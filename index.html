@@ -17,7 +17,7 @@
       --bg-base: #09090b;
       --bg-glass: rgba(255, 255, 255, 0.035);
       --bg-glass-hover: rgba(255, 255, 255, 0.075);
-      --bg-elevated: rgba(24, 24, 27, 0.78);
+      --bg-elevated: rgba(24, 24, 27, 0.86);
       --bg-solid: #121215;
       --border-glass: rgba(255, 255, 255, 0.09);
       --border-hover: rgba(255, 255, 255, 0.24);
@@ -31,7 +31,7 @@
       --bg-base: #f4f4f5;
       --bg-glass: rgba(255, 255, 255, 0.55);
       --bg-glass-hover: rgba(255, 255, 255, 0.85);
-      --bg-elevated: rgba(255, 255, 255, 0.82);
+      --bg-elevated: rgba(255, 255, 255, 0.88);
       --bg-solid: #ffffff;
       --border-glass: rgba(0, 0, 0, 0.08);
       --border-hover: rgba(0, 0, 0, 0.22);
@@ -43,11 +43,11 @@
     }
     :root { --r-lg: 22px; --r-md: 14px; --r-sm: 10px; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body { max-width: 100%; overflow-x: hidden; }
     body {
       background-color: var(--bg-base);
       color: var(--text-primary);
       min-height: 100vh;
-      overflow-x: hidden;
       transition: background 0.25s, color 0.25s;
       background-image: radial-gradient(circle at 18% 12%, rgba(255,255,255,0.04), transparent 40%), radial-gradient(circle at 82% 85%, rgba(255,255,255,0.03), transparent 45%);
     }
@@ -85,9 +85,12 @@
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
     .btn-glass { background: var(--bg-glass); backdrop-filter: blur(16px); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 10px 16px; border-radius: var(--r-md); font-size: 0.86rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
     .btn-glass:hover { background: var(--bg-glass-hover); border-color: var(--border-hover); }
-    .btn-danger { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #ef4444; padding: 9px 14px; border-radius: var(--r-md); font-size: 0.84rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; }
+    .btn-danger { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #ef4444; padding: 9px 14px; border-radius: var(--r-md); font-size: 0.84rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; display: inline-flex; }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.22); }
     .mod-only { display: none !important; }
     body.is-admin .mod-only { display: inline-flex !important; }
+    .owner-only { display: none !important; }
+    body.is-owner .owner-only { display: inline-flex !important; }
 
     .catalog-layout { display: grid; grid-template-columns: 270px 1fr; gap: 22px; align-items: start; }
     .authors-sidebar { background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 16px; position: sticky; top: 76px; }
@@ -101,7 +104,6 @@
     .author-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-glass); flex-shrink: 0; background: var(--bg-solid); }
     .author-row-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .author-row-count { font-size: 0.74rem; color: var(--text-secondary); background: var(--bg-glass); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border-glass); flex-shrink: 0; }
-
     .catalog-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
     .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -111,24 +113,27 @@
     .card-stage { width: 100%; height: 245px; display: flex; align-items: center; justify-content: center; position: relative; background: transparent; margin-bottom: 10px; }
     .card-stage img { max-width: 100%; max-height: 100%; object-fit: contain; }
     .pill-rank { position: absolute; top: 2px; left: 2px; padding: 3px 9px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 700; color: var(--text-primary); }
-    .pill-360 { position: absolute; top: 2px; right: 2px; padding: 3px 8px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); }
     .card-mod-controls { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; z-index: 5; }
-    .mod-mini-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border-glass); background: var(--bg-solid); color: var(--text-primary); font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .mod-mini-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border-glass); background: var(--bg-solid); color: var(--text-primary); font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.15s; }
+    .mod-mini-btn:hover { border-color: var(--border-hover); transform: scale(1.05); }
     .card-footer-glass { background: rgba(128, 128, 128, 0.05); border: 1px solid var(--border-glass); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
     .card-title { font-weight: 700; font-size: 0.96rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .card-author-pill { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; background: var(--bg-glass); border: 1px solid var(--border-glass); transition: 0.15s; }
     .card-author-pill:hover { background: var(--bg-glass-hover); border-color: var(--border-hover); }
     .card-author-pill img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--bg-solid); }
     .card-author-pill span { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     .profile-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
     .profile-banner { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; margin-bottom: 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
     .avatar-box { position: relative; width: 92px; height: 92px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+    .avatar-box.readonly { cursor: default; }
     .avatar-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-hover); background: var(--bg-solid); }
     .avatar-edit { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--bg-base); }
     .profile-info h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.7rem; margin-bottom: 4px; }
     .profile-info p { color: var(--text-secondary); font-size: 0.94rem; margin-bottom: 10px; }
     .contact-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-primary); font-size: 0.84rem; font-weight: 600; }
     .banned-tag { background: #ef4444; color: #fff; font-size: 0.72rem; padding: 3px 8px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
+    .owner-tag { background: #f59e0b; color: #09090b; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
 
     .ranks-dock { display: flex; justify-content: space-between; align-items: center; background: var(--bg-glass); backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 6px 8px 6px 18px; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
     .ranks-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); }
@@ -136,6 +141,26 @@
     .rank-btn { padding: 6px 15px; border-radius: 99px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: 0.2s; }
     .rank-btn:hover { color: var(--text-primary); background: var(--bg-glass-hover); }
     .rank-btn.active { background: var(--accent); color: var(--accent-text); }
+    .mod-workspace { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; }
+    .mod-ws-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-glass); }
+    .mod-ws-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; }
+    .mod-ws-role-badge { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 99px; background: var(--bg-glass-hover); border: 1px solid var(--border-hover); }
+    .mod-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .mod-tab-btn { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-secondary); padding: 9px 16px; border-radius: 12px; font-size: 0.86rem; font-weight: 600; cursor: pointer; transition: 0.18s; }
+    .mod-tab-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .mod-tab-btn.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+    .mod-panel { display: none; }
+    .mod-panel.active { display: block; }
+    .mod-toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .mod-search-input { flex: 1; min-width: 220px; padding: 11px 14px; background: rgba(128, 128, 128, 0.08); border: 1px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 0.9rem; outline: none; }
+    .mod-search-input:focus { border-color: var(--border-hover); }
+    .mod-list-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 14px; margin-bottom: 10px; font-size: 0.9rem; flex-wrap: wrap; }
+    .mod-item-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+    .mod-item-thumb { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; background: var(--bg-solid); border: 1px solid var(--border-glass); flex-shrink: 0; }
+    .mod-item-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .mod-item-title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mod-item-sub { font-size: 0.8rem; color: var(--text-secondary); }
+    .mod-item-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
     .modal-backdrop { position: fixed; inset: 0; background: rgba(4, 4, 6, 0.84); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; }
     .modal-backdrop.open { display: flex; }
@@ -155,20 +180,13 @@
     .viewer-meta { text-align: center; }
     .viewer-meta h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 4px; }
     .viewer-meta p { color: #a1a1aa; font-size: 0.86rem; }
-
     .dialog-card { background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 500px; color: var(--text-primary); max-height: 90vh; overflow-y: auto; }
     .dialog-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 16px; }
-    .mod-tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; flex-wrap: wrap; }
-    .mod-tab-btn { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-secondary); padding: 6px 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
-    .mod-tab-btn.active { background: var(--accent); color: var(--accent-text); }
-    .mod-panel { display: none; }
-    .mod-panel.active { display: block; }
-    .mod-list-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; margin-bottom: 8px; font-size: 0.86rem; }
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
     .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.9rem; outline: none; }
     .rank-edit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-    .btn-del-mini { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+    .btn-del-mini { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 7px 11px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
     .dropzone { border: 1.5px dashed var(--border-hover); border-radius: var(--r-md); padding: 16px; text-align: center; background: var(--bg-glass); cursor: pointer; font-size: 0.86rem; color: var(--text-primary); }
     .dialog-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
@@ -177,81 +195,23 @@
 
     @media (max-width: 860px) { .catalog-layout { grid-template-columns: 1fr; } .authors-sidebar { position: static; } .hero-split { grid-template-columns: 1fr; padding: 32px 20px; } .hero-stats { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 640px) { .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .card-stage { height: 185px; } .google-btn span { display: none; } .tab-btn { padding: 6px 12px; font-size: 0.82rem; } }
-        html, body {
-      max-width: 100%;
-      overflow-x: hidden;
-    }
 
     @media (max-width: 768px) {
-      header {
-        padding: 8px 10px !important;
-      }
-
-      .nav-pill {
-        flex-wrap: wrap !important;
-        justify-content: space-between !important;
-        gap: 8px !important;
-        padding: 10px 12px !important;
-        border-radius: 20px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      .brand {
-        font-size: 1.05rem !important;
-        white-space: nowrap;
-      }
-
-      .nav-center {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        gap: 6px !important;
-      }
-
-      .nav-center .tab-btn {
-        flex: 1;
-        text-align: center;
-        padding: 6px 10px !important;
-        font-size: 0.82rem !important;
-      }
-
-      .nav-right {
-        gap: 6px !important;
-        flex-wrap: nowrap !important;
-        margin-left: auto;
-      }
-
-      .user-chip {
-        max-width: 120px;
-        padding: 4px 8px !important;
-      }
-
-      .user-chip span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 75px;
-        font-size: 0.8rem;
-      }
-
-      .theme-btn, .google-btn, .mod-only {
-        padding: 6px 9px !important;
-        font-size: 0.8rem !important;
-      }
-
-      .dialog-card {
-        width: 94vw !important;
-        max-width: 94vw !important;
-        padding: 16px !important;
-        box-sizing: border-box !important;
-      }
+      header { padding: 8px 10px !important; }
+      .nav-pill { flex-wrap: wrap !important; justify-content: space-between !important; gap: 8px !important; padding: 10px 12px !important; border-radius: 20px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+      .brand { font-size: 1.05rem !important; white-space: nowrap; }
+      .nav-center { order: 3; width: 100%; justify-content: center; gap: 6px !important; }
+      .nav-center .tab-btn { flex: 1; text-align: center; padding: 6px 10px !important; font-size: 0.82rem !important; }
+      .nav-right { gap: 6px !important; flex-wrap: nowrap !important; margin-left: auto; }
+      .user-chip { max-width: 120px; padding: 4px 8px !important; }
+      .user-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75px; font-size: 0.8rem; }
+      .theme-btn, .google-btn, .mod-only { padding: 6px 9px !important; font-size: 0.8rem !important; }
+      .dialog-card { width: 94vw !important; max-width: 94vw !important; padding: 16px !important; box-sizing: border-box !important; }
+      .mod-workspace { padding: 16px !important; }
     }
   </style>
 </head>
 <body>
-
   <header>
     <div class="nav-pill">
       <div class="brand" id="siteBrand" onclick="selectedAuthorId=null; switchTab('home');" title="На главную">Custom Cards</div>
@@ -260,13 +220,13 @@
         <button class="tab-btn" data-tab="catalog">Каталог карт</button>
       </div>
       <div class="nav-right">
-        <button class="btn-glass mod-only" style="padding: 6px 14px; border-radius: 99px; font-size: 0.82rem;" onclick="openModPanel('settings')">🛡 Модерация</button>
+        <button class="btn-glass mod-only" style="padding: 6px 14px; border-radius: 99px; font-size: 0.82rem;" onclick="openModWorkspace('authors')">🛡 Модерация</button>
         <button class="theme-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Сменить тему">🌓</button>
         <button class="google-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
           <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
           <span>Войти через Google</span>
         </button>
-                <div class="user-chip" id="userChip" onclick="openMyOwnProfile()" title="Мой профиль">
+        <div class="user-chip" id="userChip" onclick="openMyOwnProfile()" title="Мой профиль">
           <img id="userAvatar" src="" alt="">
           <span id="userName">User</span>
         </div>
@@ -314,7 +274,6 @@
         </div>
       </div>
     </section>
-
     <section id="catalog" class="tab-content">
       <div class="catalog-layout">
         <aside class="authors-sidebar">
@@ -327,8 +286,8 @@
           <div class="catalog-top">
             <div style="font-weight: 700; font-size: 1.05rem;">Все работы</div>
             <div class="admin-actions">
-              <button class="btn-glass" onclick="openAuthorModal(false)">+ Стать автором</button>
-              <button class="btn-glass mod-only" onclick="openModPanel('ranks')">⚙ Ранги</button>
+              <button class="btn-glass" id="becomeAuthorBtn" onclick="openAuthorModal(false)">+ Стать автором</button>
+              <button class="btn-glass mod-only" onclick="openModWorkspace('ranks')">⚙ Ранги</button>
               <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadModal()">+ Загрузить карту</button>
             </div>
           </div>
@@ -341,17 +300,17 @@
       <div class="profile-nav">
         <button class="btn-glass" onclick="closeAuthorProfile()">← Назад в общий каталог</button>
         <div class="admin-actions">
-          <button class="btn-glass" onclick="openAuthorModal(true)">✎ Настроить профиль</button>
-          <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadModal()">+ Добавить карту</button>
-          <button class="btn-danger mod-only" id="banAuthorBtn" onclick="toggleBanAuthor()">🚫 Забанить</button>
-          <button class="btn-danger mod-only" onclick="deleteAuthorProfile()">🗑 Удалить профиль</button>
+          <button class="btn-glass" id="editProfileBtn" onclick="openAuthorModal(true)">✎ Настроить профиль</button>
+          <button class="btn-primary" id="profileAddCardBtn" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadModal()">+ Добавить карту</button>
+          <button class="btn-danger" id="banAuthorBtn" style="display: none;" onclick="toggleBanAuthor()">🚫 Забанить</button>
+          <button class="btn-danger" id="deleteProfileBtn" style="display: none;" onclick="deleteAuthorProfile()">🗑 Удалить профиль</button>
         </div>
       </div>
 
       <div class="profile-banner">
-        <div class="avatar-box" onclick="openAuthorModal(true)" title="Изменить аватар (GIF, WebP, PNG, JPEG)">
+        <div class="avatar-box" id="profileAvatarBox" onclick="handleAvatarBoxClick()" title="Изменить аватар (GIF, WebP, PNG, JPEG)">
           <img id="pageProfileAvatar" src="" alt="">
-          <div class="avatar-edit">✎</div>
+          <div class="avatar-edit" id="profileAvatarEditIcon">✎</div>
         </div>
         <div class="profile-info">
           <h1 id="pageProfileName">Ник автора</h1>
@@ -369,6 +328,65 @@
       </div>
 
       <div class="cards-grid" id="profileCardsGrid"></div>
+    </section>
+    <section id="modPage" class="tab-content">
+      <div class="mod-workspace">
+        <div class="mod-ws-header">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-glass" onclick="switchTab('catalog')">← В каталог</button>
+            <h1>🛡 Панель модерации</h1>
+          </div>
+          <span class="mod-ws-role-badge" id="modRoleBadge">Модератор</span>
+        </div>
+
+        <div class="mod-tabs">
+          <button type="button" class="mod-tab-btn active" data-modtab="authors" onclick="switchModTab('authors')">👥 Авторы</button>
+          <button type="button" class="mod-tab-btn" data-modtab="cards" onclick="switchModTab('cards')">🃏 Карты</button>
+          <button type="button" class="mod-tab-btn" data-modtab="ranks" onclick="switchModTab('ranks')">⚙ Ранги</button>
+          <button type="button" class="mod-tab-btn" data-modtab="settings" onclick="switchModTab('settings')">📝 Тексты и правила</button>
+          <button type="button" class="mod-tab-btn owner-only" data-modtab="staff" onclick="switchModTab('staff')">👑 Модераторы</button>
+        </div>
+
+        <div id="modPanel-authors" class="mod-panel active">
+          <div class="mod-toolbar">
+            <input type="text" class="mod-search-input" id="modAuthorSearchInput" placeholder="🔍 Поиск автора по нику или Email..." oninput="renderModAuthorsList()">
+          </div>
+          <div id="modAuthorsList"></div>
+        </div>
+
+        <div id="modPanel-cards" class="mod-panel">
+          <div class="mod-toolbar">
+            <input type="text" class="mod-search-input" id="modCardSearchInput" placeholder="🔍 Поиск карты по названию или автору..." oninput="renderModCardsList()">
+          </div>
+          <div id="modCardsList"></div>
+        </div>
+
+        <div id="modPanel-ranks" class="mod-panel">
+          <div id="ranksEditorList"></div>
+          <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addGlobalRank()">+ Добавить ранг</button>
+        </div>
+
+        <div id="modPanel-settings" class="mod-panel">
+          <form id="siteSettingsForm">
+            <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
+            <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
+            <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
+            <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="5"></textarea></div>
+            <div class="dialog-footer"><button type="submit" class="btn-primary" style="padding: 10px 22px; border-radius: 12px;">Сохранить настройки</button></div>
+          </form>
+        </div>
+
+        <div id="modPanel-staff" class="mod-panel">
+          <div class="field">
+            <label>Назначить нового модератора (введите Google Email)</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <input type="email" id="newModEmailInput" placeholder="user@gmail.com" style="flex: 1; min-width: 220px;">
+              <button type="button" class="btn-primary" style="padding: 10px 20px; border-radius: 12px;" onclick="addModerator()">Назначить</button>
+            </div>
+          </div>
+          <div id="modsListContainer" style="margin-top: 14px;"></div>
+        </div>
+      </div>
     </section>
   </main>
   <div class="modal-backdrop" id="viewerModal">
@@ -400,7 +418,7 @@
           <label>Аватарка (GIF, WebP, PNG, JPEG)</label>
           <div class="dropzone" onclick="document.getElementById('authorAvatarInput').click()">
             <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG</span>
-           <input type="file" id="authorAvatarInput" accept=".gif,.png,.jpg,.jpeg,.webp" style="display: none;">
+            <input type="file" id="authorAvatarInput" accept=".gif,.png,.jpg,.jpeg,.webp" style="display: none;">
           </div>
         </div>
         <div class="field">
@@ -422,7 +440,6 @@
       </form>
     </div>
   </div>
-
   <div class="modal-backdrop" id="uploadModal">
     <div class="dialog-card">
       <h2>Загрузить карту</h2>
@@ -457,6 +474,7 @@
       </form>
     </div>
   </div>
+
   <div class="modal-backdrop" id="editCardModal">
     <div class="dialog-card">
       <h2>Редактировать карту</h2>
@@ -484,51 +502,6 @@
       <p id="termsModalBody" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; white-space: pre-line; margin-bottom: 18px;"></p>
       <div class="dialog-footer">
         <button type="button" class="btn-primary" id="acceptTermsBtn" style="padding: 9px 20px; border-radius: 10px;" onclick="acceptTerms()">Принимаю условия</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="modModal">
-    <div class="dialog-card" style="max-width: 560px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <h2 style="margin: 0;">🛡 Панель управления и модерации</h2>
-        <button type="button" class="btn-glass" style="padding: 5px 10px;" onclick="closeModal('modModal')">✕</button>
-      </div>
-      <div class="mod-tabs">
-        <button type="button" class="mod-tab-btn active" data-modtab="settings" onclick="switchModTab('settings')">Тексты и правила</button>
-        <button type="button" class="mod-tab-btn" data-modtab="staff" onclick="switchModTab('staff')">Модераторы</button>
-        <button type="button" class="mod-tab-btn" data-modtab="ranks" onclick="switchModTab('ranks')">Ранги</button>
-        <button type="button" class="mod-tab-btn" data-modtab="users" onclick="switchModTab('users')">Авторы</button>
-      </div>
-
-      <div id="modPanel-settings" class="mod-panel active">
-        <form id="siteSettingsForm">
-          <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
-          <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
-          <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
-          <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="4"></textarea></div>
-          <div class="dialog-footer"><button type="submit" class="btn-primary" style="padding: 9px 18px; border-radius: 10px;">Сохранить настройки</button></div>
-        </form>
-      </div>
-
-      <div id="modPanel-staff" class="mod-panel">
-        <div class="field">
-          <label>Назначить нового модератора (введите Google Email)</label>
-          <div style="display: flex; gap: 8px;">
-            <input type="email" id="newModEmailInput" placeholder="user@gmail.com">
-            <button type="button" class="btn-primary" style="padding: 8px 16px; border-radius: 10px;" onclick="addModerator()">Назначить</button>
-          </div>
-        </div>
-        <div id="modsListContainer" style="margin-top: 12px;"></div>
-      </div>
-
-      <div id="modPanel-ranks" class="mod-panel">
-        <div id="ranksEditorList"></div>
-        <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 8px;" onclick="addGlobalRank()">+ Добавить ранг</button>
-      </div>
-
-      <div id="modPanel-users" class="mod-panel">
-        <div id="modAuthorsList"></div>
       </div>
     </div>
   </div>
@@ -591,7 +564,7 @@
       setTimeout(() => openTermsModal(true), 350);
     }
 
-               async function uploadToImageKit(file) {
+    async function uploadToImageKit(file) {
       if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
       const ext = (file.name.split('.').pop() || 'png').toLowerCase();
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
@@ -601,21 +574,20 @@
 
       const res = await fetch(SB_URL + '/storage/v1/object/media/' + fname, {
         method: 'POST',
-              headers: {
-        'apikey': SB_KEY,
-        'Authorization': 'Bearer ' + SB_KEY,
-        'x-upsert': 'true'
-      },
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'x-upsert': 'true'
+        },
         body: fd
       });
-
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || err.error || ("Код ошибки: " + res.status));
       }
       return SB_URL + '/storage/v1/object/public/media/' + fname;
     }
-    
+
     function getGridPreviewUrl(url) {
       return url;
     }
@@ -624,12 +596,64 @@
       firebase.initializeApp(FIREBASE_CONFIG);
     }
 
-    function isRealModerator() {
-      if (!window.firebase || !firebase.auth().currentUser) return false;
-      const email = (firebase.auth().currentUser.email || '').toLowerCase();
-      return moderators.includes(email);
+    function getCurrentUser() {
+      return (window.firebase && firebase.auth().currentUser) ? firebase.auth().currentUser : null;
     }
 
+    function isCreator() {
+      const u = getCurrentUser();
+      if (!u || !u.email) return false;
+      return u.email.toLowerCase() === OWNER_EMAIL.toLowerCase();
+    }
+
+    function isRealModerator() {
+      const u = getCurrentUser();
+      if (!u || !u.email) return false;
+      const email = u.email.toLowerCase();
+      return isCreator() || moderators.includes(email);
+    }
+
+    function isAuthorCreator(author) {
+      if (!author) return false;
+      return (author.ownerEmail || '').toLowerCase() === OWNER_EMAIL.toLowerCase();
+    }
+
+    function isMyAuthor(author) {
+      const u = getCurrentUser();
+      if (!u || !author) return false;
+      if (author.ownerUid && author.ownerUid === u.uid) return true;
+      if (author.ownerEmail && u.email && author.ownerEmail.toLowerCase() === u.email.toLowerCase()) return true;
+      return false;
+    }
+
+    function canEditAuthorProfile(author) {
+      if (!getCurrentUser() || !author) return false;
+      if (isCreator()) return true;
+      if (isAuthorCreator(author)) return false;
+      if (isRealModerator()) return true;
+      return isMyAuthor(author) && !author.banned;
+    }
+
+    function canModerateAuthor(author) {
+      if (!getCurrentUser() || !author) return false;
+      if (isAuthorCreator(author)) return false;
+      if (isCreator()) return true;
+      if (isRealModerator()) {
+        const targetEmail = (author.ownerEmail || '').toLowerCase();
+        if (targetEmail && moderators.includes(targetEmail)) return false;
+        return true;
+      }
+      return false;
+    }
+
+    function canManageCard(card) {
+      if (!getCurrentUser() || !card) return false;
+      const author = authors.find(a => a.id === card.authorId);
+      if (isCreator()) return true;
+      if (isAuthorCreator(author)) return false;
+      if (isRealModerator()) return true;
+      return author && isMyAuthor(author) && !author.banned;
+    }
     function signInWithGoogle() {
       if (!window.firebase) { showToast("Ошибка загрузки модуля Google"); return; }
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -642,39 +666,55 @@
       if (window.firebase) firebase.auth().signOut();
     }
 
-        function openMyOwnProfile() {
+    function openMyOwnProfile() {
       if (!requireGoogleAuth()) return;
-      const uid = firebase.auth().currentUser.uid;
-      const myAuthor = authors.find(a => a.ownerUid === uid);
+      const myAuthor = authors.find(a => isMyAuthor(a));
       if (myAuthor) {
         openAuthorProfile(myAuthor.id);
-      } else if (authors.length > 0 && isRealModerator()) {
-        openAuthorProfile(authors[0].id);
       } else {
         openAuthorModal(false);
       }
     }
 
-    if (window.firebase) {
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          document.getElementById('googleLoginBtn').style.display = 'none';
-          document.getElementById('userChip').style.display = 'flex';
-          document.getElementById('logoutBtn').style.display = 'flex';
-          document.getElementById('userAvatar').src = user.photoURL || DEFAULT_AVATAR;
-          document.getElementById('userName').textContent = user.displayName || 'User';
-          if (isRealModerator()) document.body.classList.add('is-admin');
-          else document.body.classList.remove('is-admin');
-        } else {
-          document.body.classList.remove('is-admin');
-          document.getElementById('googleLoginBtn').style.display = 'flex';
-          document.getElementById('userChip').style.display = 'none';
-          document.getElementById('logoutBtn').style.display = 'none';
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const becomeBtn = document.getElementById('becomeAuthorBtn');
+      if (user) {
+        document.getElementById('googleLoginBtn').style.display = 'none';
+        document.getElementById('userChip').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'flex';
+        document.getElementById('userAvatar').src = user.photoURL || DEFAULT_AVATAR;
+        document.getElementById('userName').textContent = user.displayName || 'User';
+
+        document.body.classList.toggle('is-admin', isRealModerator());
+        document.body.classList.toggle('is-owner', isCreator());
+
+        const hasProfile = authors.some(a => isMyAuthor(a));
+        if (becomeBtn) {
+          becomeBtn.textContent = (hasProfile && !isCreator()) ? '👤 Мой профиль' : '+ Стать автором';
+          becomeBtn.onclick = (hasProfile && !isCreator()) ? () => openMyOwnProfile() : () => openAuthorModal(false);
         }
+      } else {
+        document.body.classList.remove('is-admin', 'is-owner');
+        document.getElementById('googleLoginBtn').style.display = 'flex';
+        document.getElementById('userChip').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'none';
+        if (becomeBtn) {
+          becomeBtn.textContent = '+ Стать автором';
+          becomeBtn.onclick = () => openAuthorModal(false);
+        }
+      }
+    }
+
+    if (window.firebase) {
+      firebase.auth().onAuthStateChanged(() => {
+        updateAuthUI();
         renderAuthorsSidebar();
         renderCards();
+        if (selectedAuthorId) openAuthorProfile(selectedAuthorId);
       });
     }
+
     const themes = ['dark', 'light'];
     let themeIdx = themes.indexOf(localStorage.getItem('cc_theme') || 'dark');
     if (themeIdx === -1) themeIdx = 0;
@@ -685,7 +725,6 @@
       document.documentElement.setAttribute('data-theme', themes[themeIdx]);
       localStorage.setItem('cc_theme', themes[themeIdx]);
     }
-
     let ranks = JSON.parse(localStorage.getItem('cc_ranks')) || [
       { id: 'r1', name: 'S' },
       { id: 'r2', name: 'A' },
@@ -699,7 +738,7 @@
     let selectedAuthorId = null;
     let selectedRankFilter = 'ALL';
 
-        let sbSaving = false;
+    let sbSaving = false;
     let sbLastSaveTime = 0;
 
     function sbHeaders() {
@@ -712,17 +751,19 @@
     }
 
     async function saveData() {
+      if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
       localStorage.setItem('cc_ranks', JSON.stringify(ranks));
       localStorage.setItem('cc_authors', JSON.stringify(authors));
       localStorage.setItem('cc_cards', JSON.stringify(cards));
+      localStorage.setItem('cc_mods', JSON.stringify(moderators));
+      localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
       updateStats();
+      updateAuthUI();
 
       sbSaving = true;
       sbLastSaveTime = Date.now();
       try {
-        const mods = JSON.parse(localStorage.getItem('cc_mods')) || [];
-        const siteConfig = JSON.parse(localStorage.getItem('cc_config')) || null;
-        const payload = { ranks, authors, cards, mods, siteConfig };
+        const payload = { ranks, authors, cards, mods: moderators, siteConfig };
         await fetch(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
           method: 'POST',
           headers: sbHeaders(),
@@ -740,21 +781,30 @@
         });
         if (!res.ok) return;
         const rows = await res.json();
-        if (rows && rows.length && rows[0].data && (rows[0].data.cards || rows[0].data.authors)) {
+        if (rows && rows.length && rows[0].data) {
           const d = rows[0].data;
           if (d.ranks) ranks = d.ranks;
           if (d.authors) authors = d.authors;
           if (d.cards) cards = d.cards;
-          if (d.mods) localStorage.setItem('cc_mods', JSON.stringify(d.mods));
-          if (d.siteConfig) localStorage.setItem('cc_config', JSON.stringify(d.siteConfig));
+          if (Array.isArray(d.mods)) {
+            moderators = d.mods.map(m => m.toLowerCase());
+            if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
+          }
+          if (d.siteConfig) {
+            siteConfig = { ...siteConfig, ...d.siteConfig };
+            applySiteConfig();
+          }
 
           localStorage.setItem('cc_ranks', JSON.stringify(ranks));
           localStorage.setItem('cc_authors', JSON.stringify(authors));
           localStorage.setItem('cc_cards', JSON.stringify(cards));
-
+          localStorage.setItem('cc_mods', JSON.stringify(moderators));
+          localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
           updateStats();
-          renderAuthorsSidebar();
+          updateAuthUI();
+          renderAuthorsSidebar(document.getElementById('authorSearchInput').value);
           renderCards();
+          if (selectedAuthorId) renderProfileCards();
         } else if (cards.length > 0 || authors.length > 0) {
           saveData();
         }
@@ -778,7 +828,7 @@
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
     function requireGoogleAuth() {
-      if (!window.firebase || !firebase.auth().currentUser) {
+      if (!getCurrentUser()) {
         showToast('Сначала войдите через Google в правом верхнем углу');
         signInWithGoogle();
         return false;
@@ -815,7 +865,7 @@
 
         const nameEl = document.createElement('span');
         nameEl.className = 'author-row-name';
-        nameEl.textContent = a.name + (a.banned ? ' [БАН]' : '');
+        nameEl.textContent = (isAuthorCreator(a) ? '👑 ' : '') + a.name + (a.banned ? ' [БАН]' : '');
 
         const countEl = document.createElement('span');
         countEl.className = 'author-row-count';
@@ -829,6 +879,37 @@
         box.appendChild(row);
       });
     }
+    function updateProfilePermissionsUI(author) {
+      const canEdit = canEditAuthorProfile(author);
+      const canMod = canModerateAuthor(author);
+
+      const editBtn = document.getElementById('editProfileBtn');
+      const addCardBtn = document.getElementById('profileAddCardBtn');
+      const banBtn = document.getElementById('banAuthorBtn');
+      const delBtn = document.getElementById('deleteProfileBtn');
+      const avatarBox = document.getElementById('profileAvatarBox');
+      const avatarEditIcon = document.getElementById('profileAvatarEditIcon');
+
+      if (editBtn) editBtn.style.display = canEdit ? 'inline-flex' : 'none';
+      if (addCardBtn) addCardBtn.style.display = canEdit ? 'inline-flex' : 'none';
+      if (banBtn) banBtn.style.display = canMod ? 'inline-flex' : 'none';
+      if (delBtn) delBtn.style.display = canMod ? 'inline-flex' : 'none';
+
+      if (avatarBox) {
+        avatarBox.classList.toggle('readonly', !canEdit);
+        avatarBox.title = canEdit ? 'Изменить аватар (GIF, WebP, PNG, JPEG)' : author.name;
+      }
+      if (avatarEditIcon) avatarEditIcon.style.display = canEdit ? 'flex' : 'none';
+    }
+
+    function handleAvatarBoxClick() {
+      if (!selectedAuthorId) return;
+      const author = authors.find(a => a.id === selectedAuthorId);
+      if (author && canEditAuthorProfile(author)) {
+        openAuthorModal(true);
+      }
+    }
+
     function openAuthorProfile(authorId) {
       selectedAuthorId = authorId;
       selectedRankFilter = 'ALL';
@@ -842,6 +923,7 @@
       document.getElementById('pageProfileBio').textContent = author.bio || 'Описание не добавлено';
       document.getElementById('pageProfileContact').textContent = author.contact || 'Контакты не указаны';
       updateBanButtonUI(author);
+      updateProfilePermissionsUI(author);
 
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.getElementById('authorProfilePage').classList.add('active');
@@ -876,7 +958,6 @@
         container.appendChild(btn);
       });
     }
-
     function buildCardElement(card) {
       const author = authors.find(a => a.id === card.authorId) || { id: 0, name: 'Автор', avatar: DEFAULT_AVATAR };
       const rankObj = ranks.find(r => r.id === card.rankId) || { name: 'R' };
@@ -890,24 +971,30 @@
       const pillRank = document.createElement('span');
       pillRank.className = 'pill-rank';
       pillRank.textContent = rankObj.name;
+      stage.appendChild(pillRank);
 
-      const modBox = document.createElement('div');
-      modBox.className = 'card-mod-controls mod-only';
+      if (canManageCard(card)) {
+        const modBox = document.createElement('div');
+        modBox.className = 'card-mod-controls';
 
-      const editBtn = document.createElement('button');
-      editBtn.className = 'mod-mini-btn';
-      editBtn.textContent = '✎';
-      editBtn.onclick = (e) => { e.stopPropagation(); openEditCardModal(card.id); };
+        const editBtn = document.createElement('button');
+        editBtn.className = 'mod-mini-btn';
+        editBtn.title = 'Редактировать карту';
+        editBtn.textContent = '✎';
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditCardModal(card.id); };
 
-      const delBtn = document.createElement('button');
-      delBtn.className = 'mod-mini-btn';
-      delBtn.textContent = '✕';
-      delBtn.onclick = (e) => { e.stopPropagation(); deleteCard(card.id); };
+        const delBtn = document.createElement('button');
+        delBtn.className = 'mod-mini-btn';
+        delBtn.title = 'Удалить карту';
+        delBtn.textContent = '✕';
+        delBtn.onclick = (e) => { e.stopPropagation(); deleteCard(card.id); };
 
-      modBox.appendChild(editBtn);
-      modBox.appendChild(delBtn);
+        modBox.appendChild(editBtn);
+        modBox.appendChild(delBtn);
+        stage.appendChild(modBox);
+      }
 
-            const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+      const isWebm = card.image && card.image.toLowerCase().includes('.webm');
       let mediaEl;
       if (isWebm) {
         mediaEl = document.createElement('video');
@@ -919,8 +1006,6 @@
         mediaEl.src = getGridPreviewUrl(card.image);
         mediaEl.alt = card.title; mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
       }
-      stage.appendChild(pillRank);
-      stage.appendChild(modBox);
       stage.appendChild(mediaEl);
 
       const footer = document.createElement('div');
@@ -951,7 +1036,6 @@
       cell.addEventListener('click', () => openViewer(card, author, rankObj));
       return cell;
     }
-
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
       const mod = isRealModerator();
@@ -978,11 +1062,12 @@
       }
       list.forEach(card => grid.appendChild(buildCardElement(card)));
     }
+
     const scene3d = document.getElementById('scene3d');
     const card3dMesh = document.getElementById('card3dMesh');
-    let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false;
+    let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false, wasDragged = false;
 
-        function openViewer(card, author, rankObj) {
+    function openViewer(card, author, rankObj) {
       const frontBox = document.querySelector('.face-front');
       const backBox = document.querySelector('.face-back');
       const isWebm = card.image && card.image.toLowerCase().includes('.webm');
@@ -1018,8 +1103,6 @@
       });
     }
 
-        let wasDragged = false;
-
     function resetCardPosition() {
       if (!isDragging) return;
       isDragging = false;
@@ -1039,27 +1122,20 @@
       scheduleTransform();
     });
     window.addEventListener('mouseup', resetCardPosition);
-
-        scene3d.style.touchAction = 'none';
-
+    scene3d.style.touchAction = 'none';
     scene3d.addEventListener('touchstart', e => {
       if (e.touches.length === 1) {
-        isDragging = true;
-        wasDragged = false;
-        card3dMesh.style.transition = 'none';
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
+        isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none';
+        startX = e.touches.clientX; startY = e.touches.clientY;
       }
     }, { passive: false });
 
     scene3d.addEventListener('touchmove', e => {
       if (!isDragging || e.touches.length !== 1) return;
-      e.preventDefault();
-      wasDragged = true;
-      rotY += (e.touches[0].clientX - startX) * 0.8;
-      rotX -= (e.touches[0].clientY - startY) * 0.8;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
+      e.preventDefault(); wasDragged = true;
+      rotY += (e.touches.clientX - startX) * 0.8;
+      rotX -= (e.touches.clientY - startY) * 0.8;
+      startX = e.touches.clientX; startY = e.touches.clientY;
       scheduleTransform();
     }, { passive: false });
     window.addEventListener('touchend', resetCardPosition);
@@ -1077,27 +1153,30 @@
 
     let pendingAvatarFile = null;
     document.getElementById('authorAvatarInput').addEventListener('change', e => {
-      const file = e.target.files[0];
+      const file = e.target.files;
       if (!file) return;
       pendingAvatarFile = file;
       document.getElementById('avatarFileStatus').textContent = 'Выбран: ' + file.name;
     });
 
-    function openAuthorModal(isEdit = false) {
+    function openAuthorModal(isEdit = false, targetId = null) {
       if (!requireGoogleAuth()) return;
       const form = document.getElementById('authorForm');
-      form.reset();
-      pendingAvatarFile = null;
+      form.reset(); pendingAvatarFile = null;
       document.getElementById('avatarFileStatus').textContent = 'Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG';
 
-      if (isEdit && selectedAuthorId) {
-        const a = authors.find(x => x.id === selectedAuthorId);
+      const idToEdit = targetId || (isEdit ? selectedAuthorId : null);
+      if (idToEdit) {
+        const a = authors.find(x => x.id === Number(idToEdit));
+        if (!a || !canEditAuthorProfile(a)) { showToast('Нет прав на редактирование этого профиля'); return; }
         document.getElementById('authorModalTitle').textContent = 'Настроить профиль';
         document.getElementById('editAuthorId').value = a.id;
         document.getElementById('authorNameInput').value = a.name;
         document.getElementById('authorBioInput').value = a.bio || '';
         document.getElementById('authorContactInput').value = a.contact || '';
       } else {
+        const existingMine = authors.find(a => isMyAuthor(a));
+        if (existingMine && !isCreator()) { showToast('У вас уже есть профиль автора'); openAuthorProfile(existingMine.id); return; }
         document.getElementById('authorModalTitle').textContent = 'Создать профиль автора';
         document.getElementById('editAuthorId').value = '';
       }
@@ -1105,53 +1184,62 @@
     }
 
     document.getElementById('authorForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      if (!requireGoogleAuth()) return;
+      e.preventDefault(); if (!requireGoogleAuth()) return;
       const btn = document.getElementById('saveAuthorSubmitBtn');
       btn.disabled = true; btn.textContent = 'Сохранение...';
       try {
-        let avatarUrl = null;
-        if (pendingAvatarFile) avatarUrl = await uploadToImageKit(pendingAvatarFile);
         const editId = document.getElementById('editAuthorId').value;
         const name = document.getElementById('authorNameInput').value.trim();
         const bio = document.getElementById('authorBioInput').value.trim();
         const contact = document.getElementById('authorContactInput').value.trim();
+        const fbUser = getCurrentUser();
+
         if (editId) {
           const idx = authors.findIndex(a => a.id === Number(editId));
-          if (idx !== -1) {
-            authors[idx] = { ...authors[idx], name, bio, contact, avatar: avatarUrl || authors[idx].avatar };
-            saveData(); renderAuthorsSidebar(); openAuthorProfile(Number(editId));
-          }
+          if (idx === -1 || !canEditAuthorProfile(authors[idx])) throw new Error('Нет прав на изменение профиля');
+          let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          authors[idx] = {
+            ...authors[idx], name, bio, contact, avatar: avatarUrl || authors[idx].avatar,
+            ownerUid: authors[idx].ownerUid || (isMyAuthor(authors[idx]) ? fbUser.uid : authors[idx].ownerUid),
+            ownerEmail: authors[idx].ownerEmail || (isMyAuthor(authors[idx]) ? (fbUser.email || '').toLowerCase() : authors[idx].ownerEmail)
+          };
+          saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
+          if (selectedAuthorId === Number(editId)) openAuthorProfile(Number(editId));
         } else {
-          const fbUser = firebase.auth().currentUser;
-          const newAuthor = { id: Date.now(), name, avatar: avatarUrl || (fbUser && fbUser.photoURL) || DEFAULT_AVATAR, bio, contact, banned: false };
-          authors.push(newAuthor);
-          saveData(); renderAuthorsSidebar(); openAuthorProfile(newAuthor.id);
+          if (authors.some(a => isMyAuthor(a)) && !isCreator()) throw new Error('Вы уже создали свой профиль');
+          let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          const newAuthor = {
+            id: Date.now(), ownerUid: fbUser.uid, ownerEmail: (fbUser.email || '').toLowerCase(),
+            name, avatar: avatarUrl || fbUser.photoURL || DEFAULT_AVATAR, bio, contact, banned: false
+          };
+          authors.push(newAuthor); saveData(); renderAuthorsSidebar(); openAuthorProfile(newAuthor.id);
         }
-        closeModal('authorModal');
-        showToast('Профиль сохранён');
+        closeModal('authorModal'); showToast('Профиль сохранён');
       } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить'; }
     });
     function toggleCustomRankInput(val) {
-      const box = document.getElementById('customRankField');
-      const inp = document.getElementById('customRankInput');
+      const box = document.getElementById('customRankField'), inp = document.getElementById('customRankInput');
       if (val === 'CUSTOM_NEW') { box.style.display = 'block'; inp.required = true; }
       else { box.style.display = 'none'; inp.required = false; inp.value = ''; }
     }
 
     function openUploadModal() {
       if (!requireGoogleAuth()) return;
-      const activeAuthors = authors.filter(a => !a.banned);
-      if (!activeAuthors.length) { showToast('Сначала создайте профиль автора'); openAuthorModal(false); return; }
+      const myProfile = authors.find(a => isMyAuthor(a));
+      if (myProfile && myProfile.banned && !isCreator()) { showToast('Ваш профиль заблокирован'); return; }
+      const allowedAuthors = authors.filter(a => !a.banned && canEditAuthorProfile(a));
+      if (!allowedAuthors.length) { showToast('Сначала создайте профиль автора'); openAuthorModal(false); return; }
+
       const aSel = document.getElementById('uploadAuthorSelect'); aSel.innerHTML = '';
-      activeAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
-      if (selectedAuthorId) aSel.value = selectedAuthorId;
+      allowedAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
+      if (selectedAuthorId && allowedAuthors.some(a => a.id === selectedAuthorId)) aSel.value = selectedAuthorId;
+      else if (myProfile) aSel.value = myProfile.id;
+      aSel.disabled = allowedAuthors.length === 1;
 
       const rSel = document.getElementById('uploadRankSelect'); rSel.innerHTML = '';
       ranks.forEach(r => { const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; rSel.appendChild(opt); });
       const customOpt = document.createElement('option'); customOpt.value = 'CUSTOM_NEW'; customOpt.textContent = '+ Добавить свой ранг...';
-      rSel.appendChild(customOpt);
-      toggleCustomRankInput(rSel.value);
+      rSel.appendChild(customOpt); toggleCustomRankInput(rSel.value);
       document.getElementById('uploadModal').classList.add('open');
     }
 
@@ -1161,6 +1249,9 @@
 
     document.getElementById('uploadForm').addEventListener('submit', async e => {
       e.preventDefault(); if (!requireGoogleAuth()) return;
+      const targetAuthorId = Number(document.getElementById('uploadAuthorSelect').value);
+      const targetAuthor = authors.find(a => a.id === targetAuthorId);
+      if (!targetAuthor || !canEditAuthorProfile(targetAuthor)) { showToast('Нет прав на загрузку в этот каталог'); return; }
       const file = document.getElementById('uploadFileInput').files[0]; if (!file) return;
       const btn = document.getElementById('uploadSubmitBtn'); btn.disabled = true; btn.textContent = 'Загрузка...';
       try {
@@ -1169,67 +1260,79 @@
           const newName = document.getElementById('customRankInput').value.trim().toUpperCase();
           if (!newName) throw new Error('Введите название нового ранга');
           const existing = ranks.find(r => r.name.toUpperCase() === newName);
-          if (existing) { rankId = existing.id; }
-          else { rankId = 'r_' + Date.now(); ranks.push({ id: rankId, name: newName }); }
+          rankId = existing ? existing.id : ('r_' + Date.now());
+          if (!existing) ranks.push({ id: rankId, name: newName });
         }
         const cloudUrl = await uploadToImageKit(file);
-        cards.unshift({ id: Date.now(), authorId: Number(document.getElementById('uploadAuthorSelect').value), rankId, title: document.getElementById('uploadTitleInput').value.trim(), image: cloudUrl });
-        saveData(); renderCards(); renderAuthorsSidebar(); if (selectedAuthorId) { renderProfileRanks(); renderProfileCards(); }
+        cards.unshift({ id: Date.now(), authorId: targetAuthorId, rankId, title: document.getElementById('uploadTitleInput').value.trim(), image: cloudUrl });
+        saveData(); renderCards(); renderAuthorsSidebar();
+        if (selectedAuthorId) { renderProfileRanks(); renderProfileCards(); }
         document.getElementById('uploadForm').reset(); document.getElementById('fileStatusText').textContent = 'Нажмите, чтобы выбрать .PNG или .WEBP';
         closeModal('uploadModal'); showToast('Карта загружена');
       } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Загрузить'; }
     });
 
     function deleteCard(cardId) {
-      if (!isRealModerator() || !confirm('Удалить эту карту?')) return;
-      cards = cards.filter(c => c.id !== cardId); saveData(); renderCards(); renderAuthorsSidebar(); if (selectedAuthorId) renderProfileCards();
+      const card = cards.find(c => c.id === cardId);
+      if (!card || !canManageCard(card) || !confirm('Удалить эту карту?')) return;
+      cards = cards.filter(c => c.id !== cardId); saveData(); renderCards(); renderAuthorsSidebar(); renderModCardsList();
+      if (selectedAuthorId) renderProfileCards();
     }
 
     function openEditCardModal(cardId) {
-      if (!isRealModerator()) return;
-      const card = cards.find(c => c.id === cardId); if (!card) return;
+      const card = cards.find(c => c.id === cardId);
+      if (!card || !canManageCard(card)) return;
       document.getElementById('editCardId').value = card.id; document.getElementById('editCardTitleInput').value = card.title;
       const rSel = document.getElementById('editCardRankSelect'); rSel.innerHTML = '';
       ranks.forEach(r => { const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; rSel.appendChild(opt); });
       rSel.value = card.rankId; document.getElementById('editCardModal').classList.add('open');
     }
-
     document.getElementById('editCardForm').addEventListener('submit', e => {
-      e.preventDefault(); if (!isRealModerator()) return;
+      e.preventDefault();
       const idx = cards.findIndex(c => c.id === Number(document.getElementById('editCardId').value));
-      if (idx !== -1) { cards[idx].title = document.getElementById('editCardTitleInput').value.trim(); cards[idx].rankId = document.getElementById('editCardRankSelect').value; saveData(); renderCards(); if (selectedAuthorId) renderProfileCards(); }
+      if (idx !== -1 && canManageCard(cards[idx])) {
+        cards[idx].title = document.getElementById('editCardTitleInput').value.trim();
+        cards[idx].rankId = document.getElementById('editCardRankSelect').value;
+        saveData(); renderCards(); renderModCardsList(); if (selectedAuthorId) renderProfileCards();
+      }
       closeModal('editCardModal');
     });
+
     function toggleBanAuthor(targetId = selectedAuthorId) {
-      if (!isRealModerator() || !targetId) return;
-      const idx = authors.findIndex(a => a.id === targetId); if (idx === -1) return;
-      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorsSidebar(); renderModAuthorsList();
+      const idx = authors.findIndex(a => a.id === targetId);
+      if (idx === -1 || !canModerateAuthor(authors[idx])) { showToast('Нельзя применить санкции к этому профилю'); return; }
+      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
       if (selectedAuthorId === targetId) updateBanButtonUI(authors[idx]);
     }
 
     function updateBanButtonUI(author) {
       const btn = document.getElementById('banAuthorBtn'), nameEl = document.getElementById('pageProfileName');
-      if (author.banned) { btn.textContent = '✅ Разбанить'; nameEl.innerHTML = author.name + ' <span class="banned-tag">ЗАБАНЕН</span>'; }
-      else { btn.textContent = '🚫 Забанить'; nameEl.textContent = author.name; }
+      const crown = isAuthorCreator(author) ? '<span class="owner-tag">👑 Создатель</span>' : '';
+      if (author.banned) { btn.textContent = '✅ Разбанить'; nameEl.innerHTML = author.name + ' ' + crown + ' <span class="banned-tag">ЗАБАНЕН</span>'; }
+      else { btn.textContent = '🚫 Забанить'; nameEl.innerHTML = author.name + ' ' + crown; }
     }
 
     function deleteAuthorProfile(targetId = selectedAuthorId) {
-      if (!isRealModerator() || !targetId || !confirm('Удалить профиль автора и все его карты?')) return;
+      const target = authors.find(a => a.id === targetId);
+      if (!target || !canModerateAuthor(target) || !confirm('Удалить профиль автора и все его карты?')) return;
       authors = authors.filter(a => a.id !== targetId); cards = cards.filter(c => c.authorId !== targetId);
-      saveData(); renderAuthorsSidebar(); renderModAuthorsList(); if (selectedAuthorId === targetId) closeAuthorProfile();
+      saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList(); renderModCardsList();
+      if (selectedAuthorId === targetId) closeAuthorProfile();
     }
 
-    function openModPanel(tab = 'settings') {
+    function openModWorkspace(tab = 'authors') {
       if (!isRealModerator()) return;
+      document.getElementById('modRoleBadge').textContent = isCreator() ? '👑 Создатель' : '🛡 Модератор';
       document.getElementById('cfgBrand').value = siteConfig.brand;
       document.getElementById('cfgHeroTitle').value = siteConfig.heroTitle;
       document.getElementById('cfgHeroSub').value = siteConfig.heroSub;
       document.getElementById('cfgTerms').value = siteConfig.terms;
-      renderModsList(); renderModRanksList(); renderModAuthorsList();
-      switchModTab(tab); document.getElementById('modModal').classList.add('open');
+      renderModsList(); renderModRanksList(); renderModAuthorsList(); renderModCardsList();
+      switchModTab(tab); switchTab('modPage'); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function switchModTab(tab) {
+      if (tab === 'staff' && !isCreator()) tab = 'authors';
       document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
       document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
     }
@@ -1240,7 +1343,7 @@
       siteConfig.heroTitle = document.getElementById('cfgHeroTitle').value.trim();
       siteConfig.heroSub = document.getElementById('cfgHeroSub').value.trim();
       siteConfig.terms = document.getElementById('cfgTerms').value.trim();
-      localStorage.setItem('cc_cfg', JSON.stringify(siteConfig)); applySiteConfig(); showToast('Настройки сохранены');
+      saveData(); applySiteConfig(); showToast('Настройки сохранены');
     });
 
     function renderModsList() {
@@ -1249,20 +1352,19 @@
         const item = document.createElement('div'); item.className = 'mod-list-item';
         const span = document.createElement('span'); span.textContent = email + (email === OWNER_EMAIL ? ' (Создатель)' : '');
         item.appendChild(span);
-        if (email !== OWNER_EMAIL) {
+        if (email !== OWNER_EMAIL && isCreator()) {
           const btn = document.createElement('button'); btn.className = 'btn-del-mini'; btn.textContent = 'Снять';
-          btn.onclick = () => { moderators = moderators.filter(m => m !== email); localStorage.setItem('cc_mods', JSON.stringify(moderators)); renderModsList(); };
+          btn.onclick = () => { moderators = moderators.filter(m => m !== email); saveData(); renderModsList(); };
           item.appendChild(btn);
         }
         box.appendChild(item);
       });
     }
-
     function addModerator() {
-      if (!isRealModerator()) return;
+      if (!isCreator()) return;
       const inp = document.getElementById('newModEmailInput'); const email = inp.value.trim().toLowerCase();
       if (!email || !email.includes('@')) return;
-      if (!moderators.includes(email)) { moderators.push(email); localStorage.setItem('cc_mods', JSON.stringify(moderators)); renderModsList(); }
+      if (!moderators.includes(email)) { moderators.push(email); saveData(); renderModsList(); }
       inp.value = ''; showToast('Модератор назначен');
     }
 
@@ -1288,17 +1390,70 @@
     }
 
     function renderModAuthorsList() {
-      const box = document.getElementById('modAuthorsList'); box.innerHTML = '';
-      if (!authors.length) { box.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.86rem;">Авторов пока нет</div>'; return; }
-      authors.forEach(a => {
+      const box = document.getElementById('modAuthorsList'); if (!box) return;
+      const q = (document.getElementById('modAuthorSearchInput')?.value || '').toLowerCase().trim();
+      const list = authors.filter(a => a.name.toLowerCase().includes(q) || (a.ownerEmail || '').toLowerCase().includes(q));
+      box.innerHTML = '';
+      if (!list.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Авторы не найдены</div>'; return; }
+      list.forEach(a => {
         const item = document.createElement('div'); item.className = 'mod-list-item';
-        const name = document.createElement('span'); name.textContent = a.name + (a.banned ? ' [БАН]' : '');
-        const acts = document.createElement('div'); acts.style.display = 'flex'; acts.style.gap = '6px';
-        const banBtn = document.createElement('button'); banBtn.className = 'btn-glass'; banBtn.style.padding = '4px 10px'; banBtn.textContent = a.banned ? 'Разбанить' : 'Бан';
-        banBtn.onclick = () => toggleBanAuthor(a.id);
-        const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
-        delBtn.onclick = () => deleteAuthorProfile(a.id);
-        acts.appendChild(banBtn); acts.appendChild(delBtn); item.appendChild(name); item.appendChild(acts); box.appendChild(item);
+        const info = document.createElement('div'); info.className = 'mod-item-info';
+        const img = document.createElement('img'); img.className = 'mod-item-thumb'; img.src = a.avatar || DEFAULT_AVATAR; img.onerror = () => { img.src = DEFAULT_AVATAR; };
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + (isAuthorCreator(a) ? '👑 ' : '') + a.name + (a.banned ? ' [БАН]' : '') + '</div><div class="mod-item-sub">' + (a.ownerEmail || 'Без Email') + ' • Карт: ' + cards.filter(c => c.authorId === a.id).length + '</div>';
+        info.appendChild(img); info.appendChild(meta);
+
+        const acts = document.createElement('div'); acts.className = 'mod-item-actions';
+        const openBtn = document.createElement('button'); openBtn.className = 'btn-glass'; openBtn.style.padding = '5px 10px'; openBtn.textContent = 'Профиль';
+        openBtn.onclick = () => openAuthorProfile(a.id);
+        acts.appendChild(openBtn);
+
+        if (canEditAuthorProfile(a)) {
+          const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
+          editBtn.onclick = () => openAuthorModal(true, a.id);
+          acts.appendChild(editBtn);
+        }
+        if (canModerateAuthor(a)) {
+          const banBtn = document.createElement('button'); banBtn.className = 'btn-glass'; banBtn.style.padding = '5px 10px'; banBtn.textContent = a.banned ? 'Разбанить' : 'Бан';
+          banBtn.onclick = () => toggleBanAuthor(a.id);
+          const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
+          delBtn.onclick = () => deleteAuthorProfile(a.id);
+          acts.appendChild(banBtn); acts.appendChild(delBtn);
+        }
+        item.appendChild(info); item.appendChild(acts); box.appendChild(item);
+      });
+    }
+
+    function renderModCardsList() {
+      const box = document.getElementById('modCardsList'); if (!box) return;
+      const q = (document.getElementById('modCardSearchInput')?.value || '').toLowerCase().trim();
+      const list = cards.filter(c => {
+        const a = authors.find(x => x.id === c.authorId);
+        return c.title.toLowerCase().includes(q) || (a && a.name.toLowerCase().includes(q));
+      });
+      box.innerHTML = '';
+      if (!list.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Карты не найдены</div>'; return; }
+      list.forEach(c => {
+        const a = authors.find(x => x.id === c.authorId) || { name: 'Автор' };
+        const r = ranks.find(x => x.id === c.rankId) || { name: 'R' };
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const info = document.createElement('div'); info.className = 'mod-item-info';
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + c.title + ' [' + r.name + ']</div><div class="mod-item-sub">Автор: ' + a.name + '</div>';
+        info.appendChild(meta);
+
+        const acts = document.createElement('div'); acts.className = 'mod-item-actions';
+        if (canManageCard(c)) {
+          const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
+          editBtn.onclick = () => openEditCardModal(c.id);
+          const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
+          delBtn.onclick = () => deleteCard(c.id);
+          acts.appendChild(editBtn); acts.appendChild(delBtn);
+        } else {
+          const lock = document.createElement('span'); lock.className = 'mod-item-sub'; lock.textContent = '🔒 Каталог создателя';
+          acts.appendChild(lock);
+        }
+        item.appendChild(info); item.appendChild(acts); box.appendChild(item);
       });
     }
 
