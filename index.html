@@ -328,7 +328,7 @@
           <label>Аватарка (GIF, WebP, PNG, JPEG)</label>
           <div class="dropzone" onclick="document.getElementById('authorAvatarInput').click()">
             <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG</span>
-            <input type="file" id="authorAvatarInput" accept="image/gif, image/png, image/jpeg, image/webp" style="display: none;">
+           <input type="file" id="authorAvatarInput" accept=".gif,.png,.jpg,.jpeg,.webp" style="display: none;">
           </div>
         </div>
         <div class="field">
@@ -375,7 +375,7 @@
           <label>Файл (.png или анимированный .webp)</label>
           <div class="dropzone" onclick="document.getElementById('uploadFileInput').click()">
             <span id="fileStatusText">Нажмите, чтобы выбрать .PNG или .WEBP</span>
-            <input type="file" id="uploadFileInput" accept="image/png,image/webp,video/webm,image/gif,image/jpeg,.png,.webp,.webm,.gif,.jpg,.jpeg" style="display: none;" required>
+            <input type="file" id="uploadFileInput" accept=".png,.webp,.webm,.gif,.jpg,.jpeg" style="display: none;" required>
           </div>
         </div>
         <div class="dialog-footer">
@@ -474,8 +474,8 @@
       appId: "1:576413137502:web:bf8246e8fe306aff0d92cf"
     };
 
-        const CLOUDINARY_CLOUD = "m3m7qphe";
-    const CLOUDINARY_PRESET = "cards_preset";
+    const SB_URL = "https://" + "sroieqeosjjhkvkihubo.supabase.co";
+    const SB_KEY = "sb_publishable_h9te5qjr9anpaAIKNPWWw_7zeoWhjf";
 
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://w3.org" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
 
@@ -519,26 +519,27 @@
       setTimeout(() => openTermsModal(true), 350);
     }
 
-        async function uploadToImageKit(file) {
+            async function uploadToImageKit(file) {
       if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("upload_preset", CLOUDINARY_PRESET);
-      fd.append("folder", "custom_cards");
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+      const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
-      const host = ["api", "cloudinary", "com"].join(".");
-      const url = "https://" + host + "/v1_1/" + CLOUDINARY_CLOUD + "/auto/upload";
+      const res = await fetch(SB_URL + '/storage/v1/object/media/' + fname, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY,
+          'Content-Type': file.type || 'application/octet-stream',
+          'x-upsert': 'true'
+        },
+        body: file
+      });
 
-      const res = await fetch(url, { method: "POST", body: fd });
       if (!res.ok) throw new Error("Ошибка загрузки в облако");
-      const data = await res.json();
-      return data.secure_url;
+      return SB_URL + '/storage/v1/object/public/media/' + fname;
     }
 
     function getGridPreviewUrl(url) {
-      if (url && url.includes("cloudinary.com") && url.includes("/image/upload/") && !url.toLowerCase().endsWith(".gif") && !url.toLowerCase().endsWith(".webp")) {
-        return url.replace("/image/upload/", "/image/upload/w_450,q_auto,f_auto/");
-      }
       return url;
     }
 
