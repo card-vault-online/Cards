@@ -183,7 +183,7 @@
 
   <header>
     <div class="nav-pill">
-      <div class="brand" id="siteBrand" onclick="switchTab('home')" title="На главную">Custom Cards</div>
+      <div class="brand" id="siteBrand" onclick="selectedAuthorId=null; switchTab('home');" title="На главную">Custom Cards</div>
       <div class="nav-center">
         <button class="tab-btn active" data-tab="home">Главная</button>
         <button class="tab-btn" data-tab="catalog">Каталог карт</button>
@@ -375,7 +375,7 @@
           <label>Файл (.png или анимированный .webp)</label>
           <div class="dropzone" onclick="document.getElementById('uploadFileInput').click()">
             <span id="fileStatusText">Нажмите, чтобы выбрать .PNG или .WEBP</span>
-            <input type="file" id="uploadFileInput" accept="image/png, image/webp, video/webm, image/gif, image/jpeg" style="display: none;" required>
+            <input type="file" id="uploadFileInput" accept="image/png,image/webp,video/webm,image/gif,image/jpeg,.png,.webp,.webm,.gif,.jpg,.jpeg" style="display: none;" required>
           </div>
         </div>
         <div class="dialog-footer">
@@ -474,8 +474,8 @@
       appId: "1:576413137502:web:bf8246e8fe306aff0d92cf"
     };
 
-    const IMAGEKIT_ENDPOINT = "https://" + "ik.imagekit.io/customcards26";
-    const IMAGEKIT_PUBLIC_KEY = "public_6/KZe9gOV6mQzi6/1OVt7vgtAz4=";
+        const CLOUDINARY_CLOUD = "m3m7qphe";
+    const CLOUDINARY_PRESET = "cards_preset";
 
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://w3.org" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
 
@@ -519,23 +519,25 @@
       setTimeout(() => openTermsModal(true), 350);
     }
 
-    async function uploadToImageKit(file) {
-      if (file.size > 15 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 15 МБ)");
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("fileName", Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9._-]/g, '_'));
-      formData.append("publicKey", IMAGEKIT_PUBLIC_KEY);
-      formData.append("folder", "/custom_cards");
+        async function uploadToImageKit(file) {
+      if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", CLOUDINARY_PRESET);
+      fd.append("folder", "custom_cards");
 
-     const res = await fetch("https://" + "upload.imagekit.io/api/v1/files/upload", { method: "POST", body: formData });
+      const host = ["api", "cloudinary", "com"].join(".");
+      const url = "https://" + host + "/v1_1/" + CLOUDINARY_CLOUD + "/auto/upload";
+
+      const res = await fetch(url, { method: "POST", body: fd });
       if (!res.ok) throw new Error("Ошибка загрузки в облако");
       const data = await res.json();
-      return data.url;
+      return data.secure_url;
     }
 
     function getGridPreviewUrl(url) {
-      if (url && url.startsWith(IMAGEKIT_ENDPOINT)) {
-        return url + "?tr=f-jpg,w-420,q-80";
+      if (url && url.includes("cloudinary.com") && url.includes("/image/upload/") && !url.toLowerCase().endsWith(".gif") && !url.toLowerCase().endsWith(".webp")) {
+        return url.replace("/image/upload/", "/image/upload/w_450,q_auto,f_auto/");
       }
       return url;
     }
@@ -761,16 +763,22 @@
       modBox.appendChild(editBtn);
       modBox.appendChild(delBtn);
 
-      const img = document.createElement('img');
-      img.src = getGridPreviewUrl(card.image);
-      img.alt = card.title;
-      img.loading = 'lazy';
-      img.decoding = 'async';
-
+            const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+      let mediaEl;
+      if (isWebm) {
+        mediaEl = document.createElement('video');
+        mediaEl.src = card.image;
+        mediaEl.autoplay = true; mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true;
+        mediaEl.style.maxWidth = '100%'; mediaEl.style.maxHeight = '100%'; mediaEl.style.objectFit = 'contain';
+      } else {
+        mediaEl = document.createElement('img');
+        mediaEl.src = getGridPreviewUrl(card.image);
+        mediaEl.alt = card.title; mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
+      }
       stage.appendChild(pillRank);
       stage.appendChild(pill360);
       stage.appendChild(modBox);
-      stage.appendChild(img);
+      stage.appendChild(mediaEl);
 
       const footer = document.createElement('div');
       footer.className = 'card-footer-glass';
@@ -832,12 +840,20 @@
     let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false;
 
     function openViewer(card, author, rankObj) {
-      document.getElementById('viewerFrontImg').src = card.image;
-      document.getElementById('viewerBackImg').src = card.image;
+            const frontBox = document.querySelector('.face-front');
+      const backBox = document.querySelector('.face-back');
+      const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+      if (isWebm) {
+        frontBox.innerHTML = '<video src="' + card.image + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;"></video>';
+        backBox.innerHTML = '<video src="' + card.image + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;transform:scaleX(-1);filter:blur(9px) brightness(0.85);opacity:0.85;"></video>';
+      } else {
+        frontBox.innerHTML = '<img src="' + card.image + '" alt="">';
+        backBox.innerHTML = '<img src="' + card.image + '" alt="">';
+      }
       document.getElementById('viewerTitle').textContent = card.title;
       document.getElementById('viewerSub').textContent = author.name + ' • Ранг ' + rankObj.name;
-      rotX = 0; rotY = 0;
-      card3dMesh.style.transition = 'none';
+      document.querySelector('.face-front').innerHTML = '';
+      document.querySelector('.face-back').innerHTML = '';
       scheduleTransform();
       document.getElementById('viewerModal').classList.add('open');
     }
