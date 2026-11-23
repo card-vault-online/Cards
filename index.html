@@ -6,8 +6,12 @@
   <title>Custom Cards — Каталог</title>
   <link rel="preconnect" href="https://googleapis.com">
   <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
-  <script src="https://gstatic.com"></script>
-  <script src="https://gstatic.com"></script>
+   <script>
+    const h = ['https:/', '://gstatic.com', 'firebasejs', '10.12.2'].join('/');
+    ['app', 'auth'].forEach(m => {
+      document.write('<scr'+'ipt src="' + h + '/firebase-' + m + '-compat.js"></scr'+'ipt>');
+    });
+  </script>
   <style>
     :root[data-theme="dark"] {
       --bg-base: #09090b;
