@@ -67,6 +67,12 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: fadeSlide 0.25s ease-out; }
     @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .bg-wallpaper-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; border-radius: inherit; }
+    .bg-wallpaper-dim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,9,11,0.52) 0%, rgba(9,9,11,0.76) 100%); z-index: 1; pointer-events: none; border-radius: inherit; }
+    .has-wallpaper { position: relative; overflow: hidden; }
+    .has-wallpaper > *:not(.bg-wallpaper-layer):not(.bg-wallpaper-dim) { position: relative; z-index: 2; }
+    .catalog-banner-box { position: relative; overflow: hidden; border-radius: var(--r-lg); border: 1px solid var(--border-glass); padding: 22px 26px; margin-bottom: 18px; background: var(--bg-glass); display: none; }
+    .catalog-banner-box.active { display: block; }
 
     .hero-split { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 48px 36px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center; }
     .hero-left h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; cursor: default; }
@@ -371,16 +377,34 @@
           <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addGlobalRank()">+ Добавить ранг</button>
         </div>
 
-        <div id="modPanel-settings" class="mod-panel">
+                <div id="modPanel-settings" class="mod-panel">
           <form id="siteSettingsForm">
             <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
             <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
             <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
-            <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="5"></textarea></div>
-            <div class="dialog-footer"><button type="submit" class="btn-primary" style="padding: 10px 22px; border-radius: 12px;">Сохранить настройки</button></div>
+            <div class="field">
+              <label>Обои Главной страницы (PNG, JPG, GIF, WebP, MP4, WebM)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgHeroBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgHeroBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" onclick="document.getElementById('cfgHeroBg').value=''">✕</button>
+                <input type="file" id="cfgHeroBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+            <div class="field">
+              <label>Обои страницы Каталога карт (PNG, JPG, GIF, WebP, MP4, WebM)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgCatalogBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgCatalogBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" onclick="document.getElementById('cfgCatalogBg').value=''">✕</button>
+                <input type="file" id="cfgCatalogBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+            <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="4"></textarea></div>
+            <div class="dialog-footer"><button type="submit" class="btn-primary" id="saveSiteCfgBtn" style="padding: 10px 22px; border-radius: 12px;">Сохранить настройки</button></div>
           </form>
         </div>
-
+        
         <div id="modPanel-staff" class="mod-panel">
           <div class="field">
             <label>Назначить нового модератора (введите Google Email)</label>
@@ -419,11 +443,21 @@
       <h2 id="authorModalTitle">Профиль автора</h2>
       <form id="authorForm">
         <input type="hidden" id="editAuthorId">
-        <div class="field">
+                <div class="field">
           <label>Аватарка (GIF, WebP, PNG, JPEG)</label>
           <div class="dropzone" onclick="document.getElementById('authorAvatarInput').click()">
             <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG</span>
             <input type="file" id="authorAvatarInput" accept=".gif,.png,.jpg,.jpeg,.webp" style="display: none;">
+          </div>
+        </div>
+        <div class="field">
+          <label>Обои профиля (GIF, WebP, PNG, JPEG, WebM, MP4)</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="dropzone" style="flex: 1; padding: 12px;" onclick="document.getElementById('authorBannerInput').click()">
+              <span id="bannerFileStatus">Нажмите, чтобы выбрать обои шапки профиля</span>
+              <input type="file" id="authorBannerInput" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+            </div>
+            <button type="button" class="btn-del-mini" id="clearAuthorBannerBtn" title="Убрать обои" onclick="clearPendingBanner()">✕</button>
           </div>
         </div>
         <div class="field">
@@ -548,11 +582,41 @@
       window._toastTimer = setTimeout(() => box.classList.remove('show'), 3600);
     }
 
+        function applyWallpaper(containerEl, url) {
+      if (!containerEl) return;
+      containerEl.querySelectorAll('.bg-wallpaper-layer, .bg-wallpaper-dim').forEach(el => el.remove());
+      containerEl.classList.remove('has-wallpaper');
+      if (!url || !url.trim()) return;
+
+      const cleanUrl = url.trim();
+      const isVideo = /\.(mp4|webm)(\?|$)/i.test(cleanUrl);
+      let media;
+      if (isVideo) {
+        media = document.createElement('video');
+        media.src = cleanUrl;
+        media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
+      } else {
+        media = document.createElement('img');
+        media.src = cleanUrl;
+        media.alt = '';
+      }
+      media.className = 'bg-wallpaper-layer';
+
+      const dim = document.createElement('div');
+      dim.className = 'bg-wallpaper-dim';
+
+      containerEl.classList.add('has-wallpaper');
+      containerEl.insertBefore(dim, containerEl.firstChild);
+      containerEl.insertBefore(media, containerEl.firstChild);
+    }
+
     function applySiteConfig() {
       document.getElementById('siteBrand').textContent = siteConfig.brand;
       document.getElementById('heroTitleText').textContent = siteConfig.heroTitle;
       document.getElementById('heroSubText').textContent = siteConfig.heroSub;
       document.getElementById('termsModalBody').textContent = siteConfig.terms;
+      applyWallpaper(document.querySelector('.hero-split'), siteConfig.heroBg || '');
+      applyWallpaper(document.getElementById('catalog'), siteConfig.catalogBg || '');
     }
 
     function openTermsModal(isFirstVisit = false) {
@@ -898,6 +962,7 @@
 
       if (editBtn) editBtn.style.display = canEdit ? 'inline-flex' : 'none';
       if (addCardBtn) addCardBtn.style.display = canEdit ? 'inline-flex' : 'none';
+      applyWallpaper(document.querySelector('.profile-banner'), author.banner || '');
       if (banBtn) banBtn.style.display = canMod ? 'inline-flex' : 'none';
       if (delBtn) delBtn.style.display = canMod ? 'inline-flex' : 'none';
 
@@ -1165,19 +1230,38 @@
       });
     });
 
-    let pendingAvatarFile = null;
+        let pendingAvatarFile = null;
+    let pendingBannerFile = null;
+    let removeAuthorBanner = false;
+
     document.getElementById('authorAvatarInput').addEventListener('change', e => {
-      const file = e.target.files[0];
+      const file = e.target.files.item(0);
       if (!file) return;
       pendingAvatarFile = file;
       document.getElementById('avatarFileStatus').textContent = 'Выбран: ' + file.name;
     });
 
+    document.getElementById('authorBannerInput').addEventListener('change', e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      pendingBannerFile = file;
+      removeAuthorBanner = false;
+      document.getElementById('bannerFileStatus').textContent = 'Выбраны обои: ' + file.name;
+    });
+
+    function clearPendingBanner() {
+      pendingBannerFile = null;
+      removeAuthorBanner = true;
+      document.getElementById('authorBannerInput').value = '';
+      document.getElementById('bannerFileStatus').textContent = 'Обои убраны (нажмите Сохранить)';
+    }
+
     function openAuthorModal(isEdit = false, targetId = null) {
       if (!requireGoogleAuth()) return;
       const form = document.getElementById('authorForm');
-      form.reset(); pendingAvatarFile = null;
+      form.reset(); pendingAvatarFile = null; pendingBannerFile = null; removeAuthorBanner = false;
       document.getElementById('avatarFileStatus').textContent = 'Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG';
+      document.getElementById('bannerFileStatus').textContent = 'Нажмите, чтобы выбрать обои шапки профиля';
 
       const idToEdit = targetId || (isEdit ? selectedAuthorId : null);
       if (idToEdit) {
@@ -1188,13 +1272,14 @@
         document.getElementById('authorNameInput').value = a.name;
         document.getElementById('authorBioInput').value = a.bio || '';
         document.getElementById('authorContactInput').value = a.contact || '';
+        if (a.banner) document.getElementById('bannerFileStatus').textContent = 'Текущие обои установлены (нажмите ✕ чтобы убрать)';
       } else {
         const existingMine = authors.find(a => isMyAuthor(a));
         if (existingMine && !isCreator()) { showToast('У вас уже есть профиль автора'); openAuthorProfile(existingMine.id); return; }
         document.getElementById('authorModalTitle').textContent = 'Создать профиль автора';
         document.getElementById('editAuthorId').value = '';
       }
-      document.getElementById('authorModal').classList.add('open');
+            document.getElementById('authorModal').classList.add('open');
     }
 
     document.getElementById('authorForm').addEventListener('submit', async e => {
@@ -1212,8 +1297,11 @@
           const idx = authors.findIndex(a => a.id === Number(editId));
           if (idx === -1 || !canEditAuthorProfile(authors[idx])) throw new Error('Нет прав на изменение профиля');
           let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          let bannerUrl = pendingBannerFile ? await uploadToImageKit(pendingBannerFile) : (removeAuthorBanner ? '' : (authors[idx].banner || ''));
           authors[idx] = {
-            ...authors[idx], name, bio, contact, avatar: avatarUrl || authors[idx].avatar,
+            ...authors[idx], name, bio, contact,
+            avatar: avatarUrl || authors[idx].avatar,
+            banner: bannerUrl,
             ownerUid: authors[idx].ownerUid || (isMyAuthor(authors[idx]) ? fbUser.uid : authors[idx].ownerUid),
             ownerEmail: authors[idx].ownerEmail || (isMyAuthor(authors[idx]) ? (fbUser.email || '').toLowerCase() : authors[idx].ownerEmail)
           };
@@ -1222,9 +1310,10 @@
         } else {
           if (authors.some(a => isMyAuthor(a)) && !isCreator()) throw new Error('Вы уже создали свой профиль');
           let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          let bannerUrl = pendingBannerFile ? await uploadToImageKit(pendingBannerFile) : '';
           const newAuthor = {
             id: Date.now(), ownerUid: fbUser.uid, ownerEmail: (fbUser.email || '').toLowerCase(),
-            name, avatar: avatarUrl || fbUser.photoURL || DEFAULT_AVATAR, bio, contact, banned: false
+            name, avatar: avatarUrl || fbUser.photoURL || DEFAULT_AVATAR, banner: bannerUrl, bio, contact, banned: false
           };
           authors.push(newAuthor); saveData(); renderAuthorsSidebar(); openAuthorProfile(newAuthor.id);
         }
@@ -1356,30 +1445,56 @@
       if (selectedAuthorId === targetId) closeAuthorProfile();
     }
 
-    function openModWorkspace(tab = 'authors') {
+        function openModWorkspace(tab = 'authors') {
       if (!isRealModerator()) return;
       document.getElementById('modRoleBadge').textContent = isCreator() ? '👑 Создатель' : '🛡 Модератор';
       document.getElementById('cfgBrand').value = siteConfig.brand;
       document.getElementById('cfgHeroTitle').value = siteConfig.heroTitle;
       document.getElementById('cfgHeroSub').value = siteConfig.heroSub;
+      document.getElementById('cfgHeroBg').value = siteConfig.heroBg || '';
+      document.getElementById('cfgCatalogBg').value = siteConfig.catalogBg || '';
       document.getElementById('cfgTerms').value = siteConfig.terms;
       renderModsList(); renderModRanksList(); renderModAuthorsList(); renderModCardsList();
       switchModTab(tab); switchTab('modPage'); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+    
     function switchModTab(tab) {
       if (tab === 'staff' && !isCreator()) tab = 'authors';
       document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
       document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
     }
 
+        document.getElementById('cfgHeroBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка обоев главной...');
+      try {
+        document.getElementById('cfgHeroBg').value = await uploadToImageKit(file);
+        showToast('Обои главной загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    document.getElementById('cfgCatalogBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка обоев каталога...');
+      try {
+        document.getElementById('cfgCatalogBg').value = await uploadToImageKit(file);
+        showToast('Обои каталога загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
     document.getElementById('siteSettingsForm').addEventListener('submit', e => {
       e.preventDefault(); if (!isRealModerator()) return;
       siteConfig.brand = document.getElementById('cfgBrand').value.trim() || 'Custom Cards';
       siteConfig.heroTitle = document.getElementById('cfgHeroTitle').value.trim();
       siteConfig.heroSub = document.getElementById('cfgHeroSub').value.trim();
+      siteConfig.heroBg = document.getElementById('cfgHeroBg').value.trim();
+      siteConfig.catalogBg = document.getElementById('cfgCatalogBg').value.trim();
       siteConfig.terms = document.getElementById('cfgTerms').value.trim();
-      saveData(); applySiteConfig(); showToast('Настройки сохранены');
+      saveData(); applySiteConfig(); showToast('Настройки и обои сохранены');
     });
 
         function toggleAuthorModerator(email) {
