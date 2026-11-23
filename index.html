@@ -628,12 +628,70 @@
     let selectedAuthorId = null;
     let selectedRankFilter = 'ALL';
 
-    function saveData() {
+        let sbSaving = false;
+    let sbLastSaveTime = 0;
+
+    function sbHeaders() {
+      return {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      };
+    }
+
+    async function saveData() {
       localStorage.setItem('cc_ranks', JSON.stringify(ranks));
       localStorage.setItem('cc_authors', JSON.stringify(authors));
       localStorage.setItem('cc_cards', JSON.stringify(cards));
       updateStats();
+
+      sbSaving = true;
+      sbLastSaveTime = Date.now();
+      try {
+        const mods = JSON.parse(localStorage.getItem('cc_mods')) || [];
+        const siteConfig = JSON.parse(localStorage.getItem('cc_config')) || null;
+        const payload = { ranks, authors, cards, mods, siteConfig };
+        await fetch(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
+          method: 'POST',
+          headers: sbHeaders(),
+          body: JSON.stringify([{ id: 'main', data: payload }])
+        });
+      } catch (e) {}
+      sbSaving = false;
     }
+
+    async function syncFromCloud() {
+      if (sbSaving || (Date.now() - sbLastSaveTime < 6000)) return;
+      try {
+        const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (rows && rows.length && rows[0].data && (rows[0].data.cards || rows[0].data.authors)) {
+          const d = rows[0].data;
+          if (d.ranks) ranks = d.ranks;
+          if (d.authors) authors = d.authors;
+          if (d.cards) cards = d.cards;
+          if (d.mods) localStorage.setItem('cc_mods', JSON.stringify(d.mods));
+          if (d.siteConfig) localStorage.setItem('cc_config', JSON.stringify(d.siteConfig));
+
+          localStorage.setItem('cc_ranks', JSON.stringify(ranks));
+          localStorage.setItem('cc_authors', JSON.stringify(authors));
+          localStorage.setItem('cc_cards', JSON.stringify(cards));
+
+          updateStats();
+          renderAuthorsSidebar();
+          renderCards();
+        } else if (cards.length > 0 || authors.length > 0) {
+          saveData();
+        }
+      } catch (e) {}
+    }
+
+    syncFromCloud();
+    setInterval(syncFromCloud, 8000);
 
     function updateStats() {
       const aEl = document.getElementById('statAuthors');
