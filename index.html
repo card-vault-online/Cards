@@ -3,113 +3,141 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Custom Cards — 3D Каталог</title>
+  <title>Custom Cards — Каталог</title>
   <link rel="preconnect" href="https://googleapis.com">
-  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
   <script src="https://gstatic.com"></script>
   <script src="https://gstatic.com"></script>
   <style>
     :root[data-theme="dark"] {
-      --bg-base: #08080c; --bg-elevated: rgba(20, 20, 30, 0.78); --bg-solid: #14141e;
-      --bg-glass: rgba(255, 255, 255, 0.05); --border-glass: rgba(255, 255, 255, 0.1);
-      --border-hover: rgba(255, 255, 255, 0.28); --text-primary: #f8fafc; --text-secondary: #94a3b8;
-      --accent: #6366f1; --accent-glow: rgba(99, 102, 241, 0.42);
-      --grad-1: rgba(99, 102, 241, 0.16); --grad-2: rgba(236, 72, 153, 0.12); --slice: rgba(148, 163, 184, 0.35);
+      --bg-base: #09090b;
+      --bg-glass: rgba(255, 255, 255, 0.035);
+      --bg-glass-hover: rgba(255, 255, 255, 0.075);
+      --bg-elevated: rgba(24, 24, 27, 0.78);
+      --bg-solid: #121215;
+      --border-glass: rgba(255, 255, 255, 0.09);
+      --border-hover: rgba(255, 255, 255, 0.24);
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --accent: #f4f4f5;
+      --accent-text: #09090b;
+      --slice: rgba(255, 255, 255, 0.22);
     }
     :root[data-theme="light"] {
-      --bg-base: #f1f5f9; --bg-elevated: rgba(255, 255, 255, 0.88); --bg-solid: #ffffff;
-      --bg-glass: rgba(15, 23, 42, 0.05); --border-glass: rgba(15, 23, 42, 0.1);
-      --border-hover: rgba(79, 70, 229, 0.4); --text-primary: #0f172a; --text-secondary: #475569;
-      --accent: #4f46e5; --accent-glow: rgba(79, 70, 229, 0.28);
-      --grad-1: rgba(99, 102, 241, 0.12); --grad-2: rgba(14, 165, 233, 0.1); --slice: rgba(203, 213, 225, 0.75);
+      --bg-base: #f4f4f5;
+      --bg-glass: rgba(255, 255, 255, 0.55);
+      --bg-glass-hover: rgba(255, 255, 255, 0.85);
+      --bg-elevated: rgba(255, 255, 255, 0.82);
+      --bg-solid: #ffffff;
+      --border-glass: rgba(0, 0, 0, 0.08);
+      --border-hover: rgba(0, 0, 0, 0.22);
+      --text-primary: #09090b;
+      --text-secondary: #52525b;
+      --accent: #18181b;
+      --accent-text: #ffffff;
+      --slice: rgba(0, 0, 0, 0.18);
     }
-    :root[data-theme="cyber"] {
-      --bg-base: #0b0416; --bg-elevated: rgba(28, 14, 48, 0.8); --bg-solid: #1c0e30;
-      --bg-glass: rgba(217, 70, 239, 0.08); --border-glass: rgba(217, 70, 239, 0.22);
-      --border-hover: rgba(217, 70, 239, 0.55); --text-primary: #fdf4ff; --text-secondary: #c084fc;
-      --accent: #d946ef; --accent-glow: rgba(217, 70, 239, 0.45);
-      --grad-1: rgba(217, 70, 239, 0.18); --grad-2: rgba(6, 182, 212, 0.15); --slice: rgba(217, 70, 239, 0.3);
-    }
-    :root { --r-lg: 24px; --r-md: 16px; --r-sm: 10px; }
+    :root { --r-lg: 22px; --r-md: 14px; --r-sm: 10px; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; transition: 0.3s; background-image: radial-gradient(circle at 12% 10%, var(--grad-1), transparent 38%), radial-gradient(circle at 88% 82%, var(--grad-2), transparent 42%); }
-    header { position: sticky; top: 12px; z-index: 100; max-width: 1180px; margin: 12px auto 0; padding: 0 16px; }
-    .nav-pill { background: var(--bg-elevated); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 8px 12px 8px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 14px 36px rgba(0,0,0,0.25); }
-    .brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.18rem; letter-spacing: -0.5px; }
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.25s, color 0.25s;
+      background-image: radial-gradient(circle at 18% 12%, rgba(255,255,255,0.04), transparent 40%), radial-gradient(circle at 82% 85%, rgba(255,255,255,0.03), transparent 45%);
+    }
+    header { position: sticky; top: 12px; z-index: 100; max-width: 1240px; margin: 12px auto 0; padding: 0 16px; }
+    .nav-pill { background: var(--bg-elevated); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 8px 12px 8px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.5px; cursor: pointer; user-select: none; transition: opacity 0.2s; }
+    .brand:hover { opacity: 0.78; }
     .nav-center { display: flex; gap: 4px; background: var(--bg-glass); padding: 4px; border-radius: 99px; border: 1px solid var(--border-glass); }
-    .tab-btn { background: transparent; border: none; color: var(--text-secondary); padding: 7px 16px; border-radius: 99px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 4px 12px var(--accent-glow); }
+    .tab-btn { background: transparent; border: none; color: var(--text-secondary); padding: 7px 16px; border-radius: 99px; font-size: 0.86rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { background: var(--accent); color: var(--accent-text); }
     .nav-right { display: flex; align-items: center; gap: 8px; }
-    .theme-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-glass); background: var(--bg-glass); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-    .google-btn { display: flex; align-items: center; gap: 8px; background: #fff; color: #0f172a; border: 1px solid rgba(0,0,0,0.1); padding: 8px 14px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
-    .user-chip { display: none; align-items: center; gap: 8px; background: var(--bg-glass); border: 1px solid var(--accent); padding: 4px 12px 4px 5px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+    .theme-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-glass); background: var(--bg-glass); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+    .google-btn { display: flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-text); border: none; padding: 8px 15px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+    .user-chip { display: none; align-items: center; gap: 8px; background: var(--bg-glass); border: 1px solid var(--border-hover); padding: 4px 12px 4px 5px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
     .user-chip img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
-    main { max-width: 1180px; margin: 28px auto; padding: 0 16px 60px; }
+    main { max-width: 1240px; margin: 28px auto; padding: 0 16px 60px; }
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: fadeSlide 0.25s ease-out; }
     @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .hero-split { background: var(--bg-elevated); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 48px 36px; backdrop-filter: blur(20px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center; }
-    .hero-left h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; }
-    .hero-left p { color: var(--text-secondary); font-size: 1rem; line-height: 1.55; max-width: 480px; margin-bottom: 26px; }
+
+    .hero-split { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 48px 36px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center; }
+    .hero-left h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; cursor: default; }
+    .hero-left p { color: var(--text-secondary); font-size: 1rem; line-height: 1.55; max-width: 480px; margin-bottom: 26px; cursor: default; }
     .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
     .hero-right { display: flex; flex-direction: column; gap: 16px; }
-    .quote-bubble { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 18px 22px; font-size: 0.95rem; line-height: 1.45; box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
-    .quote-bubble.tilt-l { transform: rotate(-2deg); }
-    .quote-bubble.tilt-r { transform: rotate(2deg) translateX(10px); }
-    .quote-star { color: #22c55e; margin-right: 6px; }
-    .hero-stats { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-glass); display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .stat-box { display: flex; align-items: center; gap: 12px; }
+    .quote-bubble { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 18px 22px; font-size: 0.95rem; line-height: 1.45; cursor: default; }
+    .quote-bubble.tilt-l { transform: rotate(-1.5deg); }
+    .quote-bubble.tilt-r { transform: rotate(1.5deg) translateX(8px); }
+    .hero-stats { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-glass); display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: center; }
+    .stat-box { display: flex; align-items: center; gap: 12px; cursor: default; }
     .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; }
     .stat-txt { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.3; }
-    .btn-glow { background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 99px; font-size: 0.92rem; font-weight: 600; cursor: pointer; box-shadow: 0 8px 22px var(--accent-glow); }
-    .btn-glass { background: var(--bg-elevated); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 10px 16px; border-radius: var(--r-md); font-size: 0.86rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-danger { background: rgba(239,68,68,0.14); border: 1px solid rgba(239,68,68,0.4); color: #ef4444; padding: 10px 16px; border-radius: var(--r-md); font-size: 0.86rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; }
+
+    .btn-primary { background: var(--accent); color: var(--accent-text); border: none; padding: 11px 22px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-glass { background: var(--bg-glass); backdrop-filter: blur(16px); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 10px 16px; border-radius: var(--r-md); font-size: 0.86rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+    .btn-glass:hover { background: var(--bg-glass-hover); border-color: var(--border-hover); }
+    .btn-danger { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #ef4444; padding: 9px 14px; border-radius: var(--r-md); font-size: 0.84rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; }
     .mod-only { display: none !important; }
     body.is-admin .mod-only { display: inline-flex !important; }
-    .controls-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-    .search-box { position: relative; flex-grow: 1; max-width: 420px; }
-    .search-input { width: 100%; padding: 12px 16px; background: var(--bg-elevated); border: 1px solid var(--border-glass); border-radius: var(--r-md); color: var(--text-primary); font-size: 0.94rem; outline: none; }
-    .dropdown-menu { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: var(--r-md); box-shadow: 0 20px 45px rgba(0,0,0,0.5); max-height: 280px; overflow-y: auto; z-index: 80; display: none; padding: 6px; }
-    .dropdown-menu.open { display: block; }
-    .dropdown-item { padding: 10px 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; }
-    .dropdown-item:hover { background: var(--bg-glass); }
-    .dropdown-left { display: flex; align-items: center; gap: 10px; }
-    .dropdown-item img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent); }
-    .dropdown-badge { font-size: 0.76rem; color: var(--text-secondary); background: var(--bg-glass); padding: 3px 9px; border-radius: 99px; }
-    .profile-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
-    .profile-banner { background: var(--bg-elevated); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; margin-bottom: 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
-    .avatar-box { position: relative; width: 92px; height: 92px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
-    .avatar-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
-    .avatar-edit { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--bg-base); }
-    .profile-info h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.7rem; margin-bottom: 4px; }
-    .profile-info p { color: var(--text-secondary); font-size: 0.94rem; margin-bottom: 10px; }
-    .contact-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--accent); font-size: 0.84rem; font-weight: 600; }
-    .banned-tag { background: #ef4444; color: #fff; font-size: 0.72rem; padding: 3px 8px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
-    .ranks-dock { display: flex; justify-content: space-between; align-items: center; background: var(--bg-elevated); border: 1px solid var(--border-glass); border-radius: 99px; padding: 6px 8px 6px 18px; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
-    .ranks-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); }
-    .ranks-row { display: flex; gap: 6px; flex-wrap: wrap; }
-    .rank-btn { padding: 7px 16px; border-radius: 99px; border: none; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.86rem; cursor: pointer; transition: 0.2s; }
-    .rank-btn.active { background: var(--rank-color, var(--accent)); color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+
+    .catalog-layout { display: grid; grid-template-columns: 270px 1fr; gap: 22px; align-items: start; }
+    .authors-sidebar { background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 16px; position: sticky; top: 76px; }
+    .sidebar-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 10px; }
+    .sidebar-search { width: 100%; padding: 10px 14px; background: rgba(128, 128, 128, 0.08); border: 1px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 0.88rem; outline: none; margin-bottom: 12px; }
+    .sidebar-search:focus { border-color: var(--border-hover); }
+    .authors-list { display: flex; flex-direction: column; gap: 6px; max-height: 460px; overflow-y: auto; }
+    .author-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 12px; background: transparent; border: 1px solid transparent; cursor: pointer; transition: 0.18s; }
+    .author-row:hover { background: var(--bg-glass-hover); border-color: var(--border-glass); }
+    .author-row-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .author-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-glass); flex-shrink: 0; background: var(--bg-solid); }
+    .author-row-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .author-row-count { font-size: 0.74rem; color: var(--text-secondary); background: var(--bg-glass); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border-glass); flex-shrink: 0; }
+
+    .catalog-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
     .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
-    .card-cell { background: transparent; border: 1px dashed var(--border-glass); border-radius: var(--r-lg); padding: 14px; display: flex; flex-direction: column; align-items: center; cursor: pointer; content-visibility: auto; contain-intrinsic-size: 240px 320px; transform: translateZ(0); transition: transform 0.2s, border-color 0.2s; }
-    .card-cell:hover { transform: translate3d(0, -5px, 0); border-color: var(--accent); }
-    .card-stage { width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; position: relative; background: transparent; margin-bottom: 10px; }
-    .card-stage img { max-width: 100%; max-height: 100%; object-fit: contain; transform: translateZ(0); }
-    .pill-rank { position: absolute; top: 4px; left: 4px; padding: 3px 10px; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.76rem; font-weight: 700; color: #fff; z-index: 2; }
-    .pill-360 { position: absolute; top: 4px; right: 4px; padding: 3px 8px; border-radius: 6px; background: rgba(0,0,0,0.65); font-size: 0.7rem; font-weight: 600; color: #fff; z-index: 2; }
-    .card-mod-controls { position: absolute; bottom: 6px; right: 6px; display: flex; gap: 4px; z-index: 5; }
-    .mod-mini-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(15,23,42,0.85); color: #fff; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .mod-mini-btn.del:hover { background: #ef4444; }
-    .mod-mini-btn.edit:hover { background: var(--accent); }
-    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 2px; text-align: center; }
-    .card-author-tag { font-size: 0.82rem; color: var(--accent); font-weight: 500; }
+    .card-cell { background: var(--bg-glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 12px; display: flex; flex-direction: column; cursor: pointer; content-visibility: auto; contain-intrinsic-size: 230px 330px; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
+    .card-cell:hover { transform: translateY(-4px); border-color: var(--border-hover); background: var(--bg-glass-hover); }
+    .card-stage { width: 100%; height: 245px; display: flex; align-items: center; justify-content: center; position: relative; background: transparent; margin-bottom: 10px; }
+    .card-stage img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .pill-rank { position: absolute; top: 2px; left: 2px; padding: 3px 9px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 700; color: var(--text-primary); }
+    .pill-360 { position: absolute; top: 2px; right: 2px; padding: 3px 8px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); }
+    .card-mod-controls { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; z-index: 5; }
+    .mod-mini-btn { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border-glass); background: var(--bg-solid); color: var(--text-primary); font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .card-footer-glass { background: rgba(128, 128, 128, 0.05); border: 1px solid var(--border-glass); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .card-title { font-weight: 700; font-size: 0.96rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-author-pill { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; background: var(--bg-glass); border: 1px solid var(--border-glass); transition: 0.15s; }
+    .card-author-pill:hover { background: var(--bg-glass-hover); border-color: var(--border-hover); }
+    .card-author-pill img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--bg-solid); }
+    .card-author-pill span { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .profile-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
+    .profile-banner { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; margin-bottom: 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .avatar-box { position: relative; width: 92px; height: 92px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+    .avatar-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-hover); background: var(--bg-solid); }
+    .avatar-edit { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--bg-base); }
+    .profile-info h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.7rem; margin-bottom: 4px; }
+    .profile-info p { color: var(--text-secondary); font-size: 0.94rem; margin-bottom: 10px; }
+    .contact-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-primary); font-size: 0.84rem; font-weight: 600; }
+    .banned-tag { background: #ef4444; color: #fff; font-size: 0.72rem; padding: 3px 8px; border-radius: 99px; margin-left: 8px; vertical-align: middle; }
 
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(4,4,8,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; }
+    .ranks-dock { display: flex; justify-content: space-between; align-items: center; background: var(--bg-glass); backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 6px 8px 6px 18px; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+    .ranks-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); }
+    .ranks-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .rank-btn { padding: 6px 15px; border-radius: 99px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: 0.2s; }
+    .rank-btn:hover { color: var(--text-primary); background: var(--bg-glass-hover); }
+    .rank-btn.active { background: var(--accent); color: var(--accent-text); }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(4, 4, 6, 0.84); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 16px; }
     .modal-backdrop.open { display: flex; }
-    .viewer-cell { width: 100%; max-width: 440px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.16); border-radius: 28px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; color: #f8fafc; }
-    .close-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.14); border: none; color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 10; }
-    .drag-hint { font-size: 0.78rem; color: #cbd5e1; background: rgba(255,255,255,0.08); padding: 5px 14px; border-radius: 99px; margin-bottom: 6px; }
+    .viewer-cell { width: 100%; max-width: 440px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 28px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; color: #fafafa; }
+    .close-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 1.05rem; cursor: pointer; z-index: 10; }
+    .drag-hint { font-size: 0.78rem; color: #d4d4d8; background: rgba(255, 255, 255, 0.07); padding: 5px 14px; border-radius: 99px; margin-bottom: 6px; }
     @keyframes floatCard { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
     .scene-3d { width: 100%; max-width: 360px; height: 490px; perspective: 1200px; margin: 6px 0 12px; display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; user-select: none; animation: floatCard 3.6s ease-in-out infinite; }
     .scene-3d:active { cursor: grabbing; animation-play-state: paused; }
@@ -117,24 +145,33 @@
     .face { position: absolute; inset: 0; border-radius: 22px; padding: 4px; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .face-front { transform: translateZ(3px); background: transparent; border: none; }
     .face-front img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-    .thickness-slice { position: absolute; inset: 0; border-radius: 22px; background: var(--slice); border: 1px solid rgba(255,255,255,0.25); pointer-events: none; }
-    .face-back { transform: rotateY(180deg) translateZ(3px); background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.2); overflow: hidden; }
+    .thickness-slice { position: absolute; inset: 0; border-radius: 22px; background: var(--slice); border: 1px solid rgba(255, 255, 255, 0.2); pointer-events: none; }
+    .face-back { transform: rotateY(180deg) translateZ(3px); background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.18); overflow: hidden; }
     .face-back img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transform: scaleX(-1) translateZ(0); filter: blur(9px) brightness(0.85); opacity: 0.85; }
     .viewer-meta { text-align: center; }
     .viewer-meta h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 4px; }
-    .viewer-meta p { color: #94a3b8; font-size: 0.86rem; }
+    .viewer-meta p { color: #a1a1aa; font-size: 0.86rem; }
 
-    .dialog-card { background: var(--bg-solid); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 430px; color: var(--text-primary); max-height: 90vh; overflow-y: auto; }
+    .dialog-card { background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 500px; color: var(--text-primary); max-height: 90vh; overflow-y: auto; }
     .dialog-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 16px; }
+    .mod-tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; flex-wrap: wrap; }
+    .mod-tab-btn { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-secondary); padding: 6px 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+    .mod-tab-btn.active { background: var(--accent); color: var(--accent-text); }
+    .mod-panel { display: none; }
+    .mod-panel.active { display: block; }
+    .mod-list-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; margin-bottom: 8px; font-size: 0.86rem; }
     .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
-    .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.92rem; outline: none; }
-    .rank-edit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-    .rank-edit-row input[type="color"] { width: 42px; height: 38px; padding: 2px; cursor: pointer; }
-    .btn-del-rank { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-weight: 700; }
-    .dropzone { border: 1.5px dashed var(--accent); border-radius: var(--r-md); padding: 16px; text-align: center; background: var(--bg-glass); cursor: pointer; font-size: 0.86rem; color: var(--accent); }
+    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.9rem; outline: none; }
+    .rank-edit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .btn-del-mini { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+    .dropzone { border: 1.5px dashed var(--border-hover); border-radius: var(--r-md); padding: 16px; text-align: center; background: var(--bg-glass); cursor: pointer; font-size: 0.86rem; color: var(--text-primary); }
     .dialog-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
-    @media (max-width: 820px) { .hero-split { grid-template-columns: 1fr; padding: 32px 20px; } .hero-stats { grid-template-columns: repeat(2, 1fr); } }
+
+    .toast-box { position: fixed; bottom: 24px; right: 24px; background: var(--bg-elevated); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-hover); color: var(--text-primary); padding: 14px 18px; border-radius: 16px; font-size: 0.88rem; z-index: 999; display: none; align-items: center; gap: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.45); max-width: 360px; }
+    .toast-box.show { display: flex; animation: fadeSlide 0.2s ease-out; }
+
+    @media (max-width: 860px) { .catalog-layout { grid-template-columns: 1fr; } .authors-sidebar { position: static; } .hero-split { grid-template-columns: 1fr; padding: 32px 20px; } .hero-stats { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 640px) { .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .card-stage { height: 185px; } .google-btn span { display: none; } .tab-btn { padding: 6px 12px; font-size: 0.82rem; } }
   </style>
 </head>
@@ -142,12 +179,13 @@
 
   <header>
     <div class="nav-pill">
-      <div class="brand">Custom Cards</div>
+      <div class="brand" id="siteBrand" onclick="switchTab('home')" title="На главную">Custom Cards</div>
       <div class="nav-center">
         <button class="tab-btn active" data-tab="home">Главная</button>
         <button class="tab-btn" data-tab="catalog">Каталог карт</button>
       </div>
       <div class="nav-right">
+        <button class="btn-glass mod-only" style="padding: 6px 14px; border-radius: 99px; font-size: 0.82rem;" onclick="openModPanel('settings')">🛡 Модерация</button>
         <button class="theme-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Сменить тему">🌓</button>
         <button class="google-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
           <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
@@ -165,19 +203,19 @@
     <section id="home" class="tab-content active">
       <div class="hero-split">
         <div class="hero-left">
-          <h1>Кастомные карты расскажут об авторах лучше слов</h1>
-          <p>Открытая галерея объёмных 3D-карт от разных создателей — для прямого заказа у автора или просто для эстетического любования на 360°.</p>
+          <h1 id="heroTitleText">Кастомные карты расскажут об авторах лучше слов</h1>
+          <p id="heroSubText">Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.</p>
           <div class="hero-btns">
-            <button class="btn-glow" onclick="switchTab('catalog')">Смотреть каталог карт</button>
+            <button class="btn-primary" onclick="switchTab('catalog')">Смотреть каталог карт</button>
             <button class="btn-glass" onclick="switchTab('catalog'); openUploadModal();">+ Добавить свою карту</button>
           </div>
         </div>
         <div class="hero-right">
-          <div class="quote-bubble tilt-l">
-            <span class="quote-star">★</span> Доступ открыт для всех: загружай свои PNG и анимированные WebP в облако в пару кликов
+          <div class="quote-bubble tilt-l" id="heroBubble1">
+            ★ Доступ открыт для всех: загружай свои PNG и анимированные WebP в пару кликов
           </div>
-          <div class="quote-bubble tilt-r">
-            <span class="quote-star">★</span> Понравилась работа? Открой профиль автора — там указаны прямые контакты для заказа
+          <div class="quote-bubble tilt-r" id="heroBubble2">
+            ★ Понравилась работа? Открой профиль автора — там указаны прямые контакты для заказа и связи
           </div>
         </div>
       </div>
@@ -185,52 +223,58 @@
       <div class="hero-stats">
         <div class="stat-box">
           <span class="stat-num">360°</span>
-          <span class="stat-txt">Объёмный 3D-обзор<br>каждой карты</span>
+          <span class="stat-txt">Объёмный обзор<br>каждой карты</span>
         </div>
         <div class="stat-box">
-          <span class="stat-num" id="statAuthors">2+</span>
-          <span class="stat-txt">Независимых авторов<br>и художников</span>
+          <span class="stat-num" id="statAuthors">0</span>
+          <span class="stat-txt">Авторов<br>на платформе</span>
         </div>
         <div class="stat-box">
-          <span class="stat-num" id="statCards">4+</span>
-          <span class="stat-txt">Кастомных карт<br>в открытом каталоге</span>
+          <span class="stat-num" id="statCards">0</span>
+          <span class="stat-txt">Загруженных карт<br>в каталоге</span>
         </div>
-        <div class="stat-box">
-          <span class="stat-num">4</span>
-          <span class="stat-txt">Ранга редкости<br>S • A • RE • R</span>
+        <div class="stat-box" style="justify-content: flex-end;">
+          <button class="btn-glass" onclick="openTermsModal(false)" style="border-radius: 14px; padding: 12px 16px;">📜 Условия пользования</button>
         </div>
       </div>
     </section>
 
     <section id="catalog" class="tab-content">
-      <div class="controls-bar">
-        <div class="search-box" id="authorSearchBox">
-          <input type="text" class="search-input" id="authorSearchInput" placeholder="🔍 Нажмите, чтобы выбрать автора из списка..." autocomplete="off">
-          <div class="dropdown-menu" id="authorDropdown"></div>
-        </div>
-        <div class="admin-actions">
-          <button class="btn-glass" onclick="openAuthorModal(false)">+ Стать автором</button>
-          <button class="btn-glass" onclick="openRanksModal()">⚙ Ранги</button>
-          <button class="btn-glow" style="padding: 10px 18px; border-radius: 16px;" onclick="openUploadModal()">+ Загрузить карту</button>
+      <div class="catalog-layout">
+        <aside class="authors-sidebar">
+          <div class="sidebar-title">Авторы каталога</div>
+          <input type="text" class="sidebar-search" id="authorSearchInput" placeholder="🔍 Поиск автора по нику..." autocomplete="off">
+          <div class="authors-list" id="authorsSidebarList"></div>
+        </aside>
+
+        <div>
+          <div class="catalog-top">
+            <div style="font-weight: 700; font-size: 1.05rem;">Все работы</div>
+            <div class="admin-actions">
+              <button class="btn-glass" onclick="openAuthorModal(false)">+ Стать автором</button>
+              <button class="btn-glass mod-only" onclick="openModPanel('ranks')">⚙ Ранги</button>
+              <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadModal()">+ Загрузить карту</button>
+            </div>
+          </div>
+          <div class="cards-grid" id="cardsGrid"></div>
         </div>
       </div>
-      <div class="cards-grid" id="cardsGrid"></div>
     </section>
 
     <section id="authorProfilePage" class="tab-content">
       <div class="profile-nav">
         <button class="btn-glass" onclick="closeAuthorProfile()">← Назад в общий каталог</button>
         <div class="admin-actions">
-          <button class="btn-glass" onclick="openAuthorModal(true)">✎ Редактировать профиль и аву</button>
-          <button class="btn-glow" style="padding: 10px 18px; border-radius: 16px;" onclick="openUploadModal()">+ Добавить карту</button>
+          <button class="btn-glass" onclick="openAuthorModal(true)">✎ Настроить профиль</button>
+          <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadModal()">+ Добавить карту</button>
           <button class="btn-danger mod-only" id="banAuthorBtn" onclick="toggleBanAuthor()">🚫 Забанить</button>
           <button class="btn-danger mod-only" onclick="deleteAuthorProfile()">🗑 Удалить профиль</button>
         </div>
       </div>
 
       <div class="profile-banner">
-        <div class="avatar-box" onclick="openAuthorModal(true)" title="Сменить аватар (GIF, PNG, JPG, WebP)">
-          <img id="pageProfileAvatar" src="" alt="Avatar">
+        <div class="avatar-box" onclick="openAuthorModal(true)" title="Изменить аватар (GIF, WebP, PNG, JPEG)">
+          <img id="pageProfileAvatar" src="" alt="">
           <div class="avatar-edit">✎</div>
         </div>
         <div class="profile-info">
@@ -238,7 +282,7 @@
           <p id="pageProfileBio">Описание профиля</p>
           <div class="contact-pill">
             <span>📬 Для заказа и связи:</span>
-            <strong id="pageProfileContact">@username</strong>
+            <strong id="pageProfileContact">Не указано</strong>
           </div>
         </div>
       </div>
@@ -257,15 +301,11 @@
       <div class="drag-hint">👆 Потяните пальцем или мышкой на 360°</div>
       <div class="scene-3d" id="scene3d">
         <div class="card-3d-mesh" id="card3dMesh">
-          <div class="face face-front">
-            <img id="viewerFrontImg" src="" alt="Front">
-          </div>
+          <div class="face face-front"><img id="viewerFrontImg" src="" alt=""></div>
           <div class="thickness-slice" style="transform: translateZ(1.5px);"></div>
           <div class="thickness-slice" style="transform: translateZ(0px);"></div>
           <div class="thickness-slice" style="transform: translateZ(-1.5px);"></div>
-          <div class="face face-back">
-            <img id="viewerBackImg" src="" alt="Back">
-          </div>
+          <div class="face face-back"><img id="viewerBackImg" src="" alt=""></div>
         </div>
       </div>
       <div class="viewer-meta">
@@ -281,41 +321,27 @@
       <form id="authorForm">
         <input type="hidden" id="editAuthorId">
         <div class="field">
-          <label>Аватарка (GIF, PNG, JPEG, WebP)</label>
+          <label>Аватарка (GIF, WebP, PNG, JPEG)</label>
           <div class="dropzone" onclick="document.getElementById('authorAvatarInput').click()">
-            <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / PNG / JPG / WebP</span>
+            <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG</span>
             <input type="file" id="authorAvatarInput" accept="image/gif, image/png, image/jpeg, image/webp" style="display: none;">
           </div>
         </div>
         <div class="field">
           <label>Никнейм автора</label>
-          <input type="text" id="authorNameInput" required>
+          <input type="text" id="authorNameInput" maxlength="32" required>
         </div>
         <div class="field">
           <label>О себе и своих работах</label>
-          <textarea id="authorBioInput" rows="2"></textarea>
+          <textarea id="authorBioInput" rows="2" maxlength="180"></textarea>
         </div>
         <div class="field">
-          <label>Контакты для заказа (Telegram, Discord, ВК, Email)</label>
-          <input type="text" id="authorContactInput" required>
+          <label>Контакты для заказа и связи (Telegram, Discord, ВК, Email)</label>
+          <input type="text" id="authorContactInput" maxlength="80" required>
         </div>
         <div class="dialog-footer">
           <button type="button" class="btn-glass" onclick="closeModal('authorModal')">Отмена</button>
-          <button type="submit" class="btn-glow" id="saveAuthorSubmitBtn" style="padding: 9px 18px; border-radius: 10px;">Сохранить</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="ranksModal">
-    <div class="dialog-card">
-      <h2>Управление рангами</h2>
-      <form id="ranksForm">
-        <div id="ranksEditorList"></div>
-        <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 6px;" onclick="addRankRow()">+ Добавить ранг</button>
-        <div class="dialog-footer">
-          <button type="button" class="btn-glass" onclick="closeModal('ranksModal')">Отмена</button>
-          <button type="submit" class="btn-glow" style="padding: 9px 18px; border-radius: 10px;">Применить</button>
+          <button type="submit" class="btn-primary" id="saveAuthorSubmitBtn" style="padding: 9px 18px; border-radius: 10px;">Сохранить</button>
         </div>
       </form>
     </div>
@@ -323,19 +349,23 @@
 
   <div class="modal-backdrop" id="uploadModal">
     <div class="dialog-card">
-      <h2>Загрузить 3D-карту</h2>
+      <h2>Загрузить карту</h2>
       <form id="uploadForm">
         <div class="field">
           <label>Автор</label>
           <select id="uploadAuthorSelect" required></select>
         </div>
         <div class="field">
-          <label>Ранг</label>
-          <select id="uploadRankSelect" required></select>
+          <label>Ранг редкости</label>
+          <select id="uploadRankSelect" onchange="toggleCustomRankInput(this.value)" required></select>
+        </div>
+        <div class="field" id="customRankField" style="display: none;">
+          <label>Название вашего нового ранга</label>
+          <input type="text" id="customRankInput" placeholder="Например: UR, SSR, Mythic..." maxlength="12">
         </div>
         <div class="field">
           <label>Название карты</label>
-          <input type="text" id="uploadTitleInput" required>
+          <input type="text" id="uploadTitleInput" maxlength="40" required>
         </div>
         <div class="field">
           <label>Файл (.png или анимированный .webp)</label>
@@ -346,12 +376,11 @@
         </div>
         <div class="dialog-footer">
           <button type="button" class="btn-glass" onclick="closeModal('uploadModal')">Отмена</button>
-          <button type="submit" class="btn-glow" id="uploadSubmitBtn" style="padding: 9px 18px; border-radius: 10px;">Загрузить в облако</button>
+          <button type="submit" class="btn-primary" id="uploadSubmitBtn" style="padding: 9px 18px; border-radius: 10px;">Загрузить</button>
         </div>
       </form>
     </div>
   </div>
-
   <div class="modal-backdrop" id="editCardModal">
     <div class="dialog-card">
       <h2>Редактировать карту</h2>
@@ -359,7 +388,7 @@
         <input type="hidden" id="editCardId">
         <div class="field">
           <label>Название карты</label>
-          <input type="text" id="editCardTitleInput" required>
+          <input type="text" id="editCardTitleInput" maxlength="40" required>
         </div>
         <div class="field">
           <label>Ранг карты</label>
@@ -367,13 +396,70 @@
         </div>
         <div class="dialog-footer">
           <button type="button" class="btn-glass" onclick="closeModal('editCardModal')">Отмена</button>
-          <button type="submit" class="btn-glow" style="padding: 9px 18px; border-radius: 10px;">Сохранить</button>
+          <button type="submit" class="btn-primary" style="padding: 9px 18px; border-radius: 10px;">Сохранить</button>
         </div>
       </form>
     </div>
   </div>
+
+  <div class="modal-backdrop" id="termsModal">
+    <div class="dialog-card">
+      <h2>📜 Условия пользования и предупреждение</h2>
+      <p id="termsModalBody" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; white-space: pre-line; margin-bottom: 18px;"></p>
+      <div class="dialog-footer">
+        <button type="button" class="btn-primary" id="acceptTermsBtn" style="padding: 9px 20px; border-radius: 10px;" onclick="acceptTerms()">Принимаю условия</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modModal">
+    <div class="dialog-card" style="max-width: 560px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h2 style="margin: 0;">🛡 Панель управления и модерации</h2>
+        <button type="button" class="btn-glass" style="padding: 5px 10px;" onclick="closeModal('modModal')">✕</button>
+      </div>
+      <div class="mod-tabs">
+        <button type="button" class="mod-tab-btn active" data-modtab="settings" onclick="switchModTab('settings')">Тексты и правила</button>
+        <button type="button" class="mod-tab-btn" data-modtab="staff" onclick="switchModTab('staff')">Модераторы</button>
+        <button type="button" class="mod-tab-btn" data-modtab="ranks" onclick="switchModTab('ranks')">Ранги</button>
+        <button type="button" class="mod-tab-btn" data-modtab="users" onclick="switchModTab('users')">Авторы</button>
+      </div>
+
+      <div id="modPanel-settings" class="mod-panel active">
+        <form id="siteSettingsForm">
+          <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
+          <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
+          <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
+          <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="4"></textarea></div>
+          <div class="dialog-footer"><button type="submit" class="btn-primary" style="padding: 9px 18px; border-radius: 10px;">Сохранить настройки</button></div>
+        </form>
+      </div>
+
+      <div id="modPanel-staff" class="mod-panel">
+        <div class="field">
+          <label>Назначить нового модератора (введите Google Email)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="email" id="newModEmailInput" placeholder="user@gmail.com">
+            <button type="button" class="btn-primary" style="padding: 8px 16px; border-radius: 10px;" onclick="addModerator()">Назначить</button>
+          </div>
+        </div>
+        <div id="modsListContainer" style="margin-top: 12px;"></div>
+      </div>
+
+      <div id="modPanel-ranks" class="mod-panel">
+        <div id="ranksEditorList"></div>
+        <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 8px;" onclick="addGlobalRank()">+ Добавить ранг</button>
+      </div>
+
+      <div id="modPanel-users" class="mod-panel">
+        <div id="modAuthorsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-box" id="toastBox"><span id="toastText"></span></div>
   <script>
-    const ADMIN_EMAIL = "shix3rota@gmail.com";
+    const OWNER_EMAIL = "shix3rota@gmail.com";
 
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyCqUl3UOQNuVuuMFYE7z-5ogtykMm-dFZ8",
@@ -387,18 +473,58 @@
     const IMAGEKIT_ENDPOINT = "https://imagekit.io";
     const IMAGEKIT_PUBLIC_KEY = "public_6/KZe9gOV6mQzi6/1OVt7vgtAz4=";
 
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://w3.org" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
+
+    let moderators = JSON.parse(localStorage.getItem('cc_mods')) || [OWNER_EMAIL];
+    if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
+
+    let siteConfig = JSON.parse(localStorage.getItem('cc_cfg')) || {
+      brand: "Custom Cards",
+      heroTitle: "Кастомные карты расскажут об авторах лучше слов",
+      heroSub: "Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.",
+      terms: "1. Администрация и создатель платформы не несут ответственности за достоверность данных, авторские права и содержимое загружаемых материалов.\n\n2. Всю ответственность за размещаемые карты, изображения и контактную информацию несёт исключительно пользователь, загрузивший контент.\n\n3. Запрещено размещать материалы, нарушающие законодательство или права третьих лиц."
+    };
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      document.getElementById('toastText').textContent = msg;
+      box.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => box.classList.remove('show'), 3600);
+    }
+
+    function applySiteConfig() {
+      document.getElementById('siteBrand').textContent = siteConfig.brand;
+      document.getElementById('heroTitleText').textContent = siteConfig.heroTitle;
+      document.getElementById('heroSubText').textContent = siteConfig.heroSub;
+      document.getElementById('termsModalBody').textContent = siteConfig.terms;
+    }
+
+    function openTermsModal(isFirstVisit = false) {
+      const btn = document.getElementById('acceptTermsBtn');
+      btn.textContent = isFirstVisit ? 'Принимаю условия и законы' : 'Понятно';
+      document.getElementById('termsModal').classList.add('open');
+    }
+
+    function acceptTerms() {
+      localStorage.setItem('cc_terms_ok', '1');
+      closeModal('termsModal');
+    }
+
+    if (!localStorage.getItem('cc_terms_ok')) {
+      setTimeout(() => openTermsModal(true), 350);
+    }
+
     async function uploadToImageKit(file) {
+      if (file.size > 15 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 15 МБ)");
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("fileName", Date.now() + "_" + file.name);
+      formData.append("fileName", Date.now() + "_" + file.name.replace(/[^a-zA-Z0-9._-]/g, '_'));
       formData.append("publicKey", IMAGEKIT_PUBLIC_KEY);
       formData.append("folder", "/custom_cards");
 
-      const res = await fetch("https://imagekit.io", {
-        method: "POST",
-        body: formData
-      });
-      if (!res.ok) throw new Error("Ошибка загрузки в ImageKit");
+      const res = await fetch("https://imagekit.io", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Ошибка загрузки в облако");
       const data = await res.json();
       return data.url;
     }
@@ -414,40 +540,46 @@
       firebase.initializeApp(FIREBASE_CONFIG);
     }
 
+    function isRealModerator() {
+      if (!window.firebase || !firebase.auth().currentUser) return false;
+      const email = (firebase.auth().currentUser.email || '').toLowerCase();
+      return moderators.includes(email);
+    }
+
     function signInWithGoogle() {
+      if (!window.firebase) { showToast("Ошибка загрузки модуля Google"); return; }
       const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider).then(result => {
-        applyUserSession({
-          name: result.user.displayName,
-          email: result.user.email,
-          avatar: result.user.photoURL
-        });
-      }).catch(err => alert("Ошибка входа Google: " + err.message));
+      firebase.auth().signInWithPopup(provider).catch(err => {
+        showToast("Не удалось войти: " + err.message);
+      });
     }
 
     function signOutGoogle() {
       if (window.firebase) firebase.auth().signOut();
-      localStorage.removeItem('cc_session');
-      document.body.classList.remove('is-admin');
-      document.getElementById('googleLoginBtn').style.display = 'flex';
-      document.getElementById('userChip').style.display = 'none';
     }
 
-    function applyUserSession(user) {
-      localStorage.setItem('cc_session', JSON.stringify(user));
-      document.getElementById('googleLoginBtn').style.display = 'none';
-      document.getElementById('userChip').style.display = 'flex';
-      document.getElementById('userAvatar').src = user.avatar;
-      document.getElementById('userName').textContent = user.name;
-      if (user.email === ADMIN_EMAIL) {
-        document.body.classList.add('is-admin');
-      }
+    if (window.firebase) {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          document.getElementById('googleLoginBtn').style.display = 'none';
+          document.getElementById('userChip').style.display = 'flex';
+          document.getElementById('userAvatar').src = user.photoURL || DEFAULT_AVATAR;
+          document.getElementById('userName').textContent = user.displayName || 'User';
+          if (isRealModerator()) {
+            document.body.classList.add('is-admin');
+          } else {
+            document.body.classList.remove('is-admin');
+          }
+        } else {
+          document.body.classList.remove('is-admin');
+          document.getElementById('googleLoginBtn').style.display = 'flex';
+          document.getElementById('userChip').style.display = 'none';
+        }
+        renderAuthorsSidebar();
+        renderCards();
+      });
     }
-
-    const savedUser = JSON.parse(localStorage.getItem('cc_session'));
-    if (savedUser) applyUserSession(savedUser);
-
-    const themes = ['dark', 'light', 'cyber'];
+    const themes = ['dark', 'light'];
     let themeIdx = themes.indexOf(localStorage.getItem('cc_theme') || 'dark');
     if (themeIdx === -1) themeIdx = 0;
     document.documentElement.setAttribute('data-theme', themes[themeIdx]);
@@ -457,42 +589,16 @@
       document.documentElement.setAttribute('data-theme', themes[themeIdx]);
       localStorage.setItem('cc_theme', themes[themeIdx]);
     }
-    function makeDemoPng(symbol, stroke, fill) {
-      const c = document.createElement('canvas');
-      c.width = 400; c.height = 560;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = fill;
-      ctx.beginPath();
-      ctx.roundRect(24, 24, 352, 512, 32);
-      ctx.fill();
-      ctx.lineWidth = 8;
-      ctx.strokeStyle = stroke;
-      ctx.stroke();
-      ctx.font = '140px serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(symbol, 200, 280);
-      return c.toDataURL('image/png');
-    }
 
     let ranks = JSON.parse(localStorage.getItem('cc_ranks')) || [
-      { id: 'r1', name: 'S', color: '#f59e0b' },
-      { id: 'r2', name: 'A', color: '#ef4444' },
-      { id: 'r3', name: 'RE', color: '#a855f7' },
-      { id: 'r4', name: 'R', color: '#3b82f6' }
+      { id: 'r1', name: 'S' },
+      { id: 'r2', name: 'A' },
+      { id: 'r3', name: 'RE' },
+      { id: 'r4', name: 'R' }
     ];
 
-    let authors = JSON.parse(localStorage.getItem('cc_authors')) || [
-      { id: 1, name: 'Алексей Громов', avatar: 'https://unsplash.com', bio: 'Создатель коллекционных 3D-артефактов.', contact: 'Telegram: @gromov_3d', banned: false },
-      { id: 2, name: 'Мария Соколова', avatar: 'https://unsplash.com', bio: 'Художник-иллюстратор анимированных карт.', contact: 'Discord: maria_art#2026', banned: false }
-    ];
-
-    let cards = JSON.parse(localStorage.getItem('cc_cards')) || [
-      { id: 101, authorId: 1, rankId: 'r1', title: 'Корона Эфира', image: makeDemoPng('👑', '#f59e0b', 'rgba(245,158,11,0.2)') },
-      { id: 102, authorId: 1, rankId: 'r2', title: 'Пламя Феникса', image: makeDemoPng('🔥', '#ef4444', 'rgba(239,68,68,0.2)') },
-      { id: 103, authorId: 1, rankId: 'r3', title: 'Сфера Пустоты', image: makeDemoPng('🔮', '#a855f7', 'rgba(168,85,247,0.2)') },
-      { id: 104, authorId: 1, rankId: 'r4', title: 'Клинок Искры', image: makeDemoPng('⚔️', '#3b82f6', 'rgba(59,130,246,0.2)') }
-    ];
+    let authors = JSON.parse(localStorage.getItem('cc_authors')) || [];
+    let cards = JSON.parse(localStorage.getItem('cc_cards')) || [];
 
     let selectedAuthorId = null;
     let selectedRankFilter = 'ALL';
@@ -507,8 +613,8 @@
     function updateStats() {
       const aEl = document.getElementById('statAuthors');
       const cEl = document.getElementById('statCards');
-      if (aEl) aEl.textContent = authors.filter(a => !a.banned).length + '+';
-      if (cEl) cEl.textContent = cards.length + '+';
+      if (aEl) aEl.textContent = authors.filter(a => !a.banned).length;
+      if (cEl) cEl.textContent = cards.length;
     }
 
     function switchTab(tabId) {
@@ -518,63 +624,68 @@
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
     function requireGoogleAuth() {
-      const user = JSON.parse(localStorage.getItem('cc_session'));
-      if (!user) {
-        alert('Чтобы создать профиль или загрузить карту, сначала войдите через Google в правом верхнем углу.');
+      if (!window.firebase || !firebase.auth().currentUser) {
+        showToast('Сначала войдите через Google в правом верхнем углу');
         signInWithGoogle();
         return false;
       }
       return true;
     }
 
-    const searchInput = document.getElementById('authorSearchInput');
-    const dropdown = document.getElementById('authorDropdown');
+    const sidebarSearchInput = document.getElementById('authorSearchInput');
+    sidebarSearchInput.addEventListener('input', e => renderAuthorsSidebar(e.target.value));
 
-    function renderAuthorDropdown(query = '') {
+    function renderAuthorsSidebar(query = '') {
+      const box = document.getElementById('authorsSidebarList');
       const q = query.toLowerCase().trim();
-      const isAdmin = document.body.classList.contains('is-admin');
-      const list = authors.filter(a => (!a.banned || isAdmin) && a.name.toLowerCase().includes(q));
-      dropdown.innerHTML = '';
+      const mod = isRealModerator();
+      const list = authors.filter(a => (!a.banned || mod) && a.name.toLowerCase().includes(q));
+      box.innerHTML = '';
+
       if (!list.length) {
-        dropdown.innerHTML = '<div class="dropdown-item" style="color: var(--text-secondary);">Автор не найден</div>';
+        box.innerHTML = '<div style="font-size: 0.84rem; color: var(--text-secondary); padding: 12px 6px; text-align: center;">Авторов пока нет</div>';
         return;
       }
+
       list.forEach(a => {
         const count = cards.filter(c => c.authorId === a.id).length;
-        const div = document.createElement('div');
-        div.className = 'dropdown-item';
+        const row = document.createElement('div');
+        row.className = 'author-row';
+
         const left = document.createElement('div');
-        left.className = 'dropdown-left';
+        left.className = 'author-row-left';
+
         const img = document.createElement('img');
-        img.src = a.avatar;
-        const span = document.createElement('span');
-        span.textContent = a.name + (a.banned ? ' [БАН]' : '');
-        const badge = document.createElement('span');
-        badge.className = 'dropdown-badge';
-        badge.textContent = count + ' карт';
+        img.src = a.avatar || DEFAULT_AVATAR;
+        img.onerror = () => { img.src = DEFAULT_AVATAR; };
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'author-row-name';
+        nameEl.textContent = a.name + (a.banned ? ' [БАН]' : '');
+
+        const countEl = document.createElement('span');
+        countEl.className = 'author-row-count';
+        countEl.textContent = count;
+
         left.appendChild(img);
-        left.appendChild(span);
-        div.appendChild(left);
-        div.appendChild(badge);
-        div.addEventListener('click', () => openAuthorProfile(a.id));
-        dropdown.appendChild(div);
+        left.appendChild(nameEl);
+        row.appendChild(left);
+        row.appendChild(countEl);
+        row.onclick = () => openAuthorProfile(a.id);
+        box.appendChild(row);
       });
     }
-
-    searchInput.addEventListener('focus', () => { renderAuthorDropdown(searchInput.value); dropdown.classList.add('open'); });
-    searchInput.addEventListener('input', e => { renderAuthorDropdown(e.target.value); dropdown.classList.add('open'); });
-    document.addEventListener('click', e => { if (!document.getElementById('authorSearchBox').contains(e.target)) dropdown.classList.remove('open'); });
     function openAuthorProfile(authorId) {
       selectedAuthorId = authorId;
       selectedRankFilter = 'ALL';
       const author = authors.find(a => a.id === authorId);
       if (!author) return;
 
-      dropdown.classList.remove('open');
-      searchInput.value = '';
+      const pAvatar = document.getElementById('pageProfileAvatar');
+      pAvatar.src = author.avatar || DEFAULT_AVATAR;
+      pAvatar.onerror = () => { pAvatar.src = DEFAULT_AVATAR; };
 
-      document.getElementById('pageProfileAvatar').src = author.avatar;
-      document.getElementById('pageProfileBio').textContent = author.bio || 'Автор кастомных 3D-карт';
+      document.getElementById('pageProfileBio').textContent = author.bio || 'Описание не добавлено';
       document.getElementById('pageProfileContact').textContent = author.contact || 'Контакты не указаны';
       updateBanButtonUI(author);
 
@@ -606,7 +717,6 @@
       ranks.forEach(r => {
         const btn = document.createElement('button');
         btn.className = 'rank-btn ' + (selectedRankFilter === r.id ? 'active' : '');
-        btn.style.setProperty('--rank-color', r.color);
         btn.textContent = r.name;
         btn.onclick = () => { selectedRankFilter = r.id; renderProfileRanks(); renderProfileCards(); };
         container.appendChild(btn);
@@ -614,8 +724,8 @@
     }
 
     function buildCardElement(card) {
-      const author = authors.find(a => a.id === card.authorId) || { id: 0, name: 'Автор' };
-      const rankObj = ranks.find(r => r.id === card.rankId) || ranks[0];
+      const author = authors.find(a => a.id === card.authorId) || { id: 0, name: 'Автор', avatar: DEFAULT_AVATAR };
+      const rankObj = ranks.find(r => r.id === card.rankId) || { name: 'R' };
 
       const cell = document.createElement('div');
       cell.className = 'card-cell';
@@ -625,7 +735,6 @@
 
       const pillRank = document.createElement('span');
       pillRank.className = 'pill-rank';
-      pillRank.style.background = rankObj.color;
       pillRank.textContent = rankObj.name;
 
       const pill360 = document.createElement('span');
@@ -636,12 +745,12 @@
       modBox.className = 'card-mod-controls mod-only';
 
       const editBtn = document.createElement('button');
-      editBtn.className = 'mod-mini-btn edit';
+      editBtn.className = 'mod-mini-btn';
       editBtn.textContent = '✎';
       editBtn.onclick = (e) => { e.stopPropagation(); openEditCardModal(card.id); };
 
       const delBtn = document.createElement('button');
-      delBtn.className = 'mod-mini-btn del';
+      delBtn.className = 'mod-mini-btn';
       delBtn.textContent = '✕';
       delBtn.onclick = (e) => { e.stopPropagation(); deleteCard(card.id); };
 
@@ -659,35 +768,48 @@
       stage.appendChild(modBox);
       stage.appendChild(img);
 
+      const footer = document.createElement('div');
+      footer.className = 'card-footer-glass';
+
       const titleEl = document.createElement('div');
       titleEl.className = 'card-title';
       titleEl.textContent = card.title;
 
-      const authorEl = document.createElement('div');
-      authorEl.className = 'card-author-tag';
-      authorEl.textContent = author.name;
-      authorEl.onclick = (e) => { e.stopPropagation(); openAuthorProfile(author.id); };
+      const authorPill = document.createElement('div');
+      authorPill.className = 'card-author-pill';
+      authorPill.onclick = (e) => { e.stopPropagation(); openAuthorProfile(author.id); };
+
+      const aImg = document.createElement('img');
+      aImg.src = author.avatar || DEFAULT_AVATAR;
+      aImg.onerror = () => { aImg.src = DEFAULT_AVATAR; };
+
+      const aName = document.createElement('span');
+      aName.textContent = author.name;
+
+      authorPill.appendChild(aImg);
+      authorPill.appendChild(aName);
+      footer.appendChild(titleEl);
+      footer.appendChild(authorPill);
 
       cell.appendChild(stage);
-      cell.appendChild(titleEl);
-      cell.appendChild(authorEl);
+      cell.appendChild(footer);
       cell.addEventListener('click', () => openViewer(card, author, rankObj));
       return cell;
     }
 
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
-      const isAdmin = document.body.classList.contains('is-admin');
-      const visibleCards = cards.filter(c => {
+      const mod = isRealModerator();
+      const visible = cards.filter(c => {
         const a = authors.find(x => x.id === c.authorId);
-        return !a || !a.banned || isAdmin;
+        return !a || !a.banned || mod;
       });
       grid.innerHTML = '';
-      if (!visibleCards.length) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">Карт пока нет.</div>';
+      if (!visible.length) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 22px;">В каталоге пока нет карт. Станьте первым автором и загрузите свою работу!</div>';
         return;
       }
-      visibleCards.forEach(card => grid.appendChild(buildCardElement(card)));
+      visible.forEach(card => grid.appendChild(buildCardElement(card)));
     }
 
     function renderProfileCards() {
@@ -750,30 +872,36 @@
     window.addEventListener('mouseup', resetCardPosition);
 
     scene3d.addEventListener('touchstart', e => {
-      if (e.touches.length === 1) { isDragging = true; card3dMesh.style.transition = 'none'; startX = e.touches.clientX; startY = e.touches.clientY; }
+      if (e.touches.length === 1) { isDragging = true; card3dMesh.style.transition = 'none'; startX = e.touches[0].clientX; startY = e.touches[0].clientY; }
     }, { passive: false });
 
     scene3d.addEventListener('touchmove', e => {
       if (!isDragging || e.touches.length !== 1) return;
       e.preventDefault();
-      rotY += (e.touches.clientX - startX) * 0.8;
-      rotX -= (e.touches.clientY - startY) * 0.8;
-      startX = e.touches.clientX; startY = e.touches.clientY;
+      rotY += (e.touches[0].clientX - startX) * 0.8;
+      rotX -= (e.touches[0].clientY - startY) * 0.8;
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY;
       scheduleTransform();
     }, { passive: false });
     window.addEventListener('touchend', resetCardPosition);
 
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
     document.querySelectorAll('.modal-backdrop').forEach(m => {
-      m.addEventListener('click', e => { if (e.target === m) { if (m.id === 'viewerModal') closeViewer(); else m.classList.remove('open'); } });
+      m.addEventListener('click', e => {
+        if (e.target === m) {
+          if (m.id === 'termsModal' && !localStorage.getItem('cc_terms_ok')) return;
+          if (m.id === 'viewerModal') closeViewer();
+          else m.classList.remove('open');
+        }
+      });
     });
 
     let pendingAvatarFile = null;
     document.getElementById('authorAvatarInput').addEventListener('change', e => {
-      const file = e.target.files;
+      const file = e.target.files[0];
       if (!file) return;
       pendingAvatarFile = file;
-      document.getElementById('avatarFileStatus').textContent = 'Файл: ' + file.name;
+      document.getElementById('avatarFileStatus').textContent = 'Выбран: ' + file.name;
     });
 
     function openAuthorModal(isEdit = false) {
@@ -781,11 +909,11 @@
       const form = document.getElementById('authorForm');
       form.reset();
       pendingAvatarFile = null;
-      document.getElementById('avatarFileStatus').textContent = 'Нажмите, чтобы загрузить GIF / PNG / JPG / WebP';
+      document.getElementById('avatarFileStatus').textContent = 'Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG';
 
       if (isEdit && selectedAuthorId) {
         const a = authors.find(x => x.id === selectedAuthorId);
-        document.getElementById('authorModalTitle').textContent = 'Редактировать профиль';
+        document.getElementById('authorModalTitle').textContent = 'Настроить профиль';
         document.getElementById('editAuthorId').value = a.id;
         document.getElementById('authorNameInput').value = a.name;
         document.getElementById('authorBioInput').value = a.bio || '';
@@ -796,8 +924,10 @@
       }
       document.getElementById('authorModal').classList.add('open');
     }
+
     document.getElementById('authorForm').addEventListener('submit', async e => {
       e.preventDefault();
+      if (!requireGoogleAuth()) return;
       const btn = document.getElementById('saveAuthorSubmitBtn');
       btn.disabled = true; btn.textContent = 'Сохранение...';
       try {
@@ -811,91 +941,189 @@
           const idx = authors.findIndex(a => a.id === Number(editId));
           if (idx !== -1) {
             authors[idx] = { ...authors[idx], name, bio, contact, avatar: avatarUrl || authors[idx].avatar };
-            saveData(); renderAuthorDropdown(); openAuthorProfile(Number(editId));
+            saveData(); renderAuthorsSidebar(); openAuthorProfile(Number(editId));
           }
         } else {
-          const session = JSON.parse(localStorage.getItem('cc_session'));
-          const newAuthor = { id: Date.now(), name, avatar: avatarUrl || (session && session.avatar) || 'https://unsplash.com', bio, contact, banned: false };
+          const fbUser = firebase.auth().currentUser;
+          const newAuthor = { id: Date.now(), name, avatar: avatarUrl || (fbUser && fbUser.photoURL) || DEFAULT_AVATAR, bio, contact, banned: false };
           authors.push(newAuthor);
-          saveData(); renderAuthorDropdown(); openAuthorProfile(newAuthor.id);
+          saveData(); renderAuthorsSidebar(); openAuthorProfile(newAuthor.id);
         }
         closeModal('authorModal');
-      } catch (err) { alert('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить'; }
+        showToast('Профиль сохранён');
+      } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить'; }
     });
-
-    let tempRanks = [];
-    function openRanksModal() { tempRanks = JSON.parse(JSON.stringify(ranks)); renderRanksEditor(); document.getElementById('ranksModal').classList.add('open'); }
-    function renderRanksEditor() {
-      const list = document.getElementById('ranksEditorList'); list.innerHTML = '';
-      tempRanks.forEach((r, idx) => {
-        const row = document.createElement('div'); row.className = 'rank-edit-row';
-        const inpName = document.createElement('input'); inpName.type = 'text'; inpName.value = r.name; inpName.required = true; inpName.oninput = (e) => { tempRanks[idx].name = e.target.value; };
-        const inpColor = document.createElement('input'); inpColor.type = 'color'; inpColor.value = r.color; inpColor.onchange = (e) => { tempRanks[idx].color = e.target.value; };
-        row.appendChild(inpName); row.appendChild(inpColor);
-        if (tempRanks.length > 1) {
-          const delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'btn-del-rank'; delBtn.textContent = '✕';
-          delBtn.onclick = () => { tempRanks.splice(idx, 1); renderRanksEditor(); }; row.appendChild(delBtn);
-        }
-        list.appendChild(row);
-      });
+    function toggleCustomRankInput(val) {
+      const box = document.getElementById('customRankField');
+      const inp = document.getElementById('customRankInput');
+      if (val === 'CUSTOM_NEW') { box.style.display = 'block'; inp.required = true; }
+      else { box.style.display = 'none'; inp.required = false; inp.value = ''; }
     }
-    function addRankRow() { tempRanks.push({ id: 'r_' + Date.now(), name: 'NEW', color: '#10b981' }); renderRanksEditor(); }
-    document.getElementById('ranksForm').addEventListener('submit', e => {
-      e.preventDefault(); ranks = tempRanks.filter(r => r.name.trim() !== '').map(r => ({ ...r, name: r.name.trim() }));
-      saveData(); if (selectedAuthorId) renderProfileRanks(); renderCards(); closeModal('ranksModal');
-    });
 
     function openUploadModal() {
       if (!requireGoogleAuth()) return;
+      const activeAuthors = authors.filter(a => !a.banned);
+      if (!activeAuthors.length) { showToast('Сначала создайте профиль автора'); openAuthorModal(false); return; }
       const aSel = document.getElementById('uploadAuthorSelect'); aSel.innerHTML = '';
-      authors.filter(a => !a.banned).forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
+      activeAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
       if (selectedAuthorId) aSel.value = selectedAuthorId;
+
       const rSel = document.getElementById('uploadRankSelect'); rSel.innerHTML = '';
       ranks.forEach(r => { const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; rSel.appendChild(opt); });
+      const customOpt = document.createElement('option'); customOpt.value = 'CUSTOM_NEW'; customOpt.textContent = '+ Добавить свой ранг...';
+      rSel.appendChild(customOpt);
+      toggleCustomRankInput(rSel.value);
       document.getElementById('uploadModal').classList.add('open');
     }
-    document.getElementById('uploadFileInput').addEventListener('change', e => { if (e.target.files) document.getElementById('fileStatusText').textContent = 'Файл: ' + e.target.files.name; });
-    document.getElementById('uploadForm').addEventListener('submit', async e => {
-      e.preventDefault(); if (!requireGoogleAuth()) return;
-      const file = document.getElementById('uploadFileInput').files; if (!file) return;
-      const btn = document.getElementById('uploadSubmitBtn'); btn.disabled = true; btn.textContent = 'Загрузка...';
-      try {
-        const cloudUrl = await uploadToImageKit(file);
-        cards.unshift({ id: Date.now(), authorId: Number(document.getElementById('uploadAuthorSelect').value), rankId: document.getElementById('uploadRankSelect').value, title: document.getElementById('uploadTitleInput').value.trim(), image: cloudUrl });
-        saveData(); renderCards(); renderAuthorDropdown(); if (selectedAuthorId) renderProfileCards();
-        document.getElementById('uploadForm').reset(); document.getElementById('fileStatusText').textContent = 'Нажмите, чтобы выбрать .PNG или .WEBP'; closeModal('uploadModal');
-      } catch (err) { alert('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Загрузить в облако'; }
+
+    document.getElementById('uploadFileInput').addEventListener('change', e => {
+      if (e.target.files[0]) document.getElementById('fileStatusText').textContent = 'Файл: ' + e.target.files[0].name;
     });
 
-    function deleteCard(cardId) { if (!confirm('Удалить эту карту?')) return; cards = cards.filter(c => c.id !== cardId); saveData(); renderCards(); renderAuthorDropdown(); if (selectedAuthorId) renderProfileCards(); }
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
+      e.preventDefault(); if (!requireGoogleAuth()) return;
+      const file = document.getElementById('uploadFileInput').files[0]; if (!file) return;
+      const btn = document.getElementById('uploadSubmitBtn'); btn.disabled = true; btn.textContent = 'Загрузка...';
+      try {
+        let rankId = document.getElementById('uploadRankSelect').value;
+        if (rankId === 'CUSTOM_NEW') {
+          const newName = document.getElementById('customRankInput').value.trim().toUpperCase();
+          if (!newName) throw new Error('Введите название нового ранга');
+          const existing = ranks.find(r => r.name.toUpperCase() === newName);
+          if (existing) { rankId = existing.id; }
+          else { rankId = 'r_' + Date.now(); ranks.push({ id: rankId, name: newName }); }
+        }
+        const cloudUrl = await uploadToImageKit(file);
+        cards.unshift({ id: Date.now(), authorId: Number(document.getElementById('uploadAuthorSelect').value), rankId, title: document.getElementById('uploadTitleInput').value.trim(), image: cloudUrl });
+        saveData(); renderCards(); renderAuthorsSidebar(); if (selectedAuthorId) { renderProfileRanks(); renderProfileCards(); }
+        document.getElementById('uploadForm').reset(); document.getElementById('fileStatusText').textContent = 'Нажмите, чтобы выбрать .PNG или .WEBP';
+        closeModal('uploadModal'); showToast('Карта загружена');
+      } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Загрузить'; }
+    });
+
+    function deleteCard(cardId) {
+      if (!isRealModerator() || !confirm('Удалить эту карту?')) return;
+      cards = cards.filter(c => c.id !== cardId); saveData(); renderCards(); renderAuthorsSidebar(); if (selectedAuthorId) renderProfileCards();
+    }
+
     function openEditCardModal(cardId) {
+      if (!isRealModerator()) return;
       const card = cards.find(c => c.id === cardId); if (!card) return;
       document.getElementById('editCardId').value = card.id; document.getElementById('editCardTitleInput').value = card.title;
       const rSel = document.getElementById('editCardRankSelect'); rSel.innerHTML = '';
       ranks.forEach(r => { const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; rSel.appendChild(opt); });
       rSel.value = card.rankId; document.getElementById('editCardModal').classList.add('open');
     }
+
     document.getElementById('editCardForm').addEventListener('submit', e => {
-      e.preventDefault(); const idx = cards.findIndex(c => c.id === Number(document.getElementById('editCardId').value));
+      e.preventDefault(); if (!isRealModerator()) return;
+      const idx = cards.findIndex(c => c.id === Number(document.getElementById('editCardId').value));
       if (idx !== -1) { cards[idx].title = document.getElementById('editCardTitleInput').value.trim(); cards[idx].rankId = document.getElementById('editCardRankSelect').value; saveData(); renderCards(); if (selectedAuthorId) renderProfileCards(); }
       closeModal('editCardModal');
     });
-    function toggleBanAuthor() {
-      const idx = authors.findIndex(a => a.id === selectedAuthorId); if (idx === -1) return;
-      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorDropdown(); updateBanButtonUI(authors[idx]);
+    function toggleBanAuthor(targetId = selectedAuthorId) {
+      if (!isRealModerator() || !targetId) return;
+      const idx = authors.findIndex(a => a.id === targetId); if (idx === -1) return;
+      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorsSidebar(); renderModAuthorsList();
+      if (selectedAuthorId === targetId) updateBanButtonUI(authors[idx]);
     }
+
     function updateBanButtonUI(author) {
       const btn = document.getElementById('banAuthorBtn'), nameEl = document.getElementById('pageProfileName');
       if (author.banned) { btn.textContent = '✅ Разбанить'; nameEl.innerHTML = author.name + ' <span class="banned-tag">ЗАБАНЕН</span>'; }
       else { btn.textContent = '🚫 Забанить'; nameEl.textContent = author.name; }
     }
-    function deleteAuthorProfile() {
-      if (!confirm('Удалить профиль автора и все его карты?')) return;
-      authors = authors.filter(a => a.id !== selectedAuthorId); cards = cards.filter(c => c.authorId !== selectedAuthorId);
-      saveData(); renderAuthorDropdown(); closeAuthorProfile();
+
+    function deleteAuthorProfile(targetId = selectedAuthorId) {
+      if (!isRealModerator() || !targetId || !confirm('Удалить профиль автора и все его карты?')) return;
+      authors = authors.filter(a => a.id !== targetId); cards = cards.filter(c => c.authorId !== targetId);
+      saveData(); renderAuthorsSidebar(); renderModAuthorsList(); if (selectedAuthorId === targetId) closeAuthorProfile();
     }
 
-    updateStats(); renderAuthorDropdown(); renderCards();
+    function openModPanel(tab = 'settings') {
+      if (!isRealModerator()) return;
+      document.getElementById('cfgBrand').value = siteConfig.brand;
+      document.getElementById('cfgHeroTitle').value = siteConfig.heroTitle;
+      document.getElementById('cfgHeroSub').value = siteConfig.heroSub;
+      document.getElementById('cfgTerms').value = siteConfig.terms;
+      renderModsList(); renderModRanksList(); renderModAuthorsList();
+      switchModTab(tab); document.getElementById('modModal').classList.add('open');
+    }
+
+    function switchModTab(tab) {
+      document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
+      document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
+    }
+
+    document.getElementById('siteSettingsForm').addEventListener('submit', e => {
+      e.preventDefault(); if (!isRealModerator()) return;
+      siteConfig.brand = document.getElementById('cfgBrand').value.trim() || 'Custom Cards';
+      siteConfig.heroTitle = document.getElementById('cfgHeroTitle').value.trim();
+      siteConfig.heroSub = document.getElementById('cfgHeroSub').value.trim();
+      siteConfig.terms = document.getElementById('cfgTerms').value.trim();
+      localStorage.setItem('cc_cfg', JSON.stringify(siteConfig)); applySiteConfig(); showToast('Настройки сохранены');
+    });
+
+    function renderModsList() {
+      const box = document.getElementById('modsListContainer'); box.innerHTML = '';
+      moderators.forEach(email => {
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const span = document.createElement('span'); span.textContent = email + (email === OWNER_EMAIL ? ' (Создатель)' : '');
+        item.appendChild(span);
+        if (email !== OWNER_EMAIL) {
+          const btn = document.createElement('button'); btn.className = 'btn-del-mini'; btn.textContent = 'Снять';
+          btn.onclick = () => { moderators = moderators.filter(m => m !== email); localStorage.setItem('cc_mods', JSON.stringify(moderators)); renderModsList(); };
+          item.appendChild(btn);
+        }
+        box.appendChild(item);
+      });
+    }
+
+    function addModerator() {
+      if (!isRealModerator()) return;
+      const inp = document.getElementById('newModEmailInput'); const email = inp.value.trim().toLowerCase();
+      if (!email || !email.includes('@')) return;
+      if (!moderators.includes(email)) { moderators.push(email); localStorage.setItem('cc_mods', JSON.stringify(moderators)); renderModsList(); }
+      inp.value = ''; showToast('Модератор назначен');
+    }
+
+    function renderModRanksList() {
+      const box = document.getElementById('ranksEditorList'); box.innerHTML = '';
+      ranks.forEach((r, idx) => {
+        const row = document.createElement('div'); row.className = 'rank-edit-row';
+        const inp = document.createElement('input'); inp.type = 'text'; inp.value = r.name;
+        inp.onchange = e => { if (e.target.value.trim()) { ranks[idx].name = e.target.value.trim(); saveData(); renderCards(); if (selectedAuthorId) renderProfileRanks(); } };
+        row.appendChild(inp);
+        if (ranks.length > 1) {
+          const del = document.createElement('button'); del.type = 'button'; del.className = 'btn-del-mini'; del.textContent = '✕';
+          del.onclick = () => { ranks.splice(idx, 1); saveData(); renderModRanksList(); renderCards(); if (selectedAuthorId) renderProfileRanks(); };
+          row.appendChild(del);
+        }
+        box.appendChild(row);
+      });
+    }
+
+    function addGlobalRank() {
+      if (!isRealModerator()) return;
+      ranks.push({ id: 'r_' + Date.now(), name: 'NEW' }); saveData(); renderModRanksList(); if (selectedAuthorId) renderProfileRanks();
+    }
+
+    function renderModAuthorsList() {
+      const box = document.getElementById('modAuthorsList'); box.innerHTML = '';
+      if (!authors.length) { box.innerHTML = '<div style="color: var(--text-secondary); font-size: 0.86rem;">Авторов пока нет</div>'; return; }
+      authors.forEach(a => {
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const name = document.createElement('span'); name.textContent = a.name + (a.banned ? ' [БАН]' : '');
+        const acts = document.createElement('div'); acts.style.display = 'flex'; acts.style.gap = '6px';
+        const banBtn = document.createElement('button'); banBtn.className = 'btn-glass'; banBtn.style.padding = '4px 10px'; banBtn.textContent = a.banned ? 'Разбанить' : 'Бан';
+        banBtn.onclick = () => toggleBanAuthor(a.id);
+        const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
+        delBtn.onclick = () => deleteAuthorProfile(a.id);
+        acts.appendChild(banBtn); acts.appendChild(delBtn); item.appendChild(name); item.appendChild(acts); box.appendChild(item);
+      });
+    }
+
+    applySiteConfig(); updateStats(); renderAuthorsSidebar(); renderCards();
   </script>
 </body>
 </html>
