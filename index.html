@@ -185,11 +185,16 @@
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
     .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.9rem; outline: none; }
+        .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.9rem; outline: none; }
+    .field select option { background: var(--bg-solid); color: var(--text-primary); }
+    .rank-pills-picker { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-md); }
+    .rank-pick-chip { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: 0.18s; }
+    .rank-pick-chip:hover { color: var(--text-primary); background: var(--bg-glass-hover); border-color: var(--border-hover); }
+    .rank-pick-chip.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
     .rank-edit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
     .btn-del-mini { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 7px 11px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
     .dropzone { border: 1.5px dashed var(--border-hover); border-radius: var(--r-md); padding: 16px; text-align: center; background: var(--bg-glass); cursor: pointer; font-size: 0.86rem; color: var(--text-primary); }
     .dialog-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
-
     .toast-box { position: fixed; bottom: 24px; right: 24px; background: var(--bg-elevated); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-hover); color: var(--text-primary); padding: 14px 18px; border-radius: 16px; font-size: 0.88rem; z-index: 999; display: none; align-items: center; gap: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.45); max-width: 360px; }
     .toast-box.show { display: flex; animation: fadeSlide 0.2s ease-out; }
 
@@ -450,7 +455,8 @@
         </div>
         <div class="field">
           <label>Ранг редкости</label>
-          <select id="uploadRankSelect" onchange="toggleCustomRankInput(this.value)" required></select>
+                    <input type="hidden" id="uploadRankSelect" required>
+          <div class="rank-pills-picker" id="uploadRankPills"></div>
         </div>
         <div class="field" id="customRankField" style="display: none;">
           <label>Название вашего нового ранга</label>
@@ -1123,19 +1129,19 @@
     });
     window.addEventListener('mouseup', resetCardPosition);
     scene3d.style.touchAction = 'none';
-    scene3d.addEventListener('touchstart', e => {
+        scene3d.addEventListener('touchstart', e => {
       if (e.touches.length === 1) {
         isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none';
-        startX = e.touches.clientX; startY = e.touches.clientY;
+        startX = e.touches.item(0).clientX; startY = e.touches.item(0).clientY;
       }
     }, { passive: false });
 
     scene3d.addEventListener('touchmove', e => {
       if (!isDragging || e.touches.length !== 1) return;
       e.preventDefault(); wasDragged = true;
-      rotY += (e.touches.clientX - startX) * 0.8;
-      rotX -= (e.touches.clientY - startY) * 0.8;
-      startX = e.touches.clientX; startY = e.touches.clientY;
+      rotY += (e.touches.item(0).clientX - startX) * 0.8;
+      rotX -= (e.touches.item(0).clientY - startY) * 0.8;
+      startX = e.touches.item(0).clientX; startY = e.touches.item(0).clientY;
       scheduleTransform();
     }, { passive: false });
     window.addEventListener('touchend', resetCardPosition);
@@ -1153,7 +1159,7 @@
 
     let pendingAvatarFile = null;
     document.getElementById('authorAvatarInput').addEventListener('change', e => {
-      const file = e.target.files;
+      const file = e.target.files[0];
       if (!file) return;
       pendingAvatarFile = file;
       document.getElementById('avatarFileStatus').textContent = 'Выбран: ' + file.name;
@@ -1236,10 +1242,32 @@
       else if (myProfile) aSel.value = myProfile.id;
       aSel.disabled = allowedAuthors.length === 1;
 
-      const rSel = document.getElementById('uploadRankSelect'); rSel.innerHTML = '';
-      ranks.forEach(r => { const opt = document.createElement('option'); opt.value = r.id; opt.textContent = r.name; rSel.appendChild(opt); });
-      const customOpt = document.createElement('option'); customOpt.value = 'CUSTOM_NEW'; customOpt.textContent = '+ Добавить свой ранг...';
-      rSel.appendChild(customOpt); toggleCustomRankInput(rSel.value);
+           const rInput = document.getElementById('uploadRankSelect');
+      const rBox = document.getElementById('uploadRankPills');
+      rBox.innerHTML = '';
+      const selectRankChip = (val) => {
+        rInput.value = val;
+        rBox.querySelectorAll('.rank-pick-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.val === val));
+        toggleCustomRankInput(val);
+      };
+      ranks.forEach(r => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rank-pick-chip';
+        btn.dataset.val = r.id;
+        btn.textContent = r.name;
+        btn.onclick = () => selectRankChip(r.id);
+        rBox.appendChild(btn);
+      });
+      const customBtn = document.createElement('button');
+      customBtn.type = 'button';
+      customBtn.className = 'rank-pick-chip';
+      customBtn.dataset.val = 'CUSTOM_NEW';
+      customBtn.textContent = '+ Свой ранг';
+      customBtn.onclick = () => selectRankChip('CUSTOM_NEW');
+      rBox.appendChild(customBtn);
+      const firstRank = ranks.find(() => true);
+      selectRankChip(firstRank ? firstRank.id : 'CUSTOM_NEW');
       document.getElementById('uploadModal').classList.add('open');
     }
 
