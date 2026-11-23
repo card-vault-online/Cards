@@ -474,7 +474,7 @@
       appId: "1:576413137502:web:bf8246e8fe306aff0d92cf"
     };
 
-    const IMAGEKIT_ENDPOINT = "https://imagekit.io";
+    const IMAGEKIT_ENDPOINT = "https://" + "ik.imagekit.io/customcards26";
     const IMAGEKIT_PUBLIC_KEY = "public_6/KZe9gOV6mQzi6/1OVt7vgtAz4=";
 
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://w3.org" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
@@ -527,7 +527,7 @@
       formData.append("publicKey", IMAGEKIT_PUBLIC_KEY);
       formData.append("folder", "/custom_cards");
 
-      const res = await fetch("https://imagekit.io", { method: "POST", body: formData });
+     const res = await fetch("https://" + "upload.imagekit.io/api/v1/files/upload", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Ошибка загрузки в облако");
       const data = await res.json();
       return data.url;
