@@ -1147,13 +1147,21 @@
     window.addEventListener('touchend', resetCardPosition);
 
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    document.querySelectorAll('.modal-backdrop').forEach(m => {
+        document.querySelectorAll('.modal-backdrop').forEach(m => {
+      let downOnBackdrop = false, downX = 0, downY = 0;
+      m.addEventListener('mousedown', e => {
+        downOnBackdrop = (e.target === m);
+        downX = e.clientX;
+        downY = e.clientY;
+      });
       m.addEventListener('click', e => {
-        if (e.target === m && !wasDragged) {
+        const isPureClick = Math.abs(e.clientX - downX) < 5 && Math.abs(e.clientY - downY) < 5;
+        if (downOnBackdrop && e.target === m && isPureClick && !wasDragged) {
           if (m.id === 'termsModal' && !localStorage.getItem('cc_terms_ok')) return;
           if (m.id === 'viewerModal') closeViewer();
           else m.classList.remove('open');
         }
+        downOnBackdrop = false;
       });
     });
 
@@ -1374,25 +1382,68 @@
       saveData(); applySiteConfig(); showToast('Настройки сохранены');
     });
 
+        function toggleAuthorModerator(email) {
+      if (!isCreator() || !email) return;
+      const cleanEmail = email.toLowerCase().trim();
+      if (cleanEmail === OWNER_EMAIL.toLowerCase()) return;
+      if (moderators.includes(cleanEmail)) {
+        moderators = moderators.filter(m => m !== cleanEmail);
+        showToast('Права модератора сняты');
+      } else {
+        moderators.push(cleanEmail);
+        showToast('Назначен модератором');
+      }
+      saveData();
+      renderModsList();
+      renderModAuthorsList();
+    }
+
     function renderModsList() {
       const box = document.getElementById('modsListContainer'); box.innerHTML = '';
       moderators.forEach(email => {
         const item = document.createElement('div'); item.className = 'mod-list-item';
-        const span = document.createElement('span'); span.textContent = email + (email === OWNER_EMAIL ? ' (Создатель)' : '');
+        const linkedAuthor = authors.find(a => (a.ownerEmail || '').toLowerCase() === email.toLowerCase());
+        const label = (linkedAuthor ? linkedAuthor.name + ' — ' : '') + email + (email === OWNER_EMAIL ? ' (Создатель)' : '');
+        const span = document.createElement('span'); span.textContent = label;
         item.appendChild(span);
         if (email !== OWNER_EMAIL && isCreator()) {
           const btn = document.createElement('button'); btn.className = 'btn-del-mini'; btn.textContent = 'Снять';
-          btn.onclick = () => { moderators = moderators.filter(m => m !== email); saveData(); renderModsList(); };
+          btn.onclick = () => toggleAuthorModerator(email);
           item.appendChild(btn);
         }
         box.appendChild(item);
       });
+
+      if (isCreator()) {
+        const candidates = authors.filter(a => {
+          const em = (a.ownerEmail || '').toLowerCase().trim();
+          return em && em !== OWNER_EMAIL.toLowerCase() && !moderators.includes(em);
+        });
+        if (candidates.length) {
+          const title = document.createElement('div');
+          title.style.cssText = 'margin: 16px 0 8px; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);';
+          title.textContent = 'Быстро назначить из авторов сайта:';
+          box.appendChild(title);
+
+          candidates.forEach(a => {
+            const item = document.createElement('div'); item.className = 'mod-list-item';
+            const span = document.createElement('span');
+            span.textContent = a.name + ' (' + a.ownerEmail + ')';
+            const btn = document.createElement('button'); btn.className = 'btn-glass'; btn.style.padding = '5px 12px';
+            btn.textContent = '+ Назначить модером';
+            btn.onclick = () => toggleAuthorModerator(a.ownerEmail);
+            item.appendChild(span); item.appendChild(btn);
+            box.appendChild(item);
+          });
+        }
+      }
     }
+
     function addModerator() {
       if (!isCreator()) return;
       const inp = document.getElementById('newModEmailInput'); const email = inp.value.trim().toLowerCase();
       if (!email || !email.includes('@')) return;
-      if (!moderators.includes(email)) { moderators.push(email); saveData(); renderModsList(); }
+      if (!moderators.includes(email)) { moderators.push(email); saveData(); renderModsList(); renderModAuthorsList(); }
       inp.value = ''; showToast('Модератор назначен');
     }
 
@@ -1427,14 +1478,28 @@
         const item = document.createElement('div'); item.className = 'mod-list-item';
         const info = document.createElement('div'); info.className = 'mod-item-info';
         const img = document.createElement('img'); img.className = 'mod-item-thumb'; img.src = a.avatar || DEFAULT_AVATAR; img.onerror = () => { img.src = DEFAULT_AVATAR; };
+
+        const aEmail = (a.ownerEmail || '').toLowerCase().trim();
+        const isTargetMod = aEmail && moderators.includes(aEmail) && !isAuthorCreator(a);
+        const roleTag = isAuthorCreator(a) ? '👑 ' : (isTargetMod ? '🛡 ' : '');
+
         const meta = document.createElement('div'); meta.className = 'mod-item-meta';
-        meta.innerHTML = '<div class="mod-item-title">' + (isAuthorCreator(a) ? '👑 ' : '') + a.name + (a.banned ? ' [БАН]' : '') + '</div><div class="mod-item-sub">' + (a.ownerEmail || 'Без Email') + ' • Карт: ' + cards.filter(c => c.authorId === a.id).length + '</div>';
+        meta.innerHTML = '<div class="mod-item-title">' + roleTag + a.name + (a.banned ? ' [БАН]' : '') + '</div><div class="mod-item-sub">' + (a.ownerEmail || 'Без Email') + ' • Карт: ' + cards.filter(c => c.authorId === a.id).length + '</div>';
         info.appendChild(img); info.appendChild(meta);
 
         const acts = document.createElement('div'); acts.className = 'mod-item-actions';
         const openBtn = document.createElement('button'); openBtn.className = 'btn-glass'; openBtn.style.padding = '5px 10px'; openBtn.textContent = 'Профиль';
         openBtn.onclick = () => openAuthorProfile(a.id);
         acts.appendChild(openBtn);
+
+        if (isCreator() && !isAuthorCreator(a) && aEmail) {
+          const modBtn = document.createElement('button');
+          modBtn.className = 'btn-glass';
+          modBtn.style.padding = '5px 10px';
+          modBtn.textContent = isTargetMod ? 'Снять модера' : '🛡 Модер';
+          modBtn.onclick = () => toggleAuthorModerator(aEmail);
+          acts.appendChild(modBtn);
+        }
 
         if (canEditAuthorProfile(a)) {
           const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
