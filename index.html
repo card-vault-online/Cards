@@ -476,7 +476,7 @@
     };
 
     const SB_URL = "https://" + "sroieqeosjjhkvkihubo.supabase.co";
-    const SB_KEY = "sb_publishable_h9te5qjr9anpaAIKNPWWw_7zeoWhjf";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyb2llcWVvc2pqaGt2a2lodWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDQ4MDUsImV4cCI6MjExMDkyMDgwNX0.lIxOieRFjGaJU5TvMMNqcz45HUoJ7NewkOsJXKHYlQI";
 
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://w3.org" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
 
@@ -530,10 +530,11 @@
 
       const res = await fetch(SB_URL + '/storage/v1/object/media/' + fname, {
         method: 'POST',
-        headers: {
-          'apikey': SB_KEY,
-          'x-upsert': 'true'
-        },
+              headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'x-upsert': 'true'
+      },
         body: fd
       });
 
