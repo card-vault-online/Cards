@@ -969,17 +969,26 @@
     });
     window.addEventListener('mouseup', resetCardPosition);
 
+        scene3d.style.touchAction = 'none';
+
     scene3d.addEventListener('touchstart', e => {
-      if (e.touches.length === 1) { isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none'; startX = e.touches.clientX; startY = e.touches.clientY; }
+      if (e.touches.length === 1) {
+        isDragging = true;
+        wasDragged = false;
+        card3dMesh.style.transition = 'none';
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
     }, { passive: false });
 
     scene3d.addEventListener('touchmove', e => {
       if (!isDragging || e.touches.length !== 1) return;
       e.preventDefault();
       wasDragged = true;
-      rotY += (e.touches.clientX - startX) * 0.8;
-      rotX -= (e.touches.clientY - startY) * 0.8;
-      startX = e.touches.clientX; startY = e.touches.clientY;
+      rotY += (e.touches[0].clientX - startX) * 0.8;
+      rotX -= (e.touches[0].clientY - startY) * 0.8;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
       scheduleTransform();
     }, { passive: false });
     window.addEventListener('touchend', resetCardPosition);
