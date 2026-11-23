@@ -2,7 +2,7 @@
 <html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Custom Cards — Каталог</title>
   <link rel="preconnect" href="https://googleapis.com">
   <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
@@ -177,6 +177,77 @@
 
     @media (max-width: 860px) { .catalog-layout { grid-template-columns: 1fr; } .authors-sidebar { position: static; } .hero-split { grid-template-columns: 1fr; padding: 32px 20px; } .hero-stats { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 640px) { .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .card-stage { height: 185px; } .google-btn span { display: none; } .tab-btn { padding: 6px 12px; font-size: 0.82rem; } }
+        html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 8px 10px !important;
+      }
+
+      .nav-pill {
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        padding: 10px 12px !important;
+        border-radius: 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .brand {
+        font-size: 1.05rem !important;
+        white-space: nowrap;
+      }
+
+      .nav-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 6px !important;
+      }
+
+      .nav-center .tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 6px 10px !important;
+        font-size: 0.82rem !important;
+      }
+
+      .nav-right {
+        gap: 6px !important;
+        flex-wrap: nowrap !important;
+        margin-left: auto;
+      }
+
+      .user-chip {
+        max-width: 120px;
+        padding: 4px 8px !important;
+      }
+
+      .user-chip span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 75px;
+        font-size: 0.8rem;
+      }
+
+      .theme-btn, .google-btn, .mod-only {
+        padding: 6px 9px !important;
+        font-size: 0.8rem !important;
+      }
+
+      .dialog-card {
+        width: 94vw !important;
+        max-width: 94vw !important;
+        padding: 16px !important;
+        box-sizing: border-box !important;
+      }
+    }
   </style>
 </head>
 <body>
