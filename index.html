@@ -762,10 +762,6 @@
       pillRank.className = 'pill-rank';
       pillRank.textContent = rankObj.name;
 
-      const pill360 = document.createElement('span');
-      pill360.className = 'pill-360';
-      pill360.textContent = '360°';
-
       const modBox = document.createElement('div');
       modBox.className = 'card-mod-controls mod-only';
 
@@ -795,7 +791,6 @@
         mediaEl.alt = card.title; mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
       }
       stage.appendChild(pillRank);
-      stage.appendChild(pill360);
       stage.appendChild(modBox);
       stage.appendChild(mediaEl);
 
@@ -858,29 +853,31 @@
     const card3dMesh = document.getElementById('card3dMesh');
     let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false;
 
-    function openViewer(card, author, rankObj) {
-            const frontBox = document.querySelector('.face-front');
+        function openViewer(card, author, rankObj) {
+      const frontBox = document.querySelector('.face-front');
       const backBox = document.querySelector('.face-back');
       const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+
       if (isWebm) {
         frontBox.innerHTML = '<video src="' + card.image + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;"></video>';
         backBox.innerHTML = '<video src="' + card.image + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;transform:scaleX(-1);filter:blur(9px) brightness(0.85);opacity:0.85;"></video>';
       } else {
-        frontBox.innerHTML = '<img src="' + card.image + '" alt="">';
-        backBox.innerHTML = '<img src="' + card.image + '" alt="">';
+        frontBox.innerHTML = '<img src="' + card.image + '" alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none;">';
+        backBox.innerHTML = '<img src="' + card.image + '" alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none;transform:scaleX(-1);filter:blur(9px) brightness(0.85);opacity:0.85;">';
       }
+
       document.getElementById('viewerTitle').textContent = card.title;
       document.getElementById('viewerSub').textContent = author.name + ' • Ранг ' + rankObj.name;
-      document.querySelector('.face-front').innerHTML = '';
-      document.querySelector('.face-back').innerHTML = '';
+      rotX = 0; rotY = 0;
+      card3dMesh.style.transition = 'none';
       scheduleTransform();
       document.getElementById('viewerModal').classList.add('open');
     }
 
     function closeViewer() {
       document.getElementById('viewerModal').classList.remove('open');
-      document.getElementById('viewerFrontImg').src = '';
-      document.getElementById('viewerBackImg').src = '';
+      document.querySelector('.face-front').innerHTML = '';
+      document.querySelector('.face-back').innerHTML = '';
     }
 
     function scheduleTransform() {
@@ -892,17 +889,21 @@
       });
     }
 
+        let wasDragged = false;
+
     function resetCardPosition() {
       if (!isDragging) return;
       isDragging = false;
       rotX = 0; rotY = 0;
       card3dMesh.style.transition = 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
       scheduleTransform();
+      setTimeout(() => { wasDragged = false; }, 120);
     }
 
-    scene3d.addEventListener('mousedown', e => { isDragging = true; card3dMesh.style.transition = 'none'; startX = e.clientX; startY = e.clientY; });
+    scene3d.addEventListener('mousedown', e => { isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none'; startX = e.clientX; startY = e.clientY; });
     window.addEventListener('mousemove', e => {
       if (!isDragging) return;
+      if (Math.abs(e.clientX - startX) > 2 || Math.abs(e.clientY - startY) > 2) wasDragged = true;
       rotY += (e.clientX - startX) * 0.7;
       rotX -= (e.clientY - startY) * 0.7;
       startX = e.clientX; startY = e.clientY;
@@ -911,15 +912,16 @@
     window.addEventListener('mouseup', resetCardPosition);
 
     scene3d.addEventListener('touchstart', e => {
-      if (e.touches.length === 1) { isDragging = true; card3dMesh.style.transition = 'none'; startX = e.touches[0].clientX; startY = e.touches[0].clientY; }
+      if (e.touches.length === 1) { isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none'; startX = e.touches.clientX; startY = e.touches.clientY; }
     }, { passive: false });
 
     scene3d.addEventListener('touchmove', e => {
       if (!isDragging || e.touches.length !== 1) return;
       e.preventDefault();
-      rotY += (e.touches[0].clientX - startX) * 0.8;
-      rotX -= (e.touches[0].clientY - startY) * 0.8;
-      startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+      wasDragged = true;
+      rotY += (e.touches.clientX - startX) * 0.8;
+      rotX -= (e.touches.clientY - startY) * 0.8;
+      startX = e.touches.clientX; startY = e.touches.clientY;
       scheduleTransform();
     }, { passive: false });
     window.addEventListener('touchend', resetCardPosition);
@@ -927,7 +929,7 @@
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
     document.querySelectorAll('.modal-backdrop').forEach(m => {
       m.addEventListener('click', e => {
-        if (e.target === m) {
+        if (e.target === m && !wasDragged) {
           if (m.id === 'termsModal' && !localStorage.getItem('cc_terms_ok')) return;
           if (m.id === 'viewerModal') closeViewer();
           else m.classList.remove('open');
