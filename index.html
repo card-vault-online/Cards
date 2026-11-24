@@ -1636,12 +1636,12 @@
         showToast('У автора не указаны контакты');
         return;
       }
-            if (/^https?:\/\//i.test(contact)) {
+           if (/^https?:\/\//i.test(contact)) {
         window.open(contact, '_blank');
       } else if (/^t\.me\//i.test(contact)) {
-        window.open('https://' + contact, '_blank');
+        window.open('https:\x2f\x2f' + contact, '_blank');
       } else if (contact.startsWith('@')) {
-        window.open('https://t.me' + contact.slice(1).trim(), '_blank');
+        window.open('https:\x2f\x2ft.me\x2f' + contact.slice(1).trim(), '_blank');
       } else {
         copyTextToClipboard(contact, 'Контакт для заказа скопирован: ' + contact);
       }
