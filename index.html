@@ -888,11 +888,10 @@
           mediaEl.src = objectUrl;
           await new Promise((res, rej) => { mediaEl.onload = res; mediaEl.onerror = rej; });
         }
-        const preds = await model.classify(mediaEl);
+                const preds = await model.classify(mediaEl);
         const scores = {};
         preds.forEach(p => { scores[p.className] = p.probability; });
-        const nsfwSum = (scores.Porn || 0) + (scores.Hentai || 0) + (scores.Sexy || 0);
-        if ((scores.Porn || 0) > 0.35 || (scores.Hentai || 0) > 0.35 || nsfwSum > 0.48) {
+        if ((scores.Porn || 0) > 0.60 || (scores.Hentai || 0) > 0.60) {
           throw new Error("Загрузка отклонена: фильтр обнаружил запрещённый 18+ контент");
         }
       } finally {
