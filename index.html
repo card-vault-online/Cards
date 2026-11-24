@@ -207,9 +207,11 @@
     @media (max-width: 860px) { .catalog-layout { grid-template-columns: 1fr; } .authors-sidebar { position: static; } .hero-split { grid-template-columns: 1fr; padding: 32px 20px; } .hero-stats { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 640px) { .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .card-stage { height: 185px; } .google-btn span { display: none; } .tab-btn { padding: 6px 12px; font-size: 0.82rem; } }
 
-    @media (max-width: 768px) {
+       @media (max-width: 768px) {
+      html, body { overflow-x: hidden; max-width: 100vw; }
+      main { padding: 12px 10px 48px !important; }
       header { padding: 8px 10px !important; }
-      .nav-pill { flex-wrap: wrap !important; justify-content: space-between !important; gap: 8px !important; padding: 10px 12px !important; border-radius: 20px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+      .nav-pill { flex-wrap: wrap !important; justify-content: space-between !important; gap: 8px !important; padding: 10px 12px !important; border-radius: 20px !important; }
       .brand { font-size: 1.05rem !important; white-space: nowrap; }
       .nav-center { order: 3; width: 100%; justify-content: center; gap: 6px !important; }
       .nav-center .tab-btn { flex: 1; text-align: center; padding: 6px 10px !important; font-size: 0.82rem !important; }
@@ -217,8 +219,24 @@
       .user-chip { max-width: 120px; padding: 4px 8px !important; }
       .user-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75px; font-size: 0.8rem; }
       .theme-btn, .google-btn, .mod-only { padding: 6px 9px !important; font-size: 0.8rem !important; }
+      .hero-split { grid-template-columns: 1fr !important; padding: 20px 16px !important; gap: 20px !important; }
+      .hero-left h1 { font-size: 1.55rem !important; }
+      .catalog-layout { grid-template-columns: 1fr !important; gap: 14px !important; }
+      .authors-sidebar { position: static !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; padding: 12px !important; }
+      .catalog-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+      .catalog-header h2 { font-size: 1.2rem !important; }
+      .catalog-actions { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; width: 100% !important; }
+      .catalog-actions button { flex: 1 1 auto !important; justify-content: center !important; padding: 8px 12px !important; font-size: 0.82rem !important; white-space: nowrap !important; }
+      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; width: 100% !important; }
+      .card-item { min-width: 0 !important; padding: 8px !important; }
+      .card-title { font-size: 0.86rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .profile-banner { flex-direction: column !important; align-items: flex-start !important; padding: 16px !important; gap: 12px !important; }
+      .profile-actions { width: 100% !important; flex-wrap: wrap !important; gap: 8px !important; }
+      .profile-actions button { flex: 1 1 auto !important; font-size: 0.82rem !important; padding: 8px 10px !important; }
       .dialog-card { width: 94vw !important; max-width: 94vw !important; padding: 16px !important; box-sizing: border-box !important; }
-      .mod-workspace { padding: 16px !important; }
+      .mod-workspace { padding: 14px !important; }
+      .mod-list-item { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+      .mod-item-actions { width: 100% !important; flex-wrap: wrap !important; }
     }
   </style>
 </head>
