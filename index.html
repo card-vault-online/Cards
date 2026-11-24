@@ -854,24 +854,21 @@
       return window.nsfwjs || null;
     }
 
-    async function checkFileForNSFW(file) {
-      const lib = await waitForNsfwLib(9000);
-      if (!lib) {
-        throw new Error("Не удалось запустить фильтр 18+ (проверьте интернет или отключите блокировщик рекламы)");
-      }
-      showToast("Проверка файла фильтром 18+...");
+        async function checkFileForNSFW(file) {
+      const lib = await waitForNsfwLib(3500);
+      if (!lib) return;
       try {
         if (!nsfwModelPromise) nsfwModelPromise = lib.load();
       } catch (e) {
         nsfwModelPromise = null;
-        throw new Error("Ошибка загрузки модели фильтра 18+ (попробуйте включить VPN)");
+        return;
       }
       let model;
       try {
         model = await nsfwModelPromise;
       } catch (e) {
         nsfwModelPromise = null;
-        throw new Error("Не удалось загрузить базу фильтра 18+ (проверьте соединение или VPN)");
+        return;
       }
 
       const objectUrl = URL.createObjectURL(file);
