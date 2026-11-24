@@ -684,6 +684,29 @@
       setTimeout(() => openTermsModal(true), 350);
     }
 
+        async function fetchWithRetry(url, options = {}, retries = 3, timeoutMs = 25000) {
+      let lastErr;
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          clearTimeout(timer);
+          return res;
+        } catch (err) {
+          clearTimeout(timer);
+          lastErr = err;
+          if (attempt < retries) {
+            await new Promise(r => setTimeout(r, 1200 * attempt));
+          }
+        }
+      }
+      if (lastErr && (lastErr.name === 'AbortError' || /Failed to fetch|NetworkError|Load failed/i.test(lastErr.message || ''))) {
+        throw new Error("Нет связи с сервером (проверьте интернет или попробуйте Wi-Fi / VPN)");
+      }
+      throw lastErr;
+    }
+
     async function uploadToImageKit(file) {
       if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
       const ext = (file.name.split('.').pop() || 'png').toLowerCase();
@@ -692,11 +715,12 @@
       const fd = new FormData();
       fd.append('', file);
 
-      const res = await fetch(SB_URL + '/storage/v1/object/media/' + fname, {
+      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, {
         method: 'POST',
         headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true' },
         body: fd
-      });
+      }, 3, 30000);
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || err.error || ("Код ошибки: " + res.status));
@@ -922,7 +946,7 @@
       sbSaving = true;
       sbLastSaveTime = Date.now();
       try {
-        const getRes = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+        const getRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
           headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
         });
         if (getRes.ok) {
@@ -956,7 +980,7 @@
         updateAuthUI();
 
         const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig };
-        const postRes = await fetch(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
+        const postRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
           method: 'POST',
           headers: sbHeaders(),
           body: JSON.stringify([{ id: 'main', data: payload }])
