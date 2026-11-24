@@ -1645,6 +1645,7 @@
 
       const cell = document.createElement('div');
       cell.className = 'card-cell';
+      cell.dataset.id = card.id;
 
       const stage = document.createElement('div');
       stage.className = 'card-stage';
@@ -1675,18 +1676,35 @@
         stage.appendChild(modBox);
       }
 
-      const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+            const isWebm = card.image && /\.(webm|mp4)(\?|$)/i.test(card.image);
       let mediaEl;
       if (isWebm) {
         mediaEl = document.createElement('video');
-        mediaEl.src = card.image;
-        mediaEl.autoplay = true; mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true;
+        mediaEl.preload = 'metadata';
+        mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true;
+        mediaEl.dataset.src = card.image;
+        stage.appendChild(mediaEl);
+        if (!window._cardVideoObserver) {
+          window._cardVideoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              const v = entry.target;
+              if (entry.isIntersecting) {
+                if (!v.src && v.dataset.src) v.src = v.dataset.src;
+                v.play().catch(() => {});
+              } else {
+                v.pause();
+              }
+            });
+          }, { rootMargin: '120px' });
+        }
+        window._cardVideoObserver.observe(mediaEl);
       } else {
         mediaEl = document.createElement('img');
+        mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
+        mediaEl.alt = card.title || '';
         mediaEl.src = card.image;
-        mediaEl.alt = card.title; mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
+        stage.appendChild(mediaEl);
       }
-      stage.appendChild(mediaEl);
 
       const footer = document.createElement('div');
       footer.className = 'card-footer-glass';
