@@ -845,39 +845,61 @@
       }
       throw lastErr;
     }
-    let nsfwModelPromise = null;
+        let nsfwModelPromise = null;
+    async function waitForNsfwLib(maxWaitMs = 9000) {
+      const start = Date.now();
+      while (!window.nsfwjs && Date.now() - start < maxWaitMs) {
+        await new Promise(r => setTimeout(r, 250));
+      }
+      return window.nsfwjs || null;
+    }
+
     async function checkFileForNSFW(file) {
-      if (!window.nsfwjs) return;
+      const lib = await waitForNsfwLib(9000);
+      if (!lib) {
+        throw new Error("Не удалось запустить фильтр 18+ (проверьте интернет или отключите блокировщик рекламы)");
+      }
+      showToast("Проверка файла фильтром 18+...");
       try {
-        if (!nsfwModelPromise) nsfwModelPromise = window.nsfwjs.load();
-        const model = await nsfwModelPromise;
-        const objectUrl = URL.createObjectURL(file);
-        try {
-          let mediaEl;
-          if ((file.type || '').startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)) {
-            mediaEl = document.createElement('video');
-            mediaEl.muted = true; mediaEl.playsInline = true; mediaEl.src = objectUrl;
-            await new Promise((res, rej) => {
-              mediaEl.onloadeddata = () => { mediaEl.currentTime = Math.min(0.5, (mediaEl.duration || 1) / 2); };
-              mediaEl.onseeked = res;
-              mediaEl.onerror = rej;
-              setTimeout(res, 3000);
-            });
-          } else {
-            mediaEl = new Image();
-            mediaEl.src = objectUrl;
-            await new Promise((res, rej) => { mediaEl.onload = res; mediaEl.onerror = rej; });
-          }
-          const preds = await model.classify(mediaEl);
-          const bad = preds.find(p => ((p.className === 'Porn' || p.className === 'Hentai') && p.probability > 0.62) || (p.className === 'Sexy' && p.probability > 0.85));
-          if (bad) {
-            throw new Error("Загрузка отклонена: фильтр обнаружил запрещённый 18+ контент");
-          }
-        } finally {
-          URL.revokeObjectURL(objectUrl);
+        if (!nsfwModelPromise) nsfwModelPromise = lib.load();
+      } catch (e) {
+        nsfwModelPromise = null;
+        throw new Error("Ошибка загрузки модели фильтра 18+ (попробуйте включить VPN)");
+      }
+      let model;
+      try {
+        model = await nsfwModelPromise;
+      } catch (e) {
+        nsfwModelPromise = null;
+        throw new Error("Не удалось загрузить базу фильтра 18+ (проверьте соединение или VPN)");
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      try {
+        let mediaEl;
+        if ((file.type || '').startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)) {
+          mediaEl = document.createElement('video');
+          mediaEl.muted = true; mediaEl.playsInline = true; mediaEl.src = objectUrl;
+          await new Promise((res, rej) => {
+            mediaEl.onloadeddata = () => { mediaEl.currentTime = Math.min(0.5, (mediaEl.duration || 1) / 2); };
+            mediaEl.onseeked = res;
+            mediaEl.onerror = rej;
+            setTimeout(res, 3000);
+          });
+        } else {
+          mediaEl = new Image();
+          mediaEl.src = objectUrl;
+          await new Promise((res, rej) => { mediaEl.onload = res; mediaEl.onerror = rej; });
         }
-      } catch (err) {
-        if (err && err.message && err.message.includes('фильтр обнаружил')) throw err;
+        const preds = await model.classify(mediaEl);
+        const scores = {};
+        preds.forEach(p => { scores[p.className] = p.probability; });
+        const nsfwSum = (scores.Porn || 0) + (scores.Hentai || 0) + (scores.Sexy || 0);
+        if ((scores.Porn || 0) > 0.35 || (scores.Hentai || 0) > 0.35 || nsfwSum > 0.48) {
+          throw new Error("Загрузка отклонена: фильтр обнаружил запрещённый 18+ контент");
+        }
+      } finally {
+        URL.revokeObjectURL(objectUrl);
       }
     }
 
