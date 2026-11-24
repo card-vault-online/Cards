@@ -917,28 +917,59 @@
       };
     }
 
-    async function saveData() {
+        async function saveData(forceDelete = false) {
       if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
-      localStorage.setItem('cc_ranks', JSON.stringify(ranks));
-      localStorage.setItem('cc_authors', JSON.stringify(authors));
-      localStorage.setItem('cc_cards', JSON.stringify(cards));
-      localStorage.setItem('cc_mods', JSON.stringify(moderators));
-      localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
-      localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
-      updateStats();
-      updateAuthUI();
-
       sbSaving = true;
       sbLastSaveTime = Date.now();
       try {
+        const getRes = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        if (getRes.ok) {
+          const rows = await getRes.json();
+          if (rows && rows.length && rows[0].data) {
+            const cloud = rows[0].data;
+            if (!forceDelete) {
+              if (Array.isArray(cloud.authors)) {
+                const localIds = new Set(authors.map(a => a.id));
+                cloud.authors.forEach(ca => { if (!localIds.has(ca.id)) authors.push(ca); });
+              }
+              if (Array.isArray(cloud.cards)) {
+                const localCardIds = new Set(cards.map(c => c.id));
+                cloud.cards.forEach(cc => { if (!localCardIds.has(cc.id)) cards.unshift(cc); });
+              }
+              if (Array.isArray(cloud.users)) {
+                const localUids = new Set(registeredUsers.map(u => u.email));
+                cloud.users.forEach(cu => { if (cu.email && !localUids.has(cu.email)) registeredUsers.push(cu); });
+              }
+            }
+          }
+        }
+
+        localStorage.setItem('cc_ranks', JSON.stringify(ranks));
+        localStorage.setItem('cc_authors', JSON.stringify(authors));
+        localStorage.setItem('cc_cards', JSON.stringify(cards));
+        localStorage.setItem('cc_mods', JSON.stringify(moderators));
+        localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
+        localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
+        updateStats();
+        updateAuthUI();
+
         const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig };
-        await fetch(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
+        const postRes = await fetch(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
           method: 'POST',
           headers: sbHeaders(),
           body: JSON.stringify([{ id: 'main', data: payload }])
         });
-      } catch (e) {}
-      sbSaving = false;
+        if (!postRes.ok) {
+          const errData = await postRes.json().catch(() => ({}));
+          throw new Error(errData.message || ('Ошибка базы: ' + postRes.status));
+        }
+      } catch (e) {
+        showToast('Ошибка сохранения: ' + e.message);
+      } finally {
+        sbSaving = false;
+      }
     }
     function clearUrlParams() {
       try {
@@ -1739,10 +1770,10 @@
         cancelFormPage();
       } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить карту'; }
     });
-    function deleteCard(cardId) {
+        function deleteCard(cardId) {
       const card = cards.find(c => c.id === cardId);
       if (!card || !canManageCard(card) || !confirm('Удалить эту карту?')) return;
-      cards = cards.filter(c => c.id !== cardId); saveData(); renderCards(); renderAuthorsSidebar(); renderModCardsList();
+      cards = cards.filter(c => c.id !== cardId); saveData(true); renderCards(); renderAuthorsSidebar(); renderModCardsList();
       if (selectedAuthorId) renderProfileCards();
     }
 
@@ -1764,7 +1795,7 @@
       const target = authors.find(a => a.id === targetId);
       if (!target || !canModerateAuthor(target) || !confirm('Удалить профиль автора и все его карты?')) return;
       authors = authors.filter(a => a.id !== targetId); cards = cards.filter(c => c.authorId !== targetId);
-      saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList(); renderModCardsList();
+      saveData(true); renderAuthorsSidebar(); renderCards(); renderModAuthorsList(); renderModCardsList();
       if (selectedAuthorId === targetId) closeAuthorProfile();
     }
 
