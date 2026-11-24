@@ -63,13 +63,18 @@
     :root { --r-lg: 22px; --r-md: 14px; --r-sm: 10px; }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     html, body { max-width: 100%; overflow-x: hidden; }
-    body {
+        body {
       background-color: var(--bg-base);
       color: var(--text-primary);
       min-height: 100vh;
       transition: background 0.25s, color 0.25s;
       background-image: radial-gradient(circle at 18% 12%, rgba(255,255,255,0.04), transparent 40%), radial-gradient(circle at 82% 85%, rgba(255,255,255,0.03), transparent 45%);
     }
+    body.has-global-bg { background-image: none; }
+    #siteGlobalWallpaper { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; pointer-events: none; }
+    #siteGlobalDim { position: fixed; inset: 0; z-index: -1; pointer-events: none; transition: background 0.25s; }
+    :root[data-theme="dark"] #siteGlobalDim { background: linear-gradient(180deg, rgba(9,9,11,0.48) 0%, rgba(9,9,11,0.75) 100%); }
+    :root[data-theme="light"] #siteGlobalDim { background: linear-gradient(180deg, rgba(244,244,245,0.62) 0%, rgba(244,244,245,0.82) 100%); }
     header { position: sticky; top: 12px; z-index: 100; max-width: 1240px; margin: 12px auto 0; padding: 0 16px; }
     .nav-pill { background: var(--bg-elevated); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 8px 12px 8px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.5px; cursor: pointer; user-select: none; }
@@ -283,6 +288,7 @@
       </div>
       <div class="nav-right">
         <button class="btn-glass mod-only" style="padding: 6px 14px; border-radius: 99px; font-size: 0.82rem;" onclick="openModWorkspace('users')">🛡 Модерация</button>
+        <button class="theme-btn" id="userBgBtn" onclick="openUserBgModal()" title="Задние обои сайта">🖼</button>
         <button class="theme-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Сменить тему">🌓</button>
         <button class="google-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
           <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
@@ -541,6 +547,16 @@
             <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
             <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
             <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
+                        <div class="field">
+              <label>Общие задние обои всего сайта (позади всех плашек; крестик ✕ возвращает исходный вид)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgGlobalBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgGlobalBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" title="Убрать задние обои" onclick="document.getElementById('cfgGlobalBg').value=''">✕</button>
+                <input type="file" id="cfgGlobalBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+
             <div class="field">
               <label>Обои Главной страницы (PNG, JPG, GIF, WebP, MP4, WebM)</label>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -616,6 +632,25 @@
       </div>
     </div>
   </div>
+  <div class="modal-backdrop" id="userBgModal">
+    <div class="dialog-card">
+      <h2>🖼 Задние обои сайта</h2>
+      <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.45;">Вы можете поставить свои личные обои на задний фон сайта (PNG, JPG, GIF, WebP, MP4, WebM) или нажать крестик ✕, чтобы вернуть вид по умолчанию.</p>
+      <div class="field">
+        <label>Ссылка на обои или загрузка файла</label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <input type="text" id="userGlobalBgInput" placeholder="https://... или выберите файл →" style="flex: 1; min-width: 170px;">
+          <button type="button" class="btn-glass" onclick="document.getElementById('userGlobalBgFile').click()">📁 Файл</button>
+          <button type="button" class="btn-del-mini" title="Сбросить на вид по умолчанию" onclick="resetUserGlobalBg()">✕</button>
+          <input type="file" id="userGlobalBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-glass" onclick="document.getElementById('userBgModal').classList.remove('open')">Отмена</button>
+        <button type="button" class="btn-primary" style="padding: 9px 20px; border-radius: 10px;" onclick="saveUserGlobalBg()">Сохранить обои</button>
+      </div>
+    </div>
+  </div>
 
   <div class="toast-box" id="toastBox"><span id="toastText"></span></div>
   <script>
@@ -685,6 +720,75 @@
       containerEl.insertBefore(media, containerEl.firstChild);
     }
 
+        function applyGlobalWallpaper(url) {
+      const oldW = document.getElementById('siteGlobalWallpaper');
+      const oldD = document.getElementById('siteGlobalDim');
+      if (oldW) oldW.remove();
+      if (oldD) oldD.remove();
+      document.body.classList.remove('has-global-bg');
+
+      const cleanUrl = (url || '').trim();
+      if (!cleanUrl) return;
+
+      const isVideo = /\.(mp4|webm)(\?|$)/i.test(cleanUrl);
+      let media;
+      if (isVideo) {
+        media = document.createElement('video');
+        media.src = cleanUrl;
+        media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
+      } else {
+        media = document.createElement('img');
+        media.src = cleanUrl;
+        media.alt = '';
+      }
+      media.id = 'siteGlobalWallpaper';
+
+      const dim = document.createElement('div');
+      dim.id = 'siteGlobalDim';
+
+      document.body.classList.add('has-global-bg');
+      document.body.appendChild(media);
+      document.body.appendChild(dim);
+    }
+
+    function getUserBgKey() {
+      const u = getCurrentUser();
+      return 'cc_user_bg_' + (u && u.uid ? u.uid : 'guest');
+    }
+
+    function openUserBgModal() {
+      const saved = localStorage.getItem(getUserBgKey()) || '';
+      document.getElementById('userGlobalBgInput').value = saved;
+      document.getElementById('userBgModal').classList.add('open');
+    }
+
+    document.getElementById('userGlobalBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка ваших обоев...');
+      try {
+        document.getElementById('userGlobalBgInput').value = await uploadToImageKit(file);
+        showToast('Обои загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    function saveUserGlobalBg() {
+      const val = document.getElementById('userGlobalBgInput').value.trim();
+      if (val) localStorage.setItem(getUserBgKey(), val);
+      else localStorage.removeItem(getUserBgKey());
+      applySiteConfig();
+      document.getElementById('userBgModal').classList.remove('open');
+      showToast(val ? 'Личные задние обои установлены' : 'Возвращён вид по умолчанию');
+    }
+
+    function resetUserGlobalBg() {
+      document.getElementById('userGlobalBgInput').value = '';
+      localStorage.removeItem(getUserBgKey());
+      applySiteConfig();
+      showToast('Личные обои сброшены на вид по умолчанию');
+    }
+
     function applySiteConfig() {
       document.getElementById('siteBrand').textContent = siteConfig.brand;
       document.getElementById('heroTitleText').textContent = siteConfig.heroTitle;
@@ -692,6 +796,8 @@
       document.getElementById('termsModalBody').textContent = siteConfig.terms;
       applyWallpaper(document.querySelector('.hero-split'), siteConfig.heroBg || '');
       applyWallpaper(document.getElementById('catalog'), siteConfig.catalogBg || '');
+      const personalBg = localStorage.getItem(getUserBgKey()) || '';
+      applyGlobalWallpaper(personalBg || siteConfig.globalBg || '');
     }
 
     function openTermsModal(isFirstVisit = false) {
@@ -1865,6 +1971,7 @@
       document.getElementById('cfgBrand').value = siteConfig.brand;
       document.getElementById('cfgHeroTitle').value = siteConfig.heroTitle;
       document.getElementById('cfgHeroSub').value = siteConfig.heroSub;
+      document.getElementById('cfgGlobalBg').value = siteConfig.globalBg || '';
       document.getElementById('cfgHeroBg').value = siteConfig.heroBg || '';
       document.getElementById('cfgCatalogBg').value = siteConfig.catalogBg || '';
       document.getElementById('cfgTerms').value = siteConfig.terms;
@@ -1878,6 +1985,16 @@
       document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
       document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
     }
+    document.getElementById('cfgGlobalBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка общих задних обоев...');
+      try {
+        document.getElementById('cfgGlobalBg').value = await uploadToImageKit(file);
+        showToast('Задние обои загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
 
     document.getElementById('cfgHeroBgFile')?.addEventListener('change', async e => {
       const file = e.target.files.item(0);
@@ -1906,6 +2023,8 @@
       siteConfig.brand = document.getElementById('cfgBrand').value.trim() || 'Custom Cards';
       siteConfig.heroTitle = document.getElementById('cfgHeroTitle').value.trim();
       siteConfig.heroSub = document.getElementById('cfgHeroSub').value.trim();
+      siteConfig.globalBg = document.getElementById('cfgGlobalBg').value.trim();
+
       siteConfig.heroBg = document.getElementById('cfgHeroBg').value.trim();
       siteConfig.catalogBg = document.getElementById('cfgCatalogBg').value.trim();
       siteConfig.terms = document.getElementById('cfgTerms').value.trim();
