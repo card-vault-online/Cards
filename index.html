@@ -26,7 +26,15 @@
       document.getElementById('siteFavicon').href = c.toDataURL('image/png');
     })();
   </script>
- 
+     <script>
+    (function() {
+      var cdn = "cdn." + "jsdelivr.net/npm/";
+      var s1 = document.createElement('script'); s1.defer = true; s1.src = "https://" + cdn + "@tensorflow/tfjs@4.22.0/dist/tf.min.js";
+      var s2 = document.createElement('script'); s2.defer = true; s2.src = "https://" + cdn + "nsfwjs@4.2.0/dist/nsfwjs.min.js";
+      document.head.appendChild(s1);
+      document.head.appendChild(s2);
+    })();
+  </script>
   <script>
     var d = "cdn.jsdelivr.net";
     var p = "/npm/firebase@10.12.2/firebase-";
@@ -837,9 +845,47 @@
       }
       throw lastErr;
     }
+    let nsfwModelPromise = null;
+    async function checkFileForNSFW(file) {
+      if (!window.nsfwjs) return;
+      try {
+        if (!nsfwModelPromise) nsfwModelPromise = window.nsfwjs.load();
+        const model = await nsfwModelPromise;
+        const objectUrl = URL.createObjectURL(file);
+        try {
+          let mediaEl;
+          if ((file.type || '').startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)) {
+            mediaEl = document.createElement('video');
+            mediaEl.muted = true; mediaEl.playsInline = true; mediaEl.src = objectUrl;
+            await new Promise((res, rej) => {
+              mediaEl.onloadeddata = () => { mediaEl.currentTime = Math.min(0.5, (mediaEl.duration || 1) / 2); };
+              mediaEl.onseeked = res;
+              mediaEl.onerror = rej;
+              setTimeout(res, 3000);
+            });
+          } else {
+            mediaEl = new Image();
+            mediaEl.src = objectUrl;
+            await new Promise((res, rej) => { mediaEl.onload = res; mediaEl.onerror = rej; });
+          }
+          const preds = await model.classify(mediaEl);
+          const bad = preds.find(p => ((p.className === 'Porn' || p.className === 'Hentai') && p.probability > 0.62) || (p.className === 'Sexy' && p.probability > 0.85));
+          if (bad) {
+            throw new Error("Загрузка отклонена: фильтр обнаружил запрещённый 18+ контент");
+          }
+        } finally {
+          URL.revokeObjectURL(objectUrl);
+        }
+      } catch (err) {
+        if (err && err.message && err.message.includes('фильтр обнаружил')) throw err;
+      }
+    }
 
     async function uploadToImageKit(file) {
       if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
+            if (!isRealModerator()) {
+        await checkFileForNSFW(file);
+      }
       const ext = (file.name.split('.').pop() || 'png').toLowerCase();
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
