@@ -174,12 +174,12 @@
     .mod-item-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .modal-backdrop { position: fixed; inset: 0; background: rgba(4, 4, 6, 0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 14px; }
     .modal-backdrop.open { display: flex; }
-    .viewer-cell { width: 100%; max-width: 440px; background: rgba(24, 24, 28, 0.92); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 28px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; color: #fafafa; max-height: 94vh; overflow-y: auto; }
-    .close-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 1.05rem; cursor: pointer; z-index: 10; }
+    .viewer-cell { width: 100%; max-width: 440px; background: var(--bg-elevated); border: 1px solid var(--border-hover); border-radius: 28px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; color: var(--text-primary); max-height: 94vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28); }
+    .close-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-primary); font-size: 1.05rem; cursor: pointer; z-index: 10; }
     .viewer-top-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding-right: 36px; flex-wrap: wrap; justify-content: center; }
-    .drag-hint { font-size: 0.76rem; color: #d4d4d8; background: rgba(255, 255, 255, 0.07); padding: 5px 12px; border-radius: 99px; }
-    .holo-toggle-btn { font-size: 0.76rem; font-weight: 600; color: #fafafa; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); padding: 5px 12px; border-radius: 99px; cursor: pointer; transition: 0.18s; }
-    .holo-toggle-btn.active { background: linear-gradient(135deg, rgba(168,85,247,0.35), rgba(56,189,248,0.35)); border-color: rgba(192,132,252,0.7); }
+    .drag-hint { font-size: 0.76rem; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 5px 12px; border-radius: 99px; }
+    .holo-toggle-btn { font-size: 0.76rem; font-weight: 600; color: var(--text-primary); background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 5px 12px; border-radius: 99px; cursor: pointer; transition: 0.18s; }
+    .holo-toggle-btn.active { background: linear-gradient(135deg, rgba(168,85,247,0.28), rgba(56,189,248,0.28)); border-color: rgba(168,85,247,0.65); }
 
     @keyframes floatCard { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
     .scene-3d { width: 100%; max-width: 340px; height: 440px; perspective: 1200px; margin: 4px 0 10px; display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; user-select: none; animation: floatCard 3.6s ease-in-out infinite; }
@@ -195,9 +195,9 @@
     .face-back img, .face-back video { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transform: scaleX(-1); filter: blur(9px) brightness(0.85); opacity: 0.85; }
 
     .viewer-meta { text-align: center; width: 100%; }
-    .viewer-meta h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-bottom: 4px; }
-    .viewer-meta p { color: #a1a1aa; font-size: 0.84rem; margin-bottom: 6px; }
-    .viewer-desc { font-size: 0.84rem; color: #d4d4d8; margin-bottom: 12px; line-height: 1.4; }
+    .viewer-meta h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-bottom: 4px; color: var(--text-primary); }
+    .viewer-meta p { color: var(--text-secondary); font-size: 0.84rem; margin-bottom: 6px; }
+    .viewer-desc { font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4; }
     .viewer-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 6px; }
 
     .dialog-card { background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 500px; color: var(--text-primary); max-height: 90vh; overflow-y: auto; }
