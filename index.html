@@ -770,16 +770,24 @@
       if (isRealModerator()) return true;
       return !!(author && isMyAuthor(author) && !author.banned && !isCurrentUserBanned());
     }
-    function signInWithGoogle() {
+        function signInWithGoogle() {
       if (!window.firebase) { showToast("Ошибка загрузки модуля Google"); return; }
+      const ua = navigator.userAgent || '';
+      if (/Telegram|Instagram|FBAN|FBAV|VK/i.test(ua)) {
+        showToast("Откройте сайт в Chrome или Safari (⋮ → Открыть в браузере), чтобы войти через Google");
+        return;
+      }
       const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider).catch(err => {
-        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request' || /Mobile|Android|iPhone/i.test(navigator.userAgent)) {
-          firebase.auth().signInWithRedirect(provider);
-        } else {
-          showToast("Не удалось войти: " + err.message);
-        }
-      });
+      provider.setCustomParameters({ prompt: 'select_account' });
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => firebase.auth().signInWithPopup(provider))
+        .catch(err => {
+          if (err.code === 'auth/popup-blocked') {
+            showToast("Разрешите всплывающие окна в браузере и нажмите Войти ещё раз");
+          } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+            showToast("Ошибка входа: " + err.message);
+          }
+        });
     }
 
     function signOutGoogle() {
