@@ -150,7 +150,10 @@
     .card-cell { background: var(--bg-glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 12px; display: flex; flex-direction: column; cursor: pointer; content-visibility: auto; contain-intrinsic-size: 230px 330px; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
     .card-cell:hover { transform: translateY(-4px); border-color: var(--border-hover); background: var(--bg-glass-hover); }
     .card-stage { width: 100%; height: 245px; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 10px; }
-    .card-stage img, .card-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .card-stage img, .card-stage video, .viewer-card img, .viewer-card video {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      user-select: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-touch-callout: none;
+    }
     .pill-rank { position: absolute; top: 2px; left: 2px; padding: 3px 9px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 700; color: var(--text-primary); }
     .card-mod-controls { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; z-index: 5; }
     .mod-mini-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border-glass); background: var(--bg-solid); color: var(--text-primary); font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -699,6 +702,59 @@
       clearTimeout(window._toastTimer);
       window._toastTimer = setTimeout(() => box.classList.remove('show'), 3600);
     }
+    // Защита карт от скачивания чужими пользователями (сам автор и модераторы могут скачивать свои работы)
+    function canDownloadTargetCard(el) {
+      if (typeof isRealModerator === 'function' && isRealModerator()) return true;
+      const u = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+      if (!u || !u.uid) return false;
+      const myAuthor = typeof authorsData !== 'undefined' ? authorsData.find(a => a.ownerUid === u.uid) : null;
+      if (!myAuthor) return false;
+      const cardCell = el.closest('.card-cell[data-id]');
+      if (cardCell && typeof cardsData !== 'undefined') {
+        const card = cardsData.find(c => c.id === cardCell.dataset.id);
+        if (card && card.authorId === myAuthor.id) return true;
+      }
+      if (el.closest('#cardViewerModal') && typeof currentViewerCardId !== 'undefined' && currentViewerCardId) {
+        const card = cardsData.find(c => c.id === currentViewerCardId);
+        if (card && card.authorId === myAuthor.id) return true;
+      }
+      return false;
+    }
+
+    document.addEventListener('contextmenu', e => {
+      if (canDownloadTargetCard(e.target)) return;
+      if (e.target.closest('.card-cell, .card-stage, .viewer-card, .viewer-backdrop, .avatar-box, img, video')) {
+        e.preventDefault();
+        showToast('Скачивание работ авторов запрещено');
+      }
+    });
+
+    document.addEventListener('dragstart', e => {
+      if (canDownloadTargetCard(e.target)) return;
+      if (e.target.closest('.card-cell, .card-stage, .viewer-card, img, video')) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (typeof isRealModerator === 'function' && isRealModerator()) return;
+      if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'ы', 'г'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        showToast('Сохранение материалов сайта отключено');
+      }
+    });
+
+    new MutationObserver(() => {
+      document.querySelectorAll('video').forEach(v => {
+        v.setAttribute('controlsList', 'nodownload noplaybackrate');
+        v.setAttribute('disablePictureInPicture', '');
+        v.oncontextmenu = e => {
+          if (canDownloadTargetCard(v)) return true;
+          e.preventDefault();
+          return false;
+        };
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true });
 
     function applyWallpaper(containerEl, url) {
       if (!containerEl) return;
