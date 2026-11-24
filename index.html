@@ -365,9 +365,10 @@
           <div id="modAuthorsList"></div>
         </div>
 
-        <div id="modPanel-cards" class="mod-panel">
+                <div id="modPanel-cards" class="mod-panel">
           <div class="mod-toolbar">
             <input type="text" class="mod-search-input" id="modCardSearchInput" placeholder="🔍 Поиск карты по названию или автору..." oninput="renderModCardsList()">
+            <button type="button" class="btn-glass owner-only" id="restoreMediaBtn" onclick="restoreCardsFromStorage()">♻ Восстановить из Storage</button>
           </div>
           <div id="modCardsList"></div>
         </div>
@@ -874,9 +875,7 @@
           updateAuthUI();
           renderAuthorsSidebar(document.getElementById('authorSearchInput').value);
           renderCards();
-          if (selectedAuthorId) renderProfileCards();
-        } else if (cards.length > 0 || authors.length > 0) {
-          saveData();
+                   if (selectedAuthorId) renderProfileCards();
         }
       } catch (e) {}
     }
@@ -1664,7 +1663,77 @@
         item.appendChild(info); item.appendChild(acts); box.appendChild(item);
       });
     }
+    async function restoreCardsFromStorage() {
+      if (!isCreator()) return;
+      const btn = document.getElementById('restoreMediaBtn');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Сканирование...'; }
+      try {
+        const res = await fetch(SB_URL + '/storage/v1/object/list/media', {
+          method: 'POST',
+          headers: {
+            'apikey': SB_KEY,
+            'Authorization': 'Bearer ' + SB_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prefix: '', limit: 1000, offset: 0, sortBy: { column: 'created_at', order: 'desc' } })
+        });
+        if (!res.ok) throw new Error('Не удалось прочитать папку media (код ' + res.status + ')');
+        const files = await res.json();
+        const mediaFiles = (files || []).filter(f => f && f.name && /\.(png|jpg|jpeg|webp|webm|gif)$/i.test(f.name) && f.name.startsWith('card_'));
+        if (!mediaFiles.length) {
+          showToast('В папке media нет файлов карт');
+          return;
+        }
 
+        let targetAuthor = authors.find(a => isAuthorCreator(a)) || authors.find(() => true);
+        if (!targetAuthor) {
+          const u = getCurrentUser();
+          targetAuthor = {
+            id: Date.now(),
+            ownerUid: u ? u.uid : '',
+            ownerEmail: OWNER_EMAIL,
+            name: (u && u.displayName) || 'Создатель',
+            avatar: (u && u.photoURL) || DEFAULT_AVATAR,
+            bio: 'Восстановленный профиль',
+            contact: OWNER_EMAIL,
+            banned: false
+          };
+          authors.push(targetAuthor);
+        }
+
+        const defaultRank = ranks.find(() => true) || { id: 'r1', name: 'S' };
+        const existingUrls = new Set(cards.map(c => c.image));
+        let added = 0;
+
+        mediaFiles.forEach((f, idx) => {
+          const publicUrl = SB_URL + '/storage/v1/object/public/media/' + f.name;
+          if (!existingUrls.has(publicUrl)) {
+            cards.push({
+              id: Date.now() + idx + 1,
+              authorId: targetAuthor.id,
+              rankId: defaultRank.id,
+              title: 'Карта #' + (cards.length + 1),
+              image: publicUrl
+            });
+            added++;
+          }
+        });
+
+        if (added > 0) {
+          await saveData();
+          renderAuthorsSidebar();
+          renderCards();
+          renderModCardsList();
+          showToast('Восстановлено карт: ' + added);
+        } else {
+          showToast('Все файлы из Storage уже есть в каталоге');
+        }
+      } catch (err) {
+        showToast('Ошибка восстановления: ' + err.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '♻ Восстановить из Storage'; }
+      }
+    }
     applySiteConfig(); updateStats(); renderAuthorsSidebar(); renderCards();
   </script>
 </body>
