@@ -1084,7 +1084,7 @@
       return res.ok ? SB_URL + '/storage/v1/object/public/media/' + fname : '';
     }
 
-    async function uploadToImageKit(file) {
+        async function uploadToImageKit(file) {
       if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
       if (!isRealModerator()) {
         await checkFileForNSFW(file);
@@ -1094,22 +1094,35 @@
       const ext = (readyFile.name.split('.').pop() || 'webp').toLowerCase();
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
-      const fd = new FormData();
-      fd.append('', readyFile);
+      const signRes = await fetch('https:\x2f\x2fcards-share.musicrelaxrmi.workers.dev\x2fsign');
+      if (!signRes.ok) throw new Error("Не удалось получить подпись загрузки");
+      const { token, expire, signature } = await signRes.json();
 
-      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, {
+      const fd = new FormData();
+      fd.append('file', readyFile);
+      fd.append('fileName', fname);
+      fd.append('publicKey', 'public_qIwSM6oQ9vm4w+uFqhElKwrwlYw=');
+      fd.append('signature', signature);
+      fd.append('expire', String(expire));
+      fd.append('token', token);
+      fd.append('useUniqueFileName', 'false');
+
+      const res = await fetchWithRetry('https:\x2f\x2fupload.imagekit.io\x2fapi\x2fv1\x2ffiles\x2fupload', {
         method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true', 'cache-control': 'max-age=31536000' },
         body: fd
       }, 3, 30000);
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || err.error || ("Код ошибки: " + res.status));
+        throw new Error(err.message || ("Ошибка загрузки ImageKit: " + res.status));
       }
-      return SB_URL + '/storage/v1/object/public/media/' + fname;
+      const data = await res.json();
+      let finalUrl = data.url || ('https:\x2f\x2fik.imagekit.io\x2fe879ksw3s\x2f' + fname);
+      if (/\.webm(\?|$)/i.test(finalUrl) && !finalUrl.includes('tr=orig-true')) {
+        finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'tr=orig-true';
+      }
+      return finalUrl;
     }
-
 
     if (window.firebase && !firebase.apps.length) {
       firebase.initializeApp(FIREBASE_CONFIG);
