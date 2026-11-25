@@ -614,7 +614,6 @@
       <div class="viewer-top-bar">
         <div class="drag-hint">👆 Потяните на 360°</div>
         <button type="button" class="holo-toggle-btn active" id="holoToggleBtn" onclick="toggleHoloGlare()">✨ Блик: Вкл</button>
-        <button type="button" class="holo-toggle-btn" id="shareCardBtn" onclick="shareCard()">🔗 Поделиться</button>
       </div>
       <div class="scene-3d holo-on" id="scene3d">
         <div class="card-3d-mesh" id="card3dMesh">
@@ -1415,9 +1414,10 @@
 
     function copyCardShareLink() {
       if (!activeViewerCardId) return;
-      const url = new URL(window.location.href);
-      url.search = '?card=' + activeViewerCardId;
-      copyTextToClipboard(url.toString(), 'Персональная ссылка на карту скопирована!');
+      let link;
+      if (SHARE_BASE) link = SHARE_BASE + '?card=' + encodeURIComponent(activeViewerCardId);
+      else { const url = new URL(window.location.href); url.search = '?card=' + activeViewerCardId; link = url.toString(); }
+      copyTextToClipboard(link, 'Персональная ссылка на карту скопирована!');
     }
 
     function copyAuthorContact() {
@@ -1816,14 +1816,7 @@
     let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false, wasDragged = false;
     let holoEnabled = true;
 
-    function shareCard() {
-      if (!activeViewerCardId) return;
-      const url = SB_URL + '/functions/v1/share?card=' + encodeURIComponent(activeViewerCardId);
-      const done = () => showToast('Ссылка скопирована');
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt('Скопируйте ссылку:', url));
-      else prompt('Скопируйте ссылку:', url);
-    }
-
+    const SHARE_BASE = ''; // сюда вставляется адрес Cloudflare Worker
     function toggleHoloGlare() {
       holoEnabled = !holoEnabled;
       scene3d.classList.toggle('holo-on', holoEnabled);
