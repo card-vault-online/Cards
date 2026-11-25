@@ -1459,8 +1459,12 @@
         });
         if (!res.ok) return;
         const rows = await res.json();
-        if (rows && rows.length && rows[0].data) {
-          const d = rows[0].data;
+                if (rows && rows.length && rows[0].data) {
+          const rawJson = JSON.stringify(rows[0].data).replaceAll(
+            'https:\x2f\x2fsroieqeosjjhkvkihubo.supabase.co\x2fstorage\x2fv1\x2fobject\x2fpublic\x2fmedia\x2f',
+            'https:\x2f\x2fik.imagekit.io\x2fe879ksw3s\x2f'
+          );
+          const d = JSON.parse(rawJson);
           if (d.ranks) ranks = d.ranks;
           if (d.authors) authors = d.authors;
           if (d.cards) cards = d.cards;
