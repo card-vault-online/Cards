@@ -1,0 +1,2593 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Custom Cards — Галерея кастомных карт</title>
+  <link rel="icon" id="siteFavicon" type="image/png" href="">
+  <script>
+    (function() {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const ctx = c.getContext('2d');
+      const g = ctx.createLinearGradient(0, 0, 64, 64);
+      g.addColorStop(0, '#c084fc');
+      g.addColorStop(0.5, '#818cf8');
+      g.addColorStop(1, '#38bdf8');
+      ctx.fillStyle = '#0d0d11';
+      ctx.beginPath(); ctx.roundRect(0, 0, 64, 64, 18); ctx.fill();
+      ctx.strokeStyle = g; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.roundRect(2.5, 2.5, 59, 59, 15.5); ctx.stroke();
+      ctx.fillStyle = g;
+      ctx.font = '900 40px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('C', 32, 34);
+      document.getElementById('siteFavicon').href = c.toDataURL('image/png');
+    })();
+  </script>
+     
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+  <style>
+    :root[data-theme="dark"] {
+      --bg-base: #09090b;
+      --bg-glass: rgba(255, 255, 255, 0.035);
+      --bg-glass-hover: rgba(255, 255, 255, 0.075);
+      --bg-elevated: rgba(24, 24, 27, 0.88);
+      --bg-solid: #121215;
+      --border-glass: rgba(255, 255, 255, 0.09);
+      --border-hover: rgba(255, 255, 255, 0.24);
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --accent: #f4f4f5;
+      --accent-text: #09090b;
+    }
+    :root[data-theme="light"] {
+      --bg-base: #f4f4f5;
+      --bg-glass: rgba(255, 255, 255, 0.65);
+      --bg-glass-hover: rgba(255, 255, 255, 0.9);
+      --bg-elevated: rgba(255, 255, 255, 0.92);
+      --bg-solid: #ffffff;
+      --border-glass: rgba(0, 0, 0, 0.08);
+      --border-hover: rgba(0, 0, 0, 0.22);
+      --text-primary: #09090b;
+      --text-secondary: #52525b;
+      --accent: #18181b;
+      --accent-text: #ffffff;
+    }
+    :root { --r-lg: 22px; --r-md: 14px; --r-sm: 10px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body { max-width: 100%; overflow-x: hidden; }
+        body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: background 0.25s, color 0.25s;
+      background-image: radial-gradient(circle at 18% 12%, rgba(255,255,255,0.04), transparent 40%), radial-gradient(circle at 82% 85%, rgba(255,255,255,0.03), transparent 45%);
+    }
+    body.has-global-bg { background-image: none; }
+    #siteGlobalWallpaper { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; pointer-events: none; }
+    #siteGlobalDim { position: fixed; inset: 0; z-index: -1; pointer-events: none; transition: background 0.25s; }
+    :root[data-theme="dark"] #siteGlobalDim { background: linear-gradient(180deg, rgba(9,9,11,0.48) 0%, rgba(9,9,11,0.75) 100%); }
+    :root[data-theme="light"] #siteGlobalDim { background: linear-gradient(180deg, rgba(244,244,245,0.62) 0%, rgba(244,244,245,0.82) 100%); }
+    header { position: sticky; top: 12px; z-index: 100; max-width: 1240px; margin: 12px auto 0; padding: 0 16px; }
+    .nav-pill { background: var(--bg-elevated); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 8px 12px 8px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .brand { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: -0.5px; cursor: pointer; user-select: none; }
+    .nav-center { display: flex; gap: 4px; background: var(--bg-glass); padding: 4px; border-radius: 99px; border: 1px solid var(--border-glass); }
+    .tab-btn { background: transparent; border: none; color: var(--text-secondary); padding: 7px 16px; border-radius: 99px; font-size: 0.86rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { background: var(--accent); color: var(--accent-text); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .theme-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-glass); background: var(--bg-glass); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+    .google-btn { display: flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-text); border: none; padding: 8px 15px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+    .user-chip { display: none; align-items: center; gap: 8px; background: var(--bg-glass); border: 1px solid var(--border-hover); padding: 4px 12px 4px 5px; border-radius: 99px; font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+    .user-chip img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+    main { max-width: 1240px; margin: 28px auto; padding: 0 16px 60px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeSlide 0.25s ease-out; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+            .bg-wallpaper-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; pointer-events: none; border-radius: inherit; }
+    .bg-wallpaper-dim { position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit; transition: background 0.25s; }
+    :root[data-theme="dark"] .bg-wallpaper-dim { background: linear-gradient(180deg, rgba(9,9,11,0.42) 0%, rgba(9,9,11,0.70) 100%); }
+    :root[data-theme="light"] .bg-wallpaper-dim { background: linear-gradient(180deg, rgba(255,255,255,0.58) 0%, rgba(255,255,255,0.78) 100%); }
+    .has-wallpaper { position: relative; overflow: hidden; }
+    .has-wallpaper > *:not(.bg-wallpaper-layer):not(.bg-wallpaper-dim) { position: relative; z-index: 2; }
+    .has-wallpaper .quote-bubble { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    :root[data-theme="light"] .has-wallpaper .quote-bubble { background: rgba(255, 255, 255, 0.45); border: 1px solid rgba(0, 0, 0, 0.08); }
+    
+    .hero-split { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 48px 36px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center; }
+    .hero-left h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.1; margin-bottom: 16px; letter-spacing: -1px; }
+    .hero-left p { color: var(--text-secondary); font-size: 1rem; line-height: 1.55; max-width: 480px; margin-bottom: 26px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-right { display: flex; flex-direction: column; gap: 16px; }
+    .quote-bubble { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 20px; padding: 18px 22px; font-size: 0.95rem; line-height: 1.45; }
+    .quote-bubble.tilt-l { transform: rotate(-1.5deg); }
+    .quote-bubble.tilt-r { transform: rotate(1.5deg) translateX(8px); }
+    .hero-stats { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-glass); display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: center; }
+    .stat-box { display: flex; align-items: center; gap: 12px; }
+    .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; }
+    .stat-txt { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.3; }
+
+    .btn-primary { background: var(--accent); color: var(--accent-text); border: none; padding: 11px 22px; border-radius: 99px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-glass { background: var(--bg-glass); backdrop-filter: blur(16px); border: 1px solid var(--border-glass); color: var(--text-primary); padding: 10px 16px; border-radius: var(--r-md); font-size: 0.86rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+    .btn-glass:hover { background: var(--bg-glass-hover); border-color: var(--border-hover); }
+    .btn-danger { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #ef4444; padding: 9px 14px; border-radius: var(--r-md); font-size: 0.84rem; font-weight: 600; cursor: pointer; align-items: center; gap: 6px; display: inline-flex; }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.22); }
+    .mod-only { display: none !important; }
+    body.is-admin .mod-only { display: inline-flex !important; }
+    .owner-only { display: none !important; }
+    body.is-owner .owner-only { display: inline-flex !important; }
+
+    .catalog-layout { display: grid; grid-template-columns: 270px 1fr; gap: 22px; align-items: start; border-radius: var(--r-lg); }
+    .authors-sidebar { background: var(--bg-glass); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 16px; position: sticky; top: 76px; }
+    .sidebar-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); margin-bottom: 10px; }
+    .sidebar-search { width: 100%; padding: 10px 14px; background: rgba(128, 128, 128, 0.08); border: 1px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 0.88rem; outline: none; margin-bottom: 12px; }
+    .authors-list { display: flex; flex-direction: column; gap: 6px; max-height: 460px; overflow-y: auto; }
+    .author-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 12px; background: transparent; border: 1px solid transparent; cursor: pointer; transition: 0.18s; }
+    .author-row:hover { background: var(--bg-glass-hover); border-color: var(--border-glass); }
+    .author-row-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .author-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-glass); flex-shrink: 0; background: var(--bg-solid); }
+    .author-row-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .author-row-count { font-size: 0.74rem; color: var(--text-secondary); background: var(--bg-glass); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border-glass); flex-shrink: 0; }
+    .catalog-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+    .card-cell { background: var(--bg-glass); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 12px; display: flex; flex-direction: column; cursor: pointer; content-visibility: auto; contain-intrinsic-size: 230px 330px; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
+    .card-cell:hover { transform: translateY(-4px); border-color: var(--border-hover); background: var(--bg-glass-hover); }
+    .card-stage { width: 100%; height: 245px; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 10px; }
+        .card-stage img, .card-stage video, .viewer-card img, .viewer-card video {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      user-select: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-touch-callout: none;
+    }
+    .pill-rank { position: absolute; top: 2px; left: 2px; padding: 3px 9px; border-radius: 8px; background: var(--bg-elevated); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 700; color: var(--text-primary); }
+    .card-mod-controls { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; z-index: 5; }
+    .mod-mini-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border-glass); background: var(--bg-solid); color: var(--text-primary); font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .card-footer-glass { background: rgba(128, 128, 128, 0.05); border: 1px solid var(--border-glass); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .card-title { font-weight: 700; font-size: 0.96rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-author-pill { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; background: var(--bg-glass); border: 1px solid var(--border-glass); }
+    .card-author-pill img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--bg-solid); }
+    .card-author-pill span { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .profile-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 10px; flex-wrap: wrap; }
+    .profile-banner { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; margin-bottom: 22px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .avatar-box { position: relative; width: 92px; height: 92px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+    .avatar-box.readonly { cursor: default; }
+    .avatar-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-hover); background: var(--bg-solid); }
+    .avatar-edit { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-text); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--bg-base); }
+    .profile-info { flex: 1; min-width: 220px; }
+    .profile-info h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.7rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .profile-info p { color: var(--text-secondary); font-size: 0.94rem; margin-bottom: 12px; line-height: 1.45; }
+    .profile-pills-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .contact-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-primary); font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+    .order-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; font-size: 0.8rem; font-weight: 700; border: 1px solid var(--border-glass); }
+    .order-open { background: rgba(34, 197, 94, 0.14); color: #4ade80; border-color: rgba(34, 197, 94, 0.35); }
+    .order-queue { background: rgba(234, 179, 8, 0.14); color: #facc15; border-color: rgba(234, 179, 8, 0.35); }
+    .order-closed { background: rgba(239, 68, 68, 0.14); color: #f87171; border-color: rgba(239, 68, 68, 0.35); }
+    .banned-tag { background: #ef4444; color: #fff; font-size: 0.72rem; padding: 3px 8px; border-radius: 99px; }
+    .owner-tag { background: #f59e0b; color: #09090b; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
+
+    .ranks-dock { display: flex; justify-content: space-between; align-items: center; background: var(--bg-glass); backdrop-filter: blur(18px); border: 1px solid var(--border-glass); border-radius: 99px; padding: 6px 8px 6px 18px; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+    .ranks-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); }
+    .ranks-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .rank-btn { padding: 6px 15px; border-radius: 99px; border: 1px solid transparent; background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: 0.2s; }
+    .rank-btn:hover { color: var(--text-primary); background: var(--bg-glass-hover); }
+    .rank-btn.active { background: var(--accent); color: var(--accent-text); }
+
+    .page-form-wrap { max-width: 720px; margin: 0 auto; background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 28px; }
+    .page-form-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--border-glass); }
+    .page-form-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.45rem; }
+
+    .mod-workspace { background: var(--bg-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-glass); border-radius: var(--r-lg); padding: 26px; }
+    .mod-ws-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--border-glass); }
+    .mod-ws-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; }
+    .mod-ws-role-badge { font-size: 0.8rem; font-weight: 700; padding: 5px 12px; border-radius: 99px; background: var(--bg-glass-hover); border: 1px solid var(--border-hover); }
+    .mod-stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .mod-stat-pill { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 14px; padding: 12px 14px; }
+    .mod-stat-pill strong { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; }
+    .mod-stat-pill span { font-size: 0.78rem; color: var(--text-secondary); }
+    .mod-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .mod-tab-btn { background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-secondary); padding: 9px 15px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.18s; }
+    .mod-tab-btn.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+    .mod-panel { display: none; }
+    .mod-panel.active { display: block; }
+    .mod-toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .mod-search-input { flex: 1; min-width: 220px; padding: 11px 14px; background: rgba(128, 128, 128, 0.08); border: 1px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 0.9rem; outline: none; }
+    .mod-list-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 14px; margin-bottom: 10px; font-size: 0.9rem; flex-wrap: wrap; }
+    .mod-item-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+    .mod-item-thumb { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; background: var(--bg-solid); border: 1px solid var(--border-glass); flex-shrink: 0; }
+    .mod-item-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .mod-item-title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mod-item-sub { font-size: 0.8rem; color: var(--text-secondary); }
+    .mod-item-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(4, 4, 6, 0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 14px; }
+    .modal-backdrop.open { display: flex; }
+    .viewer-cell { width: 100%; max-width: 440px; background: var(--bg-elevated); border: 1px solid var(--border-hover); border-radius: 28px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; color: var(--text-primary); max-height: 94vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28); }
+    .close-btn { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-primary); font-size: 1.05rem; cursor: pointer; z-index: 10; }
+    .viewer-top-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding-right: 36px; flex-wrap: wrap; justify-content: center; }
+    .drag-hint { font-size: 0.76rem; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 5px 12px; border-radius: 99px; }
+    .holo-toggle-btn { font-size: 0.76rem; font-weight: 600; color: var(--text-primary); background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 5px 12px; border-radius: 99px; cursor: pointer; transition: 0.18s; }
+    .holo-toggle-btn.active { background: linear-gradient(135deg, rgba(168,85,247,0.28), rgba(56,189,248,0.28)); border-color: rgba(168,85,247,0.65); }
+
+    @keyframes floatCard { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+    .scene-3d { width: 100%; max-width: 340px; height: 440px; perspective: 1200px; margin: 4px 0 10px; display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none; user-select: none; animation: floatCard 3.6s ease-in-out infinite; }
+    .scene-3d:active { cursor: grabbing; animation-play-state: paused; }
+    .card-3d-mesh { width: 320px; height: 430px; position: relative; transform-style: preserve-3d; will-change: transform; }
+    .face { position: absolute; inset: 0; border-radius: 22px; padding: 4px; display: flex; align-items: center; justify-content: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+    .face-front { transform: translateZ(3px); }
+    .face-front img, .face-front video { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+    .holo-glare-layer { position: absolute; inset: 0; border-radius: 22px; pointer-events: none; opacity: 0; transition: opacity 0.25s; mix-blend-mode: color-dodge; background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.55) 0%, rgba(168,85,247,0.28) 28%, rgba(56,189,248,0.22) 52%, transparent 75%); }
+    .scene-3d.holo-on .holo-glare-layer { opacity: 0.92; }
+    .thickness-slice { position: absolute; inset: 0; border-radius: 22px; pointer-events: none; }
+    .face-back { transform: rotateY(180deg) translateZ(3px); overflow: hidden; }
+    .face-back img, .face-back video { width: 100%; height: 100%; object-fit: contain; pointer-events: none; transform: scaleX(-1); filter: blur(9px) brightness(0.85); opacity: 0.85; }
+
+    .viewer-meta { text-align: center; width: 100%; }
+    .viewer-meta h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; margin-bottom: 4px; color: var(--text-primary); }
+    .viewer-meta p { color: var(--text-secondary); font-size: 0.84rem; margin-bottom: 6px; }
+    .viewer-desc { font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.4; }
+    .viewer-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 6px; }
+
+    .dialog-card { background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: var(--r-lg); padding: 24px; width: 100%; max-width: 500px; color: var(--text-primary); max-height: 90vh; overflow-y: auto; }
+    .dialog-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 11px 13px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-sm); color: var(--text-primary); font-size: 0.92rem; outline: none; }
+    .field select option { background: var(--bg-solid); color: var(--text-primary); }
+    .rank-pills-picker { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--r-md); }
+    .rank-pick-chip { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.84rem; cursor: pointer; transition: 0.18s; }
+    .rank-pick-chip.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+    .rank-edit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .btn-del-mini { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 7px 11px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+    .dropzone { border: 1.5px dashed var(--border-hover); border-radius: var(--r-md); padding: 18px; text-align: center; background: var(--bg-glass); cursor: pointer; font-size: 0.88rem; color: var(--text-primary); }
+    .dialog-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .toast-box { position: fixed; bottom: 24px; right: 24px; background: var(--bg-elevated); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-hover); color: var(--text-primary); padding: 14px 18px; border-radius: 16px; font-size: 0.88rem; z-index: 999; display: none; align-items: center; gap: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.45); max-width: 360px; }
+    .toast-box.show { display: flex; animation: fadeSlide 0.2s ease-out; }
+
+    @media (max-width: 820px) {
+      main { padding: 12px 10px 48px; }
+      header { padding: 8px 10px; }
+      .nav-pill { flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 20px; }
+      .brand { font-size: 1.05rem; white-space: nowrap; }
+      .nav-center { order: 3; width: 100%; justify-content: center; gap: 6px; }
+      .nav-center .tab-btn { flex: 1; text-align: center; padding: 6px 10px; font-size: 0.82rem; }
+      .nav-right { gap: 6px; flex-wrap: nowrap; margin-left: auto; }
+      .google-btn span { display: none; }
+      .user-chip { max-width: 120px; padding: 4px 8px; }
+      .user-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 72px; font-size: 0.8rem; }
+      .theme-btn, .google-btn, .mod-only { padding: 6px 9px; font-size: 0.8rem; }
+      .hero-split { grid-template-columns: 1fr; padding: 22px 16px; gap: 20px; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .catalog-layout { grid-template-columns: 1fr; gap: 14px; }
+      .authors-sidebar { position: static; width: 100%; padding: 12px; }
+      .catalog-top { flex-direction: column; align-items: stretch; gap: 10px; }
+      .admin-actions { width: 100%; }
+      .admin-actions button { flex: 1 1 auto; padding: 8px 12px; font-size: 0.82rem; }
+      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .card-cell { min-width: 0; padding: 8px; }
+      .card-stage { height: 185px; }
+      .profile-banner { flex-direction: column; align-items: flex-start; padding: 16px; gap: 12px; }
+      .mod-stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .mod-workspace, .page-form-wrap { padding: 16px; }
+      .mod-list-item { flex-direction: column; align-items: flex-start; }
+      .mod-item-actions { width: 100%; }
+      .scene-3d { height: 370px; }
+      .card-3d-mesh { width: 270px; height: 360px; }
+    }
+  .cat-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .cat-toolbar input,.cat-toolbar select{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-primary);border-radius:12px;padding:9px 12px;font-size:.88rem}
+    .cat-toolbar input{flex:1 1 220px}
+    #catFavBtn.on{background:var(--accent);color:var(--accent-text)}
+    .card-stage{position:relative}
+    .fav-btn{position:absolute;top:10px;right:10px;z-index:6;width:32px;height:32px;border-radius:50%;border:1px solid var(--border-glass);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;font-size:.95rem}
+    .fav-btn.on{color:#f43f5e}
+    @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-pill">
+      <div class="brand" id="siteBrand" onclick="selectedAuthorId=null; clearUrlParams(); switchTab('home');" title="На главную">Custom Cards</div>
+      <div class="nav-center">
+        <button class="tab-btn active" data-tab="home">Главная</button>
+        <button class="tab-btn" data-tab="catalog">Каталог карт</button>
+      </div>
+      <div class="nav-right">
+        <button class="btn-glass mod-only" style="padding: 6px 14px; border-radius: 99px; font-size: 0.82rem;" onclick="openModWorkspace('users')">🛡 Модерация</button>
+        <button class="theme-btn" id="userBgBtn" onclick="openUserBgModal()" title="Задние обои сайта">🖼</button>
+        <button class="theme-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Сменить тему">🌓</button>
+        <button class="google-btn" id="googleLoginBtn" onclick="signInWithGoogle()">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
+          <span>Войти через Google</span>
+        </button>
+        <div class="user-chip" id="userChip" onclick="openMyOwnProfile()" title="Мой профиль">
+          <img id="userAvatar" src="" alt="">
+          <span id="userName">User</span>
+        </div>
+        <button class="theme-btn" id="logoutBtn" style="display: none;" onclick="signOutGoogle()" title="Выйти из аккаунта">🚪</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="tab-content active">
+      <div class="hero-split">
+        <div class="hero-left">
+          <h1 id="heroTitleText">Кастомные карты расскажут об авторах лучше слов</h1>
+          <p id="heroSubText">Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.</p>
+          <div class="hero-btns">
+            <button class="btn-primary" onclick="switchTab('catalog')">Смотреть каталог карт</button>
+            <button class="btn-glass" onclick="openUploadPage()">+ Добавить свою карту</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="quote-bubble tilt-l">★ Доступ открыт для всех: загружай свои PNG и анимированные WebM в пару кликов</div>
+          <div class="quote-bubble tilt-r">★ Понравилась работа? Открой карту или профиль автора — там указан статус заказов и прямая связь</div>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-box"><span class="stat-num">360°</span><span class="stat-txt">Объёмный обзор<br>каждой карты</span></div>
+        <div class="stat-box"><span class="stat-num" id="statAuthors">0</span><span class="stat-txt">Авторов<br>на платформе</span></div>
+        <div class="stat-box"><span class="stat-num" id="statCards">0</span><span class="stat-txt">Загруженных карт<br>в каталоге</span></div>
+        <div class="stat-box" style="justify-content: flex-end;">
+          <button class="btn-glass" onclick="openTermsModal(false)" style="border-radius: 14px; padding: 12px 16px;">📜 Условия пользования</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog" class="tab-content">
+      <div class="catalog-layout">
+        <aside class="authors-sidebar">
+          <div class="sidebar-title">Авторы каталога</div>
+          <input type="text" class="sidebar-search" id="authorSearchInput" placeholder="🔍 Поиск автора по нику..." autocomplete="off">
+          <div class="authors-list" id="authorsSidebarList"></div>
+        </aside>
+
+        <div>
+          <div class="catalog-top">
+            <div style="font-weight: 700; font-size: 1.05rem;">Все работы</div>
+            <div class="admin-actions">
+              <button class="btn-glass" id="becomeAuthorBtn" onclick="openAuthorPage(false)">+ Стать автором</button>
+              <button class="btn-glass mod-only" onclick="openModWorkspace('ranks')">⚙ Ранги</button>
+              <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadPage()">+ Загрузить карту</button>
+            </div>
+          </div>
+          <div class="cat-toolbar">
+            <input type="search" id="catSearch" placeholder="🔍 Поиск по картам, описанию, автору..." aria-label="Поиск по картам" oninput="setCatView('q', this.value)">
+            <select id="catRank" aria-label="Ранг" onchange="setCatView('rank', this.value)"></select>
+            <select id="catSort" aria-label="Сортировка" onchange="setCatView('sort', this.value)"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="title">По названию</option></select>
+            <button type="button" class="btn-glass" id="catFavBtn" onclick="setCatView('fav', !catView.fav)">♥ Избранное</button>
+          </div>
+          <div class="cards-grid" id="cardsGrid"></div>
+          <div style="text-align:center;margin-top:18px"><button type="button" class="btn-glass" id="catMore" style="display:none" onclick="catView.limit += 24; renderCards()">Показать ещё</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="authorProfilePage" class="tab-content">
+      <div class="profile-nav">
+        <button class="btn-glass" onclick="closeAuthorProfile()">← Назад в общий каталог</button>
+        <div class="admin-actions">
+          <button class="btn-glass" onclick="copyAuthorShareLink()">🔗 Ссылка на профиль</button>
+          <button class="btn-glass" id="editProfileBtn" onclick="openAuthorPage(true)">✎ Настроить профиль</button>
+          <button class="btn-primary" id="profileAddCardBtn" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadPage()">+ Добавить карту</button>
+          <button class="btn-danger" id="banAuthorBtn" style="display: none;" onclick="toggleBanAuthor()">🚫 Забанить</button>
+          <button class="btn-danger" id="deleteProfileBtn" style="display: none;" onclick="deleteAuthorProfile()">🗑 Удалить профиль</button>
+        </div>
+      </div>
+
+      <div class="profile-banner">
+        <div class="avatar-box" id="profileAvatarBox" onclick="handleAvatarBoxClick()">
+          <img id="pageProfileAvatar" src="" alt="">
+          <div class="avatar-edit" id="profileAvatarEditIcon">✎</div>
+        </div>
+        <div class="profile-info">
+          <h1 id="pageProfileName">Ник автора</h1>
+          <p id="pageProfileBio">Описание профиля</p>
+          <div class="profile-pills-row">
+            <span class="order-badge order-open" id="pageOrderBadge">🟢 Принимаю заказы</span>
+            <div class="contact-pill" onclick="copyAuthorContact()" title="Нажмите, чтобы скопировать контакт">
+              <span>📬 Связь:</span>
+              <strong id="pageProfileContact">Не указано</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ranks-dock">
+        <span class="ranks-label">Ранг карты</span>
+        <div class="ranks-row" id="profileRanksContainer"></div>
+      </div>
+
+      <div class="cards-grid" id="profileCardsGrid"></div>
+    </section>
+    <section id="authorFormPage" class="tab-content">
+      <div class="page-form-wrap">
+        <div class="page-form-header">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-glass" onclick="cancelFormPage()">← Назад</button>
+            <h1 id="authorPageTitle">Профиль автора</h1>
+          </div>
+        </div>
+        <form id="authorForm">
+          <input type="hidden" id="editAuthorId">
+          <div class="field">
+            <label>Аватарка (GIF, WebP, PNG, JPEG)</label>
+            <div class="dropzone" onclick="document.getElementById('authorAvatarInput').click()">
+              <span id="avatarFileStatus">Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG</span>
+              <input type="file" id="authorAvatarInput" accept=".gif,.png,.jpg,.jpeg,.webp" style="display: none;">
+            </div>
+          </div>
+          <div class="field">
+            <label>Обои профиля (GIF, WebP, PNG, JPEG, WebM, MP4)</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div class="dropzone" style="flex: 1; padding: 14px;" onclick="document.getElementById('authorBannerInput').click()">
+                <span id="bannerFileStatus">Нажмите, чтобы выбрать обои шапки профиля</span>
+                <input type="file" id="authorBannerInput" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+              <button type="button" class="btn-del-mini" title="Убрать обои" onclick="clearPendingBanner()">✕</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Никнейм автора *</label>
+            <input type="text" id="authorNameInput" maxlength="32" required>
+          </div>
+          <div class="field">
+            <label>Статус приёма заказов</label>
+            <select id="authorOrderStatusInput">
+              <option value="open">🟢 Принимаю заказы</option>
+              <option value="queue">🟡 Очередь (1–2 слота)</option>
+              <option value="closed">🔴 Заказы закрыты</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>О себе, прайс и условиях заказа (необязательно)</label>
+            <textarea id="authorBioInput" rows="3" maxlength="260" placeholder="Например: Делаю статичные и анимированные карты на заказ, срок 2-3 дня..."></textarea>
+          </div>
+          <div class="field">
+            <label>Контакты для заказа и связи (Telegram, Discord, ВК, Email) *</label>
+            <input type="text" id="authorContactInput" maxlength="80" placeholder="@username или ссылка t.me/..." required>
+          </div>
+          <div class="dialog-footer">
+            <button type="button" class="btn-glass" onclick="cancelFormPage()">Отмена</button>
+            <button type="submit" class="btn-primary" id="saveAuthorSubmitBtn" style="padding: 10px 24px; border-radius: 12px;">Сохранить профиль</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="cardFormPage" class="tab-content">
+      <div class="page-form-wrap">
+        <div class="page-form-header">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button type="button" class="btn-glass" onclick="cancelFormPage()">← Назад</button>
+            <h1 id="cardPageTitle">Загрузить карту</h1>
+          </div>
+        </div>
+        <form id="cardForm">
+          <input type="hidden" id="editCardId">
+          <div class="field">
+            <label>Автор *</label>
+            <select id="cardAuthorSelect" required></select>
+          </div>
+          <div class="field">
+            <label>Название карты *</label>
+            <input type="text" id="cardTitleInput" maxlength="45" placeholder="Введите название карты" required>
+          </div>
+          <div class="field">
+            <label>Ранг редкости *</label>
+            <input type="hidden" id="cardRankSelect" required>
+            <div class="rank-pills-picker" id="cardRankPills"></div>
+          </div>
+          <div class="field" id="customRankField" style="display: none;">
+            <label>Название вашего нового ранга *</label>
+            <input type="text" id="customRankInput" placeholder="Например: UR, SSR, Mythic..." maxlength="12">
+          </div>
+          <div class="field">
+            <label>Описание карты (необязательно — можно оставить пустым)</label>
+            <textarea id="cardDescInput" rows="2" maxlength="200" placeholder="Комментарий автора или особенности анимации..."></textarea>
+          </div>
+          <div class="field" id="cardFileField">
+            <label id="cardFileLabel">Файл карты (.png, .webp, .webm, .gif, .jpg) *</label>
+            <div class="dropzone" onclick="document.getElementById('cardFileInput').click()">
+              <span id="fileStatusText">Нажмите, чтобы выбрать файл карты</span>
+              <input type="file" id="cardFileInput" accept=".png,.webp,.webm,.gif,.jpg,.jpeg" style="display: none;">
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <button type="button" class="btn-glass" onclick="cancelFormPage()">Отмена</button>
+            <button type="submit" class="btn-primary" id="cardSubmitBtn" style="padding: 10px 24px; border-radius: 12px;">Сохранить карту</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section id="modPage" class="tab-content">
+      <div class="mod-workspace">
+        <div class="mod-ws-header">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-glass" onclick="switchTab('catalog')">← В каталог</button>
+            <h1>🛡 Панель модерации</h1>
+          </div>
+          <span class="mod-ws-role-badge" id="modRoleBadge">Модератор</span>
+        </div>
+
+        <div class="mod-stats-bar">
+          <div class="mod-stat-pill"><strong id="modStatUsers">0</strong><span>Зарегистрировано</span></div>
+          <div class="mod-stat-pill"><strong id="modStatAuthors">0</strong><span>Авторов</span></div>
+          <div class="mod-stat-pill"><strong id="modStatCards">0</strong><span>Карт в базе</span></div>
+          <div class="mod-stat-pill"><strong id="modStatMods">1</strong><span>Модераторов</span></div>
+        </div>
+
+        <div class="mod-tabs">
+          <button type="button" class="mod-tab-btn active" data-modtab="users" onclick="switchModTab('users')">👤 Пользователи</button>
+          <button type="button" class="mod-tab-btn" data-modtab="authors" onclick="switchModTab('authors')">👥 Авторы</button>
+          <button type="button" class="mod-tab-btn" data-modtab="cards" onclick="switchModTab('cards')">🃏 Карты</button>
+          <button type="button" class="mod-tab-btn" data-modtab="ranks" onclick="switchModTab('ranks')">⚙ Ранги</button>
+          <button type="button" class="mod-tab-btn" data-modtab="settings" onclick="switchModTab('settings')">📝 Тексты и обои</button>
+          <button type="button" class="mod-tab-btn owner-only" data-modtab="staff" onclick="switchModTab('staff')">👑 Модераторы</button>
+        </div>
+
+        <div id="modPanel-users" class="mod-panel active">
+          <div class="mod-toolbar">
+            <input type="text" class="mod-search-input" id="modUserSearchInput" placeholder="🔍 Поиск пользователя по имени или Email..." oninput="renderModUsersList()">
+          </div>
+          <div id="modUsersList"></div>
+        </div>
+
+        <div id="modPanel-authors" class="mod-panel">
+          <div class="mod-toolbar">
+            <input type="text" class="mod-search-input" id="modAuthorSearchInput" placeholder="🔍 Поиск автора по нику или Email..." oninput="renderModAuthorsList()">
+          </div>
+          <div id="modAuthorsList"></div>
+        </div>
+
+        <div id="modPanel-cards" class="mod-panel">
+          <div class="mod-toolbar">
+            <input type="text" class="mod-search-input" id="modCardSearchInput" placeholder="🔍 Поиск карты по названию или автору..." oninput="renderModCardsList()">
+            <button type="button" class="btn-glass owner-only" id="restoreMediaBtn" onclick="restoreCardsFromStorage()">♻ Восстановить из Storage</button>
+          </div>
+          <div id="modCardsList"></div>
+        </div>
+
+        <div id="modPanel-ranks" class="mod-panel">
+          <div id="ranksEditorList"></div>
+          <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addGlobalRank()">+ Добавить ранг</button>
+        </div>
+
+        <div id="modPanel-settings" class="mod-panel">
+          <form id="siteSettingsForm">
+            <div class="field"><label>Название в шапке</label><input type="text" id="cfgBrand"></div>
+            <div class="field"><label>Главный заголовок</label><input type="text" id="cfgHeroTitle"></div>
+            <div class="field"><label>Подзаголовок на главной</label><textarea id="cfgHeroSub" rows="2"></textarea></div>
+                        <div class="field">
+              <label>Общие задние обои всего сайта (позади всех плашек; крестик ✕ возвращает исходный вид)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgGlobalBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgGlobalBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" title="Убрать задние обои" onclick="document.getElementById('cfgGlobalBg').value=''">✕</button>
+                <input type="file" id="cfgGlobalBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Обои Главной страницы (PNG, JPG, GIF, WebP, MP4, WebM)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgHeroBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgHeroBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" onclick="document.getElementById('cfgHeroBg').value=''">✕</button>
+                <input type="file" id="cfgHeroBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+            <div class="field">
+              <label>Обои страницы Каталога карт (PNG, JPG, GIF, WebP, MP4, WebM)</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="cfgCatalogBg" placeholder="Ссылка или загрузите файл →" style="flex: 1; min-width: 180px;">
+                <button type="button" class="btn-glass" onclick="document.getElementById('cfgCatalogBgFile').click()">📁 Файл</button>
+                <button type="button" class="btn-del-mini" onclick="document.getElementById('cfgCatalogBg').value=''">✕</button>
+                <input type="file" id="cfgCatalogBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+              </div>
+            </div>
+            <div class="field"><label>Текст условий пользования и отказа от ответственности</label><textarea id="cfgTerms" rows="4"></textarea></div>
+            <div class="dialog-footer"><button type="submit" class="btn-primary" id="saveSiteCfgBtn" style="padding: 10px 22px; border-radius: 12px;">Сохранить настройки</button></div>
+          </form>
+        </div>
+
+        <div id="modPanel-staff" class="mod-panel">
+          <div class="field">
+            <label>Назначить нового модератора (введите Google Email)</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <input type="email" id="newModEmailInput" placeholder="user@gmail.com" style="flex: 1; min-width: 220px;">
+              <button type="button" class="btn-primary" style="padding: 10px 20px; border-radius: 12px;" onclick="addModerator()">Назначить</button>
+            </div>
+          </div>
+          <div id="modsListContainer" style="margin-top: 14px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="viewerModal">
+    <div class="viewer-cell">
+      <button class="close-btn" onclick="closeViewer()">✕</button>
+      <div class="viewer-top-bar">
+        <div class="drag-hint">👆 Потяните на 360°</div>
+        <button type="button" class="holo-toggle-btn active" id="holoToggleBtn" onclick="toggleHoloGlare()">✨ Блик: Вкл</button>
+      </div>
+      <div class="scene-3d holo-on" id="scene3d">
+        <div class="card-3d-mesh" id="card3dMesh">
+          <div class="face face-front"><img id="viewerFrontImg" src="" alt=""><div class="holo-glare-layer"></div></div>
+          <div class="thickness-slice" style="transform: translateZ(1.5px);"></div>
+          <div class="thickness-slice" style="transform: translateZ(0px);"></div>
+          <div class="thickness-slice" style="transform: translateZ(-1.5px);"></div>
+          <div class="face face-back"><img id="viewerBackImg" src="" alt=""></div>
+        </div>
+      </div>
+      <div class="viewer-meta">
+        <h3 id="viewerTitle">Название карты</h3>
+        <p id="viewerSub">Автор • Ранг</p>
+        <div class="viewer-desc" id="viewerDesc" style="display: none;"></div>
+        <div class="viewer-actions">
+          <button type="button" class="btn-primary" id="viewerOrderBtn" style="padding: 8px 16px; font-size: 0.84rem;" onclick="orderFromViewer()">✉️ Заказать у автора</button>
+          <button type="button" class="btn-glass" style="padding: 8px 14px; font-size: 0.82rem;" onclick="copyCardShareLink()">🔗 Ссылка на карту</button>
+          <button type="button" class="btn-glass" id="viewerAuthorBtn" style="padding: 8px 14px; font-size: 0.82rem;">👤 Профиль</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="termsModal">
+    <div class="dialog-card">
+      <h2>📜 Условия пользования и предупреждение</h2>
+      <p id="termsModalBody" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; white-space: pre-line; margin-bottom: 18px;"></p>
+      <div class="dialog-footer">
+        <button type="button" class="btn-primary" id="acceptTermsBtn" style="padding: 9px 20px; border-radius: 10px;" onclick="acceptTerms()">Принимаю условия</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="userBgModal">
+    <div class="dialog-card">
+      <h2>🖼 Задние обои сайта</h2>
+      <p style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.45;">Вы можете поставить свои личные обои на задний фон сайта (PNG, JPG, GIF, WebP, MP4, WebM) или нажать крестик ✕, чтобы вернуть вид по умолчанию.</p>
+      <div class="field">
+        <label>Ссылка на обои или загрузка файла</label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <input type="text" id="userGlobalBgInput" placeholder="https://... или выберите файл →" style="flex: 1; min-width: 170px;">
+          <button type="button" class="btn-glass" onclick="document.getElementById('userGlobalBgFile').click()">📁 Файл</button>
+          <button type="button" class="btn-del-mini" title="Сбросить на вид по умолчанию" onclick="resetUserGlobalBg()">✕</button>
+          <input type="file" id="userGlobalBgFile" accept=".gif,.png,.jpg,.jpeg,.webp,.webm,.mp4" style="display: none;">
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-glass" onclick="document.getElementById('userBgModal').classList.remove('open')">Отмена</button>
+        <button type="button" class="btn-primary" style="padding: 9px 20px; border-radius: 10px;" onclick="saveUserGlobalBg()">Сохранить обои</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-box" id="toastBox"><span id="toastText"></span></div>
+  <script>
+    const OWNER_EMAIL = "shix3rota@gmail.com";
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyCqUl3UOQNuVuuMFYE7z-5ogtykMm-dFZ8",
+      authDomain: "custom-cards-a8627" + ".firebaseapp.com",
+      projectId: "custom-cards-a8627",
+      storageBucket: "custom-cards-a8627.firebasestorage.app",
+      messagingSenderId: "576413137502",
+      appId: "1:576413137502:web:bf8246e8fe306aff0d92cf"
+    };
+
+    const SB_URL = "https://" + "sroieqeosjjhkvkihubo.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyb2llcWVvc2pqaGt2a2lodWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDQ4MDUsImV4cCI6MjExMDkyMDgwNX0.lIxOieRFjGaJU5TvMMNqcz45HUoJ7NewkOsJXKHYlQI";
+
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
+
+    let moderators = JSON.parse(localStorage.getItem('cc_mods')) || [OWNER_EMAIL];
+    if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
+
+    let registeredUsers = JSON.parse(localStorage.getItem('cc_users')) || [];
+
+    let siteConfig = JSON.parse(localStorage.getItem('cc_cfg')) || {
+      brand: "Custom Cards",
+      heroTitle: "Кастомные карты расскажут об авторах лучше слов",
+      heroSub: "Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.",
+      heroBg: "",
+      catalogBg: "",
+      terms: "1. Администрация и создатель платформы не несут ответственности за достоверность данных, авторские права и содержимое загружаемых материалов.\n\n2. Всю ответственность за размещаемые карты, изображения и контактную информацию несёт исключительно пользователь, загрузивший контент.\n\n3. Запрещено размещать материалы, нарушающие законодательство или права третьих лиц."
+    };
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      document.getElementById('toastText').textContent = msg;
+      box.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => box.classList.remove('show'), 3600);
+    }
+    // Защита карт от скачивания чужими пользователями (сам автор и модераторы могут скачивать свои работы)
+    function canDownloadTargetCard(el) {
+      if (typeof isRealModerator === 'function' && isRealModerator()) return true;
+      const u = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+      if (!u || !u.uid) return false;
+      const myAuthor = typeof authorsData !== 'undefined' ? authorsData.find(a => a.ownerUid === u.uid) : null;
+      if (!myAuthor) return false;
+      const cardCell = el.closest('.card-cell[data-id]');
+      if (cardCell && typeof cardsData !== 'undefined') {
+        const card = cardsData.find(c => c.id === cardCell.dataset.id);
+        if (card && card.authorId === myAuthor.id) return true;
+      }
+      if (el.closest('#cardViewerModal') && typeof currentViewerCardId !== 'undefined' && currentViewerCardId) {
+        const card = cardsData.find(c => c.id === currentViewerCardId);
+        if (card && card.authorId === myAuthor.id) return true;
+      }
+      return false;
+    }
+
+    document.addEventListener('contextmenu', e => {
+      if (canDownloadTargetCard(e.target)) return;
+      if (e.target.closest('.card-cell, .card-stage, .viewer-card, .viewer-backdrop, .avatar-box, img, video')) {
+        e.preventDefault();
+        showToast('Скачивание работ авторов запрещено');
+      }
+    });
+
+    document.addEventListener('dragstart', e => {
+      if (canDownloadTargetCard(e.target)) return;
+      if (e.target.closest('.card-cell, .card-stage, .viewer-card, img, video')) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (typeof isRealModerator === 'function' && isRealModerator()) return;
+      if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'ы', 'г'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        showToast('Сохранение материалов сайта отключено');
+      }
+    });
+
+    new MutationObserver(() => {
+      document.querySelectorAll('video').forEach(v => {
+        v.setAttribute('controlsList', 'nodownload noplaybackrate');
+        v.setAttribute('disablePictureInPicture', '');
+        v.oncontextmenu = e => {
+          if (canDownloadTargetCard(v)) return true;
+          e.preventDefault();
+          return false;
+        };
+      });
+    }).observe(document.documentElement, { childList: true, subtree: true });
+
+    function applyWallpaper(containerEl, url) {
+      if (!containerEl) return;
+      containerEl.querySelectorAll('.bg-wallpaper-layer, .bg-wallpaper-dim').forEach(el => el.remove());
+      containerEl.classList.remove('has-wallpaper');
+      if (!url || !url.trim()) return;
+
+      const cleanUrl = url.trim();
+      const isVideo = /\.(mp4|webm)(\?|$)/i.test(cleanUrl);
+      let media;
+      if (isVideo) {
+        media = document.createElement('video');
+        media.src = cleanUrl;
+        media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
+      } else {
+        media = document.createElement('img');
+        media.src = cleanUrl;
+        media.alt = '';
+      }
+      media.className = 'bg-wallpaper-layer';
+
+      const dim = document.createElement('div');
+      dim.className = 'bg-wallpaper-dim';
+
+      containerEl.classList.add('has-wallpaper');
+      containerEl.insertBefore(dim, containerEl.firstChild);
+      containerEl.insertBefore(media, containerEl.firstChild);
+    }
+
+        function applyGlobalWallpaper(url) {
+      const oldW = document.getElementById('siteGlobalWallpaper');
+      const oldD = document.getElementById('siteGlobalDim');
+      if (oldW) oldW.remove();
+      if (oldD) oldD.remove();
+      document.body.classList.remove('has-global-bg');
+
+      const cleanUrl = (url || '').trim();
+      if (!cleanUrl) return;
+
+      const isVideo = /\.(mp4|webm)(\?|$)/i.test(cleanUrl);
+      let media;
+      if (isVideo) {
+        media = document.createElement('video');
+        media.src = cleanUrl;
+        media.autoplay = true; media.loop = true; media.muted = true; media.playsInline = true;
+      } else {
+        media = document.createElement('img');
+        media.src = cleanUrl;
+        media.alt = '';
+      }
+      media.id = 'siteGlobalWallpaper';
+
+      const dim = document.createElement('div');
+      dim.id = 'siteGlobalDim';
+
+      document.body.classList.add('has-global-bg');
+      document.body.appendChild(media);
+      document.body.appendChild(dim);
+    }
+
+    function getUserBgKey() {
+      const u = getCurrentUser();
+      return 'cc_user_bg_' + (u && u.uid ? u.uid : 'guest');
+    }
+
+    function openUserBgModal() {
+      const saved = localStorage.getItem(getUserBgKey()) || '';
+      document.getElementById('userGlobalBgInput').value = saved;
+      document.getElementById('userBgModal').classList.add('open');
+    }
+
+    document.getElementById('userGlobalBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка ваших обоев...');
+      try {
+        document.getElementById('userGlobalBgInput').value = await uploadToImageKit(file);
+        showToast('Обои загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    function saveUserGlobalBg() {
+      const val = document.getElementById('userGlobalBgInput').value.trim();
+      if (val) localStorage.setItem(getUserBgKey(), val);
+      else localStorage.removeItem(getUserBgKey());
+      applySiteConfig();
+      document.getElementById('userBgModal').classList.remove('open');
+      showToast(val ? 'Личные задние обои установлены' : 'Возвращён вид по умолчанию');
+    }
+
+    function resetUserGlobalBg() {
+      document.getElementById('userGlobalBgInput').value = '';
+      localStorage.removeItem(getUserBgKey());
+      applySiteConfig();
+      showToast('Личные обои сброшены на вид по умолчанию');
+    }
+
+    function applySiteConfig() {
+      document.getElementById('siteBrand').textContent = siteConfig.brand;
+      document.getElementById('heroTitleText').textContent = siteConfig.heroTitle;
+      document.getElementById('heroSubText').textContent = siteConfig.heroSub;
+      document.getElementById('termsModalBody').textContent = siteConfig.terms;
+      applyWallpaper(document.querySelector('.hero-split'), siteConfig.heroBg || '');
+      applyWallpaper(document.getElementById('catalog'), siteConfig.catalogBg || '');
+      const personalBg = localStorage.getItem(getUserBgKey()) || '';
+      applyGlobalWallpaper(personalBg || siteConfig.globalBg || '');
+    }
+
+    function openTermsModal(isFirstVisit = false) {
+      const btn = document.getElementById('acceptTermsBtn');
+      btn.textContent = isFirstVisit ? 'Принимаю условия и законы' : 'Понятно';
+      document.getElementById('termsModal').classList.add('open');
+    }
+
+    function acceptTerms() {
+      localStorage.setItem('cc_terms_ok', '1');
+      document.getElementById('termsModal').classList.remove('open');
+    }
+
+    if (!localStorage.getItem('cc_terms_ok')) {
+      setTimeout(() => openTermsModal(true), 350);
+    }
+
+        async function fetchWithRetry(url, options = {}, retries = 3, timeoutMs = 25000) {
+      let lastErr;
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          clearTimeout(timer);
+          return res;
+        } catch (err) {
+          clearTimeout(timer);
+          lastErr = err;
+          if (attempt < retries) {
+            await new Promise(r => setTimeout(r, 1200 * attempt));
+          }
+        }
+      }
+      if (lastErr && (lastErr.name === 'AbortError' || /Failed to fetch|NetworkError|Load failed/i.test(lastErr.message || ''))) {
+        throw new Error("Нет связи с сервером (проверьте интернет или попробуйте Wi-Fi / VPN)");
+      }
+      throw lastErr;
+    }
+        let nsfwModelPromise = null;
+    function loadScriptOnce(src) {
+      return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+    }
+    async function waitForNsfwLib(maxWaitMs = 9000) {
+      if (!window.nsfwjs) {
+        const base = 'https://cdn.jsdelivr.net/npm/';
+        const load = (async () => {
+          if (!window.tf) await loadScriptOnce(base + '@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+          await loadScriptOnce(base + 'nsfwjs@4.2.0/dist/nsfwjs.min.js');
+        })().catch(() => {});
+        await Promise.race([load, new Promise(r => setTimeout(r, maxWaitMs * 2))]);
+      }
+      return window.nsfwjs || null;
+    }
+
+        async function checkFileForNSFW(file) {
+      const lib = await waitForNsfwLib(3500);
+      if (!lib) return;
+      try {
+        if (!nsfwModelPromise) nsfwModelPromise = lib.load();
+      } catch (e) {
+        nsfwModelPromise = null;
+        return;
+      }
+      let model;
+      try {
+        model = await nsfwModelPromise;
+      } catch (e) {
+        nsfwModelPromise = null;
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      try {
+        let mediaEl;
+        if ((file.type || '').startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)) {
+          mediaEl = document.createElement('video');
+          mediaEl.muted = true; mediaEl.playsInline = true; mediaEl.src = objectUrl;
+          await new Promise((res, rej) => {
+            mediaEl.onloadeddata = () => { mediaEl.currentTime = Math.min(0.5, (mediaEl.duration || 1) / 2); };
+            mediaEl.onseeked = res;
+            mediaEl.onerror = rej;
+            setTimeout(res, 3000);
+          });
+        } else {
+          mediaEl = new Image();
+          mediaEl.src = objectUrl;
+          await new Promise((res, rej) => { mediaEl.onload = res; mediaEl.onerror = rej; });
+        }
+                const preds = await model.classify(mediaEl);
+        const scores = {};
+        preds.forEach(p => { scores[p.className] = p.probability; });
+        if ((scores.Porn || 0) > 0.60 || (scores.Hentai || 0) > 0.60) {
+          throw new Error("Загрузка отклонена: фильтр обнаружил запрещённый 18+ контент");
+        }
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
+    }
+
+        async function compressFileBeforeUpload(file) {
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const type = (file.type || '').toLowerCase();
+
+      // Анимированные GIF и прозрачные WebM оставляем как есть, но ограничиваем вес до 8 МБ
+      if (ext === 'gif' || ext === 'webm' || type === 'image/gif' || type === 'video/webm') {
+        if (file.size > 8 * 1024 * 1024) {
+          throw new Error("Анимация GIF/WebM слишком тяжёлая (макс. 8 МБ)");
+        }
+        return file;
+      }
+
+      // Обычные картинки (JPG, PNG, WebP, BMP, AVIF) сжимаем в лёгкий WebP до 1400px с сохранением прозрачности
+      if (type.startsWith('image/') || ['png', 'jpg', 'jpeg', 'webp', 'bmp', 'avif'].includes(ext)) {
+        return await new Promise((resolve) => {
+          const url = URL.createObjectURL(file);
+          const img = new Image();
+          img.onload = () => {
+            try {
+              const maxSide = 1400;
+              let w = img.naturalWidth || img.width;
+              let h = img.naturalHeight || img.height;
+              if (w > maxSide || h > maxSide) {
+                if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
+                else { w = Math.round(w * (maxSide / h)); h = maxSide; }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              canvas.toBlob((blob) => {
+                URL.revokeObjectURL(url);
+                if (!blob || blob.size >= file.size) return resolve(file);
+                const newName = file.name.replace(/\.[^.]+$/, '') + '.webp';
+                resolve(new File([blob], newName, { type: 'image/webp' }));
+              }, 'image/webp', 0.84);
+            } catch (e) {
+              URL.revokeObjectURL(url);
+              resolve(file);
+            }
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+          img.src = url;
+        });
+      }
+
+      // Тяжёлые MP4-видео сжимаем в лёгкий WebM (до 1080px, 1.5 Мбит/с)
+      if ((type.startsWith('video/') || ['mp4', 'mov', 'm4v'].includes(ext)) && typeof MediaRecorder !== 'undefined') {
+        if (file.size <= 3 * 1024 * 1024) return file;
+        return await new Promise((resolve) => {
+          const url = URL.createObjectURL(file);
+          const video = document.createElement('video');
+          video.muted = true;
+          video.playsInline = true;
+          video.src = url;
+          video.onloadedmetadata = () => {
+            try {
+              const maxSide = 1080;
+              let w = video.videoWidth || 720;
+              let h = video.videoHeight || 1280;
+              if (w > maxSide || h > maxSide) {
+                if (w >= h) { h = Math.round(h * (maxSide / w)); w = maxSide; }
+                else { w = Math.round(w * (maxSide / h)); h = maxSide; }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              const stream = canvas.captureStream(30);
+              const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+              const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 1500000 });
+              const chunks = [];
+              rec.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+              rec.onstop = () => {
+                URL.revokeObjectURL(url);
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                if (!blob.size || blob.size >= file.size) return resolve(file);
+                const newName = file.name.replace(/\.[^.]+$/, '') + '.webm';
+                resolve(new File([blob], newName, { type: 'video/webm' }));
+              };
+              let stopped = false;
+              const drawFrame = () => {
+                if (stopped || video.paused || video.ended) return;
+                ctx.drawImage(video, 0, 0, w, h);
+                requestAnimationFrame(drawFrame);
+              };
+              video.onended = () => { if (!stopped) { stopped = true; rec.stop(); } };
+              setTimeout(() => { if (!stopped) { stopped = true; rec.stop(); } }, 15000);
+              rec.start();
+              video.play().then(drawFrame).catch(() => { URL.revokeObjectURL(url); resolve(file); });
+            } catch (e) {
+              URL.revokeObjectURL(url);
+              resolve(file);
+            }
+          };
+          video.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        });
+      }
+
+      return file;
+    }
+
+    async function uploadThumb(file) {
+      if (!file.type.startsWith('image/') || file.type === 'image/gif') return '';
+      const bmp = await createImageBitmap(file);
+      const s = Math.min(1, 480 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise(r => c.toBlob(r, 'image/webp', 0.8));
+      if (!blob) return '';
+      const fname = 'thumb_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.webp';
+      const fd = new FormData(); fd.append('', blob, fname);
+      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, { method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true', 'cache-control': 'max-age=31536000' }, body: fd }, 3, 30000);
+      return res.ok ? SB_URL + '/storage/v1/object/public/media/' + fname : '';
+    }
+
+    async function uploadToImageKit(file) {
+      if (file.size > 25 * 1024 * 1024) throw new Error("Файл слишком большой (макс. 25 МБ)");
+      if (!isRealModerator()) {
+        await checkFileForNSFW(file);
+      }
+      const readyFile = await compressFileBeforeUpload(file);
+      if (readyFile.size > 8 * 1024 * 1024) throw new Error("Файл после сжатия всё равно больше 8 МБ");
+      const ext = (readyFile.name.split('.').pop() || 'webp').toLowerCase();
+      const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
+
+      const fd = new FormData();
+      fd.append('', readyFile);
+
+      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true', 'cache-control': 'max-age=31536000' },
+        body: fd
+      }, 3, 30000);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || err.error || ("Код ошибки: " + res.status));
+      }
+      return SB_URL + '/storage/v1/object/public/media/' + fname;
+    }
+
+
+    if (window.firebase && !firebase.apps.length) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+
+    function getCurrentUser() {
+      return (window.firebase && firebase.auth().currentUser) ? firebase.auth().currentUser : null;
+    }
+
+    function isCreator() {
+      const u = getCurrentUser();
+      return !!(u && u.email && u.email.toLowerCase() === OWNER_EMAIL.toLowerCase());
+    }
+
+    function isRealModerator() {
+      const u = getCurrentUser();
+      if (!u || !u.email) return false;
+      return isCreator() || moderators.includes(u.email.toLowerCase());
+    }
+
+    function isCurrentUserBanned() {
+      const u = getCurrentUser();
+      if (!u || isCreator()) return false;
+      const email = (u.email || '').toLowerCase();
+      const rec = registeredUsers.find(x => x.uid === u.uid || (x.email && x.email.toLowerCase() === email));
+      return !!(rec && rec.banned);
+    }
+
+    function isAuthorCreator(author) {
+      return !!(author && (author.ownerEmail || '').toLowerCase() === OWNER_EMAIL.toLowerCase());
+    }
+
+    function isMyAuthor(author) {
+      const u = getCurrentUser();
+      if (!u || !author) return false;
+      if (author.ownerUid && author.ownerUid === u.uid) return true;
+      if (author.ownerEmail && u.email && author.ownerEmail.toLowerCase() === u.email.toLowerCase()) return true;
+      return false;
+    }
+
+    function canEditAuthorProfile(author) {
+      if (!getCurrentUser() || !author) return false;
+      if (isCreator()) return true;
+      if (isAuthorCreator(author)) return false;
+      if (isRealModerator()) return true;
+      return isMyAuthor(author) && !author.banned && !isCurrentUserBanned();
+    }
+
+    function canModerateAuthor(author) {
+      if (!getCurrentUser() || !author || isAuthorCreator(author)) return false;
+      if (isCreator()) return true;
+      if (isRealModerator()) {
+        const targetEmail = (author.ownerEmail || '').toLowerCase();
+        if (targetEmail && moderators.includes(targetEmail)) return false;
+        return true;
+      }
+      return false;
+    }
+
+    function canManageCard(card) {
+      if (!getCurrentUser() || !card) return false;
+      const author = authors.find(a => a.id === card.authorId);
+      if (isCreator()) return true;
+      if (isAuthorCreator(author)) return false;
+      if (isRealModerator()) return true;
+      return !!(author && isMyAuthor(author) && !author.banned && !isCurrentUserBanned());
+    }
+        function signInWithGoogle() {
+      if (!window.firebase) { showToast("Ошибка загрузки модуля Google"); return; }
+      const ua = navigator.userAgent || '';
+      if (/Telegram|Instagram|FBAN|FBAV|VK/i.test(ua)) {
+        showToast("Откройте сайт в Chrome или Safari (⋮ → Открыть в браузере), чтобы войти через Google");
+        return;
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => firebase.auth().signInWithPopup(provider))
+        .catch(err => {
+          if (err.code === 'auth/popup-blocked') {
+            showToast("Разрешите всплывающие окна в браузере и нажмите Войти ещё раз");
+          } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+            showToast("Ошибка входа: " + err.message);
+          }
+        });
+    }
+
+    function signOutGoogle() {
+      if (window.firebase) firebase.auth().signOut();
+    }
+
+    async function trackLoggedInUser(user) {
+      if (!user || !user.email) return;
+      const cleanEmail = user.email.toLowerCase().trim();
+      const now = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const idx = registeredUsers.findIndex(u => u.uid === user.uid || (u.email && u.email.toLowerCase() === cleanEmail));
+
+      if (idx !== -1) {
+        const prev = registeredUsers[idx];
+        const changed = prev.name !== (user.displayName || prev.name) || prev.avatar !== (user.photoURL || prev.avatar) || prev.uid !== user.uid;
+        registeredUsers[idx] = {
+          ...prev,
+          uid: user.uid,
+          email: cleanEmail,
+          name: user.displayName || prev.name || 'Пользователь',
+          avatar: user.photoURL || prev.avatar || DEFAULT_AVATAR,
+          lastSeen: now
+        };
+        localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
+        if (changed) await saveData();
+      } else {
+        registeredUsers.unshift({
+          uid: user.uid,
+          email: cleanEmail,
+          name: user.displayName || 'Пользователь',
+          avatar: user.photoURL || DEFAULT_AVATAR,
+          firstSeen: now,
+          lastSeen: now,
+          banned: false
+        });
+        await saveData();
+      }
+      if (isRealModerator()) renderModUsersList();
+    }
+
+    function openMyOwnProfile() {
+      if (!requireGoogleAuth()) return;
+      const myAuthor = authors.find(a => isMyAuthor(a));
+      if (myAuthor) {
+        openAuthorProfile(myAuthor.id);
+      } else {
+        openAuthorPage(false);
+      }
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const becomeBtn = document.getElementById('becomeAuthorBtn');
+      if (user) {
+        document.getElementById('googleLoginBtn').style.display = 'none';
+        document.getElementById('userChip').style.display = 'flex';
+        document.getElementById('logoutBtn').style.display = 'flex';
+        document.getElementById('userAvatar').src = user.photoURL || DEFAULT_AVATAR;
+        document.getElementById('userName').textContent = user.displayName || 'User';
+
+        document.body.classList.toggle('is-admin', isRealModerator());
+        document.body.classList.toggle('is-owner', isCreator());
+
+        const hasProfile = authors.some(a => isMyAuthor(a));
+        if (becomeBtn) {
+          becomeBtn.textContent = (hasProfile && !isCreator()) ? '👤 Мой профиль' : '+ Стать автором';
+          becomeBtn.onclick = (hasProfile && !isCreator()) ? () => openMyOwnProfile() : () => openAuthorPage(false);
+        }
+      } else {
+        document.body.classList.remove('is-admin', 'is-owner');
+        document.getElementById('googleLoginBtn').style.display = 'flex';
+        document.getElementById('userChip').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'none';
+        if (becomeBtn) {
+          becomeBtn.textContent = '+ Стать автором';
+          becomeBtn.onclick = () => openAuthorPage(false);
+        }
+      }
+    }
+
+    if (window.firebase) {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) trackLoggedInUser(user);
+        updateAuthUI();
+        renderAuthorsSidebar();
+        renderCards();
+        if (selectedAuthorId) openAuthorProfile(selectedAuthorId, false);
+      });
+    }
+
+    const themes = ['dark', 'light'];
+    let themeIdx = themes.indexOf(localStorage.getItem('cc_theme') || 'dark');
+    if (themeIdx === -1) themeIdx = 0;
+    document.documentElement.setAttribute('data-theme', themes[themeIdx]);
+
+    function cycleTheme() {
+      themeIdx = (themeIdx + 1) % themes.length;
+      document.documentElement.setAttribute('data-theme', themes[themeIdx]);
+      localStorage.setItem('cc_theme', themes[themeIdx]);
+    }
+
+    let ranks = JSON.parse(localStorage.getItem('cc_ranks')) || [
+      { id: 'r1', name: 'S' },
+      { id: 'r2', name: 'A' },
+      { id: 'r3', name: 'RE' },
+      { id: 'r4', name: 'R' }
+    ];
+
+    let authors = JSON.parse(localStorage.getItem('cc_authors')) || [];
+    let cards = JSON.parse(localStorage.getItem('cc_cards')) || [];
+
+    let selectedAuthorId = null;
+    let selectedRankFilter = 'ALL';
+    let lastPageBeforeForm = 'catalog';
+    let activeViewerCardId = null;
+    let initialRouteHandled = false;
+
+    let sbSaving = false;
+    let sbLastSaveTime = 0;
+
+    function sbHeaders() {
+      return {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      };
+    }
+
+        async function saveData(forceDelete = false) {
+      if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
+      sbSaving = true;
+      sbLastSaveTime = Date.now();
+      try {
+        const getRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        if (getRes.ok) {
+          const rows = await getRes.json();
+          if (rows && rows.length && rows[0].data) {
+            const cloud = rows[0].data;
+            if (!forceDelete) {
+              if (Array.isArray(cloud.authors)) {
+                const localIds = new Set(authors.map(a => a.id));
+                cloud.authors.forEach(ca => { if (!localIds.has(ca.id)) authors.push(ca); });
+              }
+              if (Array.isArray(cloud.cards)) {
+                const localCardIds = new Set(cards.map(c => c.id));
+                cloud.cards.forEach(cc => { if (!localCardIds.has(cc.id)) cards.unshift(cc); });
+              }
+              if (Array.isArray(cloud.users)) {
+                const localUids = new Set(registeredUsers.map(u => u.email));
+                cloud.users.forEach(cu => { if (cu.email && !localUids.has(cu.email)) registeredUsers.push(cu); });
+              }
+            }
+          }
+        }
+
+        localStorage.setItem('cc_ranks', JSON.stringify(ranks));
+        localStorage.setItem('cc_authors', JSON.stringify(authors));
+        localStorage.setItem('cc_cards', JSON.stringify(cards));
+        localStorage.setItem('cc_mods', JSON.stringify(moderators));
+        localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
+        localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
+        updateStats();
+        updateAuthUI();
+
+        const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig };
+        const postRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
+          method: 'POST',
+          headers: sbHeaders(),
+          body: JSON.stringify([{ id: 'main', data: payload }])
+        });
+        if (!postRes.ok) {
+          const errData = await postRes.json().catch(() => ({}));
+          throw new Error(errData.message || ('Ошибка базы: ' + postRes.status));
+        }
+      } catch (e) {
+        showToast('Ошибка сохранения: ' + e.message);
+      } finally {
+        sbSaving = false;
+      }
+    }
+    function clearUrlParams() {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('author');
+        url.searchParams.delete('card');
+        window.history.replaceState({}, '', url.pathname + url.search);
+      } catch (e) {}
+    }
+
+    function setUrlParam(key, val) {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('author');
+        url.searchParams.delete('card');
+        if (val) url.searchParams.set(key, val);
+        window.history.replaceState({}, '', url.pathname + url.search);
+      } catch (e) {}
+    }
+
+    function copyTextToClipboard(text, okMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(okMsg)).catch(() => prompt('Скопируйте ссылку:', text));
+      } else {
+        prompt('Скопируйте ссылку:', text);
+      }
+    }
+
+    function copyAuthorShareLink() {
+      if (!selectedAuthorId) return;
+      const url = new URL(window.location.href);
+      url.search = '?author=' + selectedAuthorId;
+      copyTextToClipboard(url.toString(), 'Ссылка на профиль скопирована!');
+    }
+
+    function copyCardShareLink() {
+      if (!activeViewerCardId) return;
+      let link;
+      if (SHARE_BASE) link = SHARE_BASE + '?card=' + encodeURIComponent(activeViewerCardId);
+      else { const url = new URL(window.location.href); url.search = '?card=' + activeViewerCardId; link = url.toString(); }
+      copyTextToClipboard(link, 'Персональная ссылка на карту скопирована!');
+    }
+
+    function copyAuthorContact() {
+      const txt = document.getElementById('pageProfileContact').textContent;
+      if (txt && txt !== 'Контакты не указаны') {
+        copyTextToClipboard(txt, 'Контакт автора скопирован: ' + txt);
+      }
+    }
+
+    function handleInitialDeepLink() {
+      if (initialRouteHandled) return;
+      const params = new URLSearchParams(window.location.search);
+      const authorParam = params.get('author');
+      const cardParam = params.get('card');
+
+      if (cardParam) {
+        const c = cards.find(x => String(x.id) === String(cardParam));
+        if (c) {
+          initialRouteHandled = true;
+          switchTab('catalog', false);
+          const a = authors.find(x => x.id === c.authorId) || { id: 0, name: 'Автор', avatar: DEFAULT_AVATAR };
+          const r = ranks.find(x => x.id === c.rankId) || { name: 'R' };
+          openViewer(c, a, r);
+        }
+      } else if (authorParam) {
+        const a = authors.find(x => String(x.id) === String(authorParam));
+        if (a) {
+          initialRouteHandled = true;
+          openAuthorProfile(a.id, true);
+        }
+      }
+    }
+
+    async function syncFromCloud() {
+      if (sbSaving || (Date.now() - sbLastSaveTime < 6000)) return;
+      try {
+        const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+        });
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (rows && rows.length && rows[0].data) {
+          const d = rows[0].data;
+          if (d.ranks) ranks = d.ranks;
+          if (d.authors) authors = d.authors;
+          if (d.cards) cards = d.cards;
+          if (Array.isArray(d.mods)) {
+            moderators = d.mods.map(m => m.toLowerCase());
+            if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
+          }
+          if (Array.isArray(d.users)) registeredUsers = d.users;
+          if (d.siteConfig) {
+            siteConfig = { ...siteConfig, ...d.siteConfig };
+            applySiteConfig();
+          }
+
+          localStorage.setItem('cc_ranks', JSON.stringify(ranks));
+          localStorage.setItem('cc_authors', JSON.stringify(authors));
+          localStorage.setItem('cc_cards', JSON.stringify(cards));
+          localStorage.setItem('cc_mods', JSON.stringify(moderators));
+          localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
+          localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
+          updateStats();
+          updateAuthUI();
+          renderAuthorsSidebar(document.getElementById('authorSearchInput').value);
+          renderCards();
+          if (selectedAuthorId) renderProfileCards();
+          handleInitialDeepLink();
+        }
+      } catch (e) {}
+    }
+
+    syncFromCloud();
+    setInterval(() => { if (!document.hidden) syncFromCloud(); }, 120000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromCloud(); });
+
+    function updateStats() {
+      const aEl = document.getElementById('statAuthors');
+      const cEl = document.getElementById('statCards');
+      if (aEl) aEl.textContent = authors.filter(a => !a.banned).length;
+      if (cEl) cEl.textContent = cards.length;
+    }
+
+    function switchTab(tabId, resetUrl = true) {
+      if (resetUrl && tabId !== 'authorProfilePage') clearUrlParams();
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === tabId));
+    }
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+      selectedAuthorId = null;
+      switchTab(btn.dataset.tab);
+    }));
+
+    function requireGoogleAuth() {
+      if (!getCurrentUser()) {
+        showToast('Сначала войдите через Google в правом верхнем углу');
+        signInWithGoogle();
+        return false;
+      }
+      if (isCurrentUserBanned()) {
+        showToast('Ваш аккаунт заблокирован администрацией');
+        return false;
+      }
+      return true;
+    }
+
+    const sidebarSearchInput = document.getElementById('authorSearchInput');
+    sidebarSearchInput.addEventListener('input', e => renderAuthorsSidebar(e.target.value));
+
+    function renderAuthorsSidebar(query = '') {
+      const box = document.getElementById('authorsSidebarList');
+      const q = query.toLowerCase().trim();
+      const mod = isRealModerator();
+      const list = authors.filter(a => (!a.banned || mod) && a.name.toLowerCase().includes(q));
+      box.innerHTML = '';
+
+      if (!list.length) {
+        box.innerHTML = '<div style="font-size: 0.84rem; color: var(--text-secondary); padding: 12px 6px; text-align: center;">Авторов пока нет</div>';
+        return;
+      }
+
+      list.forEach(a => {
+        const count = cards.filter(c => c.authorId === a.id).length;
+        const row = document.createElement('div');
+        row.className = 'author-row';
+
+        const left = document.createElement('div');
+        left.className = 'author-row-left';
+
+        const img = document.createElement('img');
+        img.src = a.avatar || DEFAULT_AVATAR;
+        img.onerror = () => { img.src = DEFAULT_AVATAR; };
+
+        const statusDot = a.orderStatus === 'closed' ? '🔴 ' : (a.orderStatus === 'queue' ? '🟡 ' : '🟢 ');
+        const nameEl = document.createElement('span');
+        nameEl.className = 'author-row-name';
+        nameEl.textContent = (isAuthorCreator(a) ? '👑 ' : statusDot) + a.name + (a.banned ? ' [БАН]' : '');
+
+        const countEl = document.createElement('span');
+        countEl.className = 'author-row-count';
+        countEl.textContent = count;
+
+        left.appendChild(img);
+        left.appendChild(nameEl);
+        row.appendChild(left);
+        row.appendChild(countEl);
+        row.onclick = () => openAuthorProfile(a.id);
+        box.appendChild(row);
+      });
+    }
+    function updateProfilePermissionsUI(author) {
+      const canEdit = canEditAuthorProfile(author);
+      const canMod = canModerateAuthor(author);
+
+      const editBtn = document.getElementById('editProfileBtn');
+      const addCardBtn = document.getElementById('profileAddCardBtn');
+      const banBtn = document.getElementById('banAuthorBtn');
+      const delBtn = document.getElementById('deleteProfileBtn');
+      const avatarBox = document.getElementById('profileAvatarBox');
+      const avatarEditIcon = document.getElementById('profileAvatarEditIcon');
+
+      if (editBtn) editBtn.style.display = canEdit ? 'inline-flex' : 'none';
+      if (addCardBtn) addCardBtn.style.display = canEdit ? 'inline-flex' : 'none';
+      applyWallpaper(document.querySelector('.profile-banner'), author.banner || '');
+      if (banBtn) banBtn.style.display = canMod ? 'inline-flex' : 'none';
+      if (delBtn) delBtn.style.display = canMod ? 'inline-flex' : 'none';
+
+      if (avatarBox) {
+        avatarBox.classList.toggle('readonly', !canEdit);
+        avatarBox.title = canEdit ? 'Настроить профиль' : author.name;
+      }
+      if (avatarEditIcon) avatarEditIcon.style.display = canEdit ? 'flex' : 'none';
+    }
+
+    function handleAvatarBoxClick() {
+      if (!selectedAuthorId) return;
+      const author = authors.find(a => a.id === selectedAuthorId);
+      if (author && canEditAuthorProfile(author)) openAuthorPage(true);
+    }
+
+    function renderOrderBadge(status) {
+      const badge = document.getElementById('pageOrderBadge');
+      if (!badge) return;
+      badge.className = 'order-badge';
+      if (status === 'closed') {
+        badge.classList.add('order-closed');
+        badge.textContent = '🔴 Заказы закрыты';
+      } else if (status === 'queue') {
+        badge.classList.add('order-queue');
+        badge.textContent = '🟡 Очередь (1–2 слота)';
+      } else {
+        badge.classList.add('order-open');
+        badge.textContent = '🟢 Принимаю заказы';
+      }
+    }
+
+    function openAuthorProfile(authorId, updateUrl = true) {
+      selectedAuthorId = authorId;
+      selectedRankFilter = 'ALL';
+      const author = authors.find(a => a.id === authorId);
+      if (!author) return;
+
+      if (updateUrl) setUrlParam('author', author.id);
+
+      const pAvatar = document.getElementById('pageProfileAvatar');
+      pAvatar.src = author.avatar || DEFAULT_AVATAR;
+      pAvatar.onerror = () => { pAvatar.src = DEFAULT_AVATAR; };
+
+      document.getElementById('pageProfileBio').textContent = author.bio || 'Описание и прайс не добавлены';
+      document.getElementById('pageProfileContact').textContent = author.contact || 'Контакты не указаны';
+      renderOrderBadge(author.orderStatus || 'open');
+      updateBanButtonUI(author);
+      updateProfilePermissionsUI(author);
+
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('authorProfilePage').classList.add('active');
+
+      renderProfileRanks();
+      renderProfileCards();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeAuthorProfile() {
+      selectedAuthorId = null;
+      selectedRankFilter = 'ALL';
+      clearUrlParams();
+      switchTab('catalog');
+      renderCards();
+    }
+
+    function renderProfileRanks() {
+      const container = document.getElementById('profileRanksContainer');
+      container.innerHTML = '';
+
+      const allBtn = document.createElement('button');
+      allBtn.className = 'rank-btn ' + (selectedRankFilter === 'ALL' ? 'active' : '');
+      allBtn.textContent = 'Все';
+      allBtn.onclick = () => { selectedRankFilter = 'ALL'; renderProfileRanks(); renderProfileCards(); };
+      container.appendChild(allBtn);
+
+      ranks.forEach(r => {
+        const btn = document.createElement('button');
+        btn.className = 'rank-btn ' + (selectedRankFilter === r.id ? 'active' : '');
+        btn.textContent = r.name;
+        btn.onclick = () => { selectedRankFilter = r.id; renderProfileRanks(); renderProfileCards(); };
+        container.appendChild(btn);
+      });
+    }
+
+    function buildCardElement(card) {
+      const author = authors.find(a => a.id === card.authorId) || { id: 0, name: 'Автор', avatar: DEFAULT_AVATAR };
+      const rankObj = ranks.find(r => r.id === card.rankId) || { name: 'R' };
+
+      const cell = document.createElement('div');
+      cell.className = 'card-cell';
+      cell.dataset.id = card.id;
+
+      const stage = document.createElement('div');
+      stage.className = 'card-stage';
+
+      const pillRank = document.createElement('span');
+      pillRank.className = 'pill-rank';
+      pillRank.textContent = rankObj.name;
+      stage.appendChild(pillRank);
+      const favBtn = document.createElement('button');
+      favBtn.type = 'button'; favBtn.className = 'fav-btn' + (getFavs().includes(card.id) ? ' on' : '');
+      favBtn.textContent = '♥'; favBtn.setAttribute('aria-label', 'В избранное');
+      favBtn.onclick = e => { e.stopPropagation(); toggleFav(card.id); };
+      stage.appendChild(favBtn);
+
+      if (canManageCard(card)) {
+        const modBox = document.createElement('div');
+        modBox.className = 'card-mod-controls';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'mod-mini-btn';
+        editBtn.title = 'Редактировать карту';
+        editBtn.textContent = '✎';
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditCardPage(card.id); };
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'mod-mini-btn';
+        delBtn.title = 'Удалить карту';
+        delBtn.textContent = '✕';
+        delBtn.onclick = (e) => { e.stopPropagation(); deleteCard(card.id); };
+
+        modBox.appendChild(editBtn);
+        modBox.appendChild(delBtn);
+        stage.appendChild(modBox);
+      }
+
+            const isWebm = card.image && /\.(webm|mp4)(\?|$)/i.test(card.image);
+      let mediaEl;
+      if (isWebm) {
+        mediaEl = document.createElement('video');
+        mediaEl.preload = 'metadata';
+        mediaEl.loop = true; mediaEl.muted = true; mediaEl.playsInline = true;
+        mediaEl.dataset.src = card.image;
+        stage.appendChild(mediaEl);
+        if (!window._cardVideoObserver) {
+          window._cardVideoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              const v = entry.target;
+              if (entry.isIntersecting) {
+                if (!v.src && v.dataset.src) v.src = v.dataset.src;
+                v.play().catch(() => {});
+              } else {
+                v.pause();
+              }
+            });
+          }, { rootMargin: '120px' });
+        }
+        window._cardVideoObserver.observe(mediaEl);
+      } else {
+        mediaEl = document.createElement('img');
+        mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
+        mediaEl.alt = card.title || '';
+        mediaEl.src = card.thumb || card.image;
+        if (card.thumb) mediaEl.onerror = () => { mediaEl.onerror = null; mediaEl.src = card.image; };
+        stage.appendChild(mediaEl);
+      }
+
+      const footer = document.createElement('div');
+      footer.className = 'card-footer-glass';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'card-title';
+      titleEl.textContent = card.title;
+
+      const authorPill = document.createElement('div');
+      authorPill.className = 'card-author-pill';
+      authorPill.onclick = (e) => { e.stopPropagation(); openAuthorProfile(author.id); };
+
+      const aImg = document.createElement('img');
+      aImg.src = author.avatar || DEFAULT_AVATAR;
+      aImg.onerror = () => { aImg.src = DEFAULT_AVATAR; };
+
+      const aName = document.createElement('span');
+      aName.textContent = author.name;
+
+      authorPill.appendChild(aImg);
+      authorPill.appendChild(aName);
+      footer.appendChild(titleEl);
+      footer.appendChild(authorPill);
+
+      cell.appendChild(stage);
+      cell.appendChild(footer);
+      cell.addEventListener('click', () => openViewer(card, author, rankObj));
+      return cell;
+    }
+
+    let catView = { q: '', rank: '', sort: 'new', fav: false, limit: 24 };
+    function getFavs() { try { return JSON.parse(localStorage.getItem('cc_favs')) || []; } catch (e) { return []; } }
+    function toggleFav(id) { const f = getFavs(), i = f.indexOf(id); if (i < 0) f.push(id); else f.splice(i, 1); localStorage.setItem('cc_favs', JSON.stringify(f)); renderCards(); }
+    function setCatView(k, v) { catView[k] = v; catView.limit = 24; renderCards(); }
+    function renderCards() {
+      const grid = document.getElementById('cardsGrid');
+      const mod = isRealModerator();
+      const sel = document.getElementById('catRank');
+      if (sel) { sel.innerHTML = '<option value="">Все ранги</option>' + ranks.map(r => '<option value="' + esc(r.id) + '">' + esc(r.name) + '</option>').join(''); sel.value = catView.rank; }
+      document.getElementById('catFavBtn').classList.toggle('on', catView.fav);
+      const favs = getFavs(), q = catView.q.trim().toLowerCase();
+      let visible = cards.filter(c => {
+        const a = authors.find(x => x.id === c.authorId);
+        if (a && a.banned && !mod) return false;
+        if (catView.rank && String(c.rankId) !== catView.rank) return false;
+        if (catView.fav && !favs.includes(c.id)) return false;
+        if (q && !((c.title || '') + ' ' + (c.desc || '') + ' ' + (a ? a.name : '')).toLowerCase().includes(q)) return false;
+        return true;
+      });
+      if (catView.sort === 'old') visible.sort((x, y) => x.id - y.id);
+      else if (catView.sort === 'title') visible.sort((x, y) => (x.title || '').localeCompare(y.title || '', 'ru'));
+      else visible.sort((x, y) => y.id - x.id);
+      grid.innerHTML = '';
+      document.getElementById('catMore').style.display = visible.length > catView.limit ? '' : 'none';
+      if (!visible.length) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 22px;">Карт не найдено.</div>';
+        return;
+      }
+      visible.slice(0, catView.limit).forEach(card => grid.appendChild(buildCardElement(card)));
+    }
+
+    function renderProfileCards() {
+      const grid = document.getElementById('profileCardsGrid');
+      let list = cards.filter(c => c.authorId === selectedAuthorId);
+      if (selectedRankFilter !== 'ALL') list = list.filter(c => c.rankId === selectedRankFilter);
+      grid.innerHTML = '';
+      if (!list.length) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">В этом ранге карт пока нет.</div>';
+        return;
+      }
+      list.forEach(card => grid.appendChild(buildCardElement(card)));
+    }
+    const scene3d = document.getElementById('scene3d');
+    const card3dMesh = document.getElementById('card3dMesh');
+    let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false, wasDragged = false;
+    let holoEnabled = true;
+
+    const SHARE_BASE = ''; // сюда вставляется адрес Cloudflare Worker
+    function toggleHoloGlare() {
+      holoEnabled = !holoEnabled;
+      scene3d.classList.toggle('holo-on', holoEnabled);
+      const btn = document.getElementById('holoToggleBtn');
+      btn.classList.toggle('active', holoEnabled);
+      btn.textContent = holoEnabled ? '✨ Блик: Вкл' : '✨ Блик: Выкл';
+    }
+
+    function openViewer(card, author, rankObj) {
+      activeViewerCardId = card.id;
+      setUrlParam('card', card.id);
+
+      const frontBox = document.querySelector('.face-front');
+      const backBox = document.querySelector('.face-back');
+      const isWebm = card.image && card.image.toLowerCase().includes('.webm');
+
+      if (isWebm) {
+        frontBox.innerHTML = '<video src="' + esc(card.image) + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;"></video><div class="holo-glare-layer"></div>';
+        backBox.innerHTML = '<video src="' + esc(card.image) + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:contain;pointer-events:none;transform:scaleX(-1);filter:blur(9px) brightness(0.85);opacity:0.85;"></video>';
+      } else {
+        frontBox.innerHTML = '<img src="' + esc(card.image) + '" alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none;"><div class="holo-glare-layer"></div>';
+        backBox.innerHTML = '<img src="' + esc(card.image) + '" alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none;transform:scaleX(-1);filter:blur(9px) brightness(0.85);opacity:0.85;">';
+      }
+
+      document.getElementById('viewerTitle').textContent = card.title;
+      document.getElementById('viewerSub').textContent = author.name + ' • Ранг ' + rankObj.name;
+
+      const descEl = document.getElementById('viewerDesc');
+      if (card.desc && card.desc.trim()) {
+        descEl.textContent = card.desc;
+        descEl.style.display = 'block';
+      } else {
+        descEl.style.display = 'none';
+      }
+
+      const orderBtn = document.getElementById('viewerOrderBtn');
+      if (author.orderStatus === 'closed') {
+        orderBtn.textContent = '🔴 Заказы закрыты';
+      } else if (author.orderStatus === 'queue') {
+        orderBtn.textContent = '🟡 Заказать (очередь)';
+      } else {
+        orderBtn.textContent = '✉️ Заказать у автора';
+      }
+
+      const authorBtn = document.getElementById('viewerAuthorBtn');
+      authorBtn.onclick = () => {
+        closeViewer();
+        if (author && author.id) openAuthorProfile(author.id);
+      };
+
+      rotX = 0; rotY = 0;
+      scene3d.style.setProperty('--mx', '50%');
+      scene3d.style.setProperty('--my', '50%');
+      card3dMesh.style.transition = 'none';
+      scheduleTransform();
+      document.getElementById('viewerModal').classList.add('open');
+    }
+
+    function orderFromViewer() {
+      const card = cards.find(c => c.id === activeViewerCardId);
+      if (!card) return;
+      const author = authors.find(a => a.id === card.authorId);
+      if (!author) return;
+      const contact = (author.contact || '').trim();
+      if (!contact) {
+        showToast('У автора не указаны контакты');
+        return;
+      }
+           if (/^https?:\/\//i.test(contact)) {
+        window.open(contact, '_blank');
+      } else if (/^t\.me\//i.test(contact)) {
+        window.open('https:\x2f\x2f' + contact, '_blank');
+      } else if (contact.startsWith('@')) {
+        window.open('https:\x2f\x2ft.me\x2f' + contact.slice(1).trim(), '_blank');
+      } else {
+        copyTextToClipboard(contact, 'Контакт для заказа скопирован: ' + contact);
+      }
+    }
+
+    function closeViewer() {
+      document.getElementById('viewerModal').classList.remove('open');
+      activeViewerCardId = null;
+      if (selectedAuthorId) setUrlParam('author', selectedAuthorId);
+      else clearUrlParams();
+      document.querySelector('.face-front').innerHTML = '';
+      document.querySelector('.face-back').innerHTML = '';
+    }
+
+    function scheduleTransform() {
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(() => {
+        card3dMesh.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+        const mx = Math.max(0, Math.min(100, 50 + rotY * 1.4));
+        const my = Math.max(0, Math.min(100, 50 - rotX * 1.4));
+        scene3d.style.setProperty('--mx', mx + '%');
+        scene3d.style.setProperty('--my', my + '%');
+        rafPending = false;
+      });
+    }
+
+    function resetCardPosition() {
+      if (!isDragging) return;
+      isDragging = false;
+      rotX = 0; rotY = 0;
+      card3dMesh.style.transition = 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      scheduleTransform();
+      setTimeout(() => { wasDragged = false; }, 120);
+    }
+
+    scene3d.addEventListener('mousedown', e => { isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none'; startX = e.clientX; startY = e.clientY; });
+    window.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      if (Math.abs(e.clientX - startX) > 2 || Math.abs(e.clientY - startY) > 2) wasDragged = true;
+      rotY += (e.clientX - startX) * 0.7;
+      rotX -= (e.clientY - startY) * 0.7;
+      startX = e.clientX; startY = e.clientY;
+      scheduleTransform();
+    });
+    window.addEventListener('mouseup', resetCardPosition);
+
+    scene3d.addEventListener('touchstart', e => {
+      if (e.touches.length === 1) {
+        isDragging = true; wasDragged = false; card3dMesh.style.transition = 'none';
+        startX = e.touches.item(0).clientX; startY = e.touches.item(0).clientY;
+      }
+    }, { passive: false });
+
+    scene3d.addEventListener('touchmove', e => {
+      if (!isDragging || e.touches.length !== 1) return;
+      e.preventDefault(); wasDragged = true;
+      rotY += (e.touches.item(0).clientX - startX) * 0.8;
+      rotX -= (e.touches.item(0).clientY - startY) * 0.8;
+      startX = e.touches.item(0).clientX; startY = e.touches.item(0).clientY;
+      scheduleTransform();
+    }, { passive: false });
+    window.addEventListener('touchend', resetCardPosition);
+
+    document.querySelectorAll('.modal-backdrop').forEach(m => {
+      let downOnBackdrop = false, downX = 0, downY = 0;
+      m.addEventListener('mousedown', e => {
+        downOnBackdrop = (e.target === m);
+        downX = e.clientX;
+        downY = e.clientY;
+      });
+      m.addEventListener('click', e => {
+        const isPureClick = Math.abs(e.clientX - downX) < 5 && Math.abs(e.clientY - downY) < 5;
+        if (downOnBackdrop && e.target === m && isPureClick && !wasDragged) {
+          if (m.id === 'termsModal' && !localStorage.getItem('cc_terms_ok')) return;
+          if (m.id === 'viewerModal') closeViewer();
+          else m.classList.remove('open');
+        }
+        downOnBackdrop = false;
+      });
+    });
+
+    function cancelFormPage() {
+      if (selectedAuthorId && authors.some(a => a.id === selectedAuthorId)) {
+        openAuthorProfile(selectedAuthorId);
+      } else {
+        switchTab(lastPageBeforeForm || 'catalog');
+      }
+    }
+    let pendingAvatarFile = null;
+    let pendingBannerFile = null;
+    let removeAuthorBanner = false;
+
+    document.getElementById('authorAvatarInput').addEventListener('change', e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      pendingAvatarFile = file;
+      document.getElementById('avatarFileStatus').textContent = 'Выбран: ' + file.name;
+    });
+
+    document.getElementById('authorBannerInput').addEventListener('change', e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      pendingBannerFile = file;
+      removeAuthorBanner = false;
+      document.getElementById('bannerFileStatus').textContent = 'Выбраны обои: ' + file.name;
+    });
+
+    function clearPendingBanner() {
+      pendingBannerFile = null;
+      removeAuthorBanner = true;
+      document.getElementById('authorBannerInput').value = '';
+      document.getElementById('bannerFileStatus').textContent = 'Обои убраны (нажмите Сохранить)';
+    }
+
+    function openAuthorPage(isEdit = false, targetId = null) {
+      if (!requireGoogleAuth()) return;
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id !== 'authorFormPage' && activeTab.id !== 'cardFormPage') {
+        lastPageBeforeForm = activeTab.id;
+      }
+
+      const form = document.getElementById('authorForm');
+      form.reset(); pendingAvatarFile = null; pendingBannerFile = null; removeAuthorBanner = false;
+      document.getElementById('avatarFileStatus').textContent = 'Нажмите, чтобы загрузить GIF / WebP / PNG / JPEG';
+      document.getElementById('bannerFileStatus').textContent = 'Нажмите, чтобы выбрать обои шапки профиля';
+
+      const idToEdit = targetId || (isEdit ? selectedAuthorId : null);
+      if (idToEdit) {
+        const a = authors.find(x => x.id === Number(idToEdit));
+        if (!a || !canEditAuthorProfile(a)) { showToast('Нет прав на редактирование этого профиля'); return; }
+        document.getElementById('authorPageTitle').textContent = 'Настроить профиль';
+        document.getElementById('editAuthorId').value = a.id;
+        document.getElementById('authorNameInput').value = a.name;
+        document.getElementById('authorOrderStatusInput').value = a.orderStatus || 'open';
+        document.getElementById('authorBioInput').value = a.bio || '';
+        document.getElementById('authorContactInput').value = a.contact || '';
+        if (a.banner) document.getElementById('bannerFileStatus').textContent = 'Текущие обои установлены (нажмите ✕ чтобы убрать)';
+      } else {
+        const existingMine = authors.find(a => isMyAuthor(a));
+        if (existingMine && !isCreator()) { showToast('У вас уже есть профиль автора'); openAuthorProfile(existingMine.id); return; }
+        document.getElementById('authorPageTitle').textContent = 'Создать профиль автора';
+        document.getElementById('editAuthorId').value = '';
+        document.getElementById('authorOrderStatusInput').value = 'open';
+      }
+
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('authorFormPage').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('authorForm').addEventListener('submit', async e => {
+      e.preventDefault(); if (!requireGoogleAuth()) return;
+      const btn = document.getElementById('saveAuthorSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Сохранение...';
+      try {
+        const editId = document.getElementById('editAuthorId').value;
+        const name = document.getElementById('authorNameInput').value.trim();
+        const orderStatus = document.getElementById('authorOrderStatusInput').value;
+        const bio = document.getElementById('authorBioInput').value.trim();
+        const contact = document.getElementById('authorContactInput').value.trim();
+        const fbUser = getCurrentUser();
+
+        if (editId) {
+          const idx = authors.findIndex(a => a.id === Number(editId));
+          if (idx === -1 || !canEditAuthorProfile(authors[idx])) throw new Error('Нет прав на изменение профиля');
+          let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          let bannerUrl = pendingBannerFile ? await uploadToImageKit(pendingBannerFile) : (removeAuthorBanner ? '' : (authors[idx].banner || ''));
+          authors[idx] = {
+            ...authors[idx], name, orderStatus, bio, contact,
+            avatar: avatarUrl || authors[idx].avatar,
+            banner: bannerUrl,
+            ownerUid: authors[idx].ownerUid || (isMyAuthor(authors[idx]) ? fbUser.uid : authors[idx].ownerUid),
+            ownerEmail: authors[idx].ownerEmail || (isMyAuthor(authors[idx]) ? (fbUser.email || '').toLowerCase() : authors[idx].ownerEmail)
+          };
+          await saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
+          openAuthorProfile(Number(editId));
+        } else {
+          if (authors.some(a => isMyAuthor(a)) && !isCreator()) throw new Error('Вы уже создали свой профиль');
+          let avatarUrl = pendingAvatarFile ? await uploadToImageKit(pendingAvatarFile) : null;
+          let bannerUrl = pendingBannerFile ? await uploadToImageKit(pendingBannerFile) : '';
+          const newAuthor = {
+            id: Date.now(), ownerUid: fbUser.uid, ownerEmail: (fbUser.email || '').toLowerCase(),
+            name, orderStatus, avatar: avatarUrl || fbUser.photoURL || DEFAULT_AVATAR, banner: bannerUrl, bio, contact, banned: false
+          };
+          authors.push(newAuthor); await saveData(); renderAuthorsSidebar(); openAuthorProfile(newAuthor.id);
+        }
+        showToast('Профиль сохранён');
+      } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить профиль'; }
+    });
+    function toggleCustomRankInput(val) {
+      const box = document.getElementById('customRankField'), inp = document.getElementById('customRankInput');
+      if (val === 'CUSTOM_NEW') { box.style.display = 'block'; inp.required = true; }
+      else { box.style.display = 'none'; inp.required = false; inp.value = ''; }
+    }
+
+    function renderCardRankPills(selectedVal) {
+      const rInput = document.getElementById('cardRankSelect');
+      const rBox = document.getElementById('cardRankPills');
+      rBox.innerHTML = '';
+      const selectRankChip = (val) => {
+        rInput.value = val;
+        rBox.querySelectorAll('.rank-pick-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.val === val));
+        toggleCustomRankInput(val);
+      };
+      ranks.forEach(r => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rank-pick-chip';
+        btn.dataset.val = r.id;
+        btn.textContent = r.name;
+        btn.onclick = () => selectRankChip(r.id);
+        rBox.appendChild(btn);
+      });
+      const customBtn = document.createElement('button');
+      customBtn.type = 'button';
+      customBtn.className = 'rank-pick-chip';
+      customBtn.dataset.val = 'CUSTOM_NEW';
+      customBtn.textContent = '+ Свой ранг';
+      customBtn.onclick = () => selectRankChip('CUSTOM_NEW');
+      rBox.appendChild(customBtn);
+
+      const firstRank = ranks.find(() => true);
+      selectRankChip(selectedVal || (firstRank ? firstRank.id : 'CUSTOM_NEW'));
+    }
+
+    function openUploadPage() {
+      if (!requireGoogleAuth()) return;
+      const myProfile = authors.find(a => isMyAuthor(a));
+      if (myProfile && myProfile.banned && !isCreator()) { showToast('Ваш профиль заблокирован'); return; }
+      const allowedAuthors = authors.filter(a => !a.banned && canEditAuthorProfile(a));
+      if (!allowedAuthors.length) { showToast('Сначала создайте профиль автора'); openAuthorPage(false); return; }
+
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id !== 'authorFormPage' && activeTab.id !== 'cardFormPage') {
+        lastPageBeforeForm = activeTab.id;
+      }
+
+      document.getElementById('cardForm').reset();
+      document.getElementById('editCardId').value = '';
+      document.getElementById('cardPageTitle').textContent = 'Загрузить новую карту';
+      document.getElementById('cardFileField').style.display = 'block';
+      document.getElementById('cardFileInput').required = true;
+      document.getElementById('fileStatusText').textContent = 'Нажмите, чтобы выбрать файл карты';
+
+      const aSel = document.getElementById('cardAuthorSelect'); aSel.innerHTML = '';
+      allowedAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
+      if (selectedAuthorId && allowedAuthors.some(a => a.id === selectedAuthorId)) aSel.value = selectedAuthorId;
+      else if (myProfile) aSel.value = myProfile.id;
+      aSel.disabled = allowedAuthors.length === 1;
+
+      renderCardRankPills(null);
+
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('cardFormPage').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openEditCardPage(cardId) {
+      const card = cards.find(c => c.id === cardId);
+      if (!card || !canManageCard(card)) return;
+
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id !== 'authorFormPage' && activeTab.id !== 'cardFormPage') {
+        lastPageBeforeForm = activeTab.id;
+      }
+
+      document.getElementById('cardForm').reset();
+      document.getElementById('editCardId').value = card.id;
+      document.getElementById('cardPageTitle').textContent = 'Редактировать карту';
+      document.getElementById('cardTitleInput').value = card.title;
+      document.getElementById('cardDescInput').value = card.desc || '';
+      document.getElementById('cardFileField').style.display = 'none';
+      document.getElementById('cardFileInput').required = false;
+
+      const allowedAuthors = authors.filter(a => canEditAuthorProfile(a) || a.id === card.authorId);
+      const aSel = document.getElementById('cardAuthorSelect'); aSel.innerHTML = '';
+      allowedAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
+      aSel.value = card.authorId;
+      aSel.disabled = !isRealModerator() && allowedAuthors.length <= 1;
+
+      renderCardRankPills(card.rankId);
+
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('cardFormPage').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('cardFileInput').addEventListener('change', e => {
+      if (e.target.files[0]) document.getElementById('fileStatusText').textContent = 'Файл: ' + e.target.files[0].name;
+    });
+
+    document.getElementById('cardForm').addEventListener('submit', async e => {
+      e.preventDefault(); if (!requireGoogleAuth()) return;
+      const editCardId = document.getElementById('editCardId').value;
+      const targetAuthorId = Number(document.getElementById('cardAuthorSelect').value);
+      const targetAuthor = authors.find(a => a.id === targetAuthorId);
+      const title = document.getElementById('cardTitleInput').value.trim();
+      const desc = document.getElementById('cardDescInput').value.trim();
+
+      const btn = document.getElementById('cardSubmitBtn'); btn.disabled = true; btn.textContent = 'Сохранение...';
+      try {
+        let rankId = document.getElementById('cardRankSelect').value;
+        if (rankId === 'CUSTOM_NEW') {
+          const newName = document.getElementById('customRankInput').value.trim().toUpperCase();
+          if (!newName) throw new Error('Введите название нового ранга');
+          const existing = ranks.find(r => r.name.toUpperCase() === newName);
+          rankId = existing ? existing.id : ('r_' + Date.now());
+          if (!existing) ranks.push({ id: rankId, name: newName });
+        }
+
+        if (editCardId) {
+          const idx = cards.findIndex(c => c.id === Number(editCardId));
+          if (idx === -1 || !canManageCard(cards[idx])) throw new Error('Нет прав на изменение этой карты');
+          cards[idx] = { ...cards[idx], authorId: targetAuthorId, rankId, title, desc };
+          await saveData();
+          showToast('Карта обновлена');
+        } else {
+          if (!targetAuthor || !canEditAuthorProfile(targetAuthor)) throw new Error('Нет прав на загрузку в этот каталог');
+          const file = document.getElementById('cardFileInput').files[0];
+          if (!file) throw new Error('Выберите файл карты');
+          const cloudUrl = await uploadToImageKit(file);
+          let thumb = ''; try { thumb = await uploadThumb(file); } catch (e) {}
+          cards.unshift({ id: Date.now(), authorId: targetAuthorId, rankId, title, desc, image: cloudUrl, thumb });
+          await saveData();
+          showToast('Карта загружена');
+        }
+
+        renderCards(); renderAuthorsSidebar(); renderModCardsList();
+        cancelFormPage();
+      } catch (err) { showToast('Ошибка: ' + err.message); } finally { btn.disabled = false; btn.textContent = 'Сохранить карту'; }
+    });
+        function deleteCard(cardId) {
+      const card = cards.find(c => c.id === cardId);
+      if (!card || !canManageCard(card) || !confirm('Удалить эту карту?')) return;
+      cards = cards.filter(c => c.id !== cardId); saveData(true); renderCards(); renderAuthorsSidebar(); renderModCardsList();
+      if (selectedAuthorId) renderProfileCards();
+    }
+
+    function toggleBanAuthor(targetId = selectedAuthorId) {
+      const idx = authors.findIndex(a => a.id === targetId);
+      if (idx === -1 || !canModerateAuthor(authors[idx])) { showToast('Нельзя применить санкции к этому профилю'); return; }
+      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
+      if (selectedAuthorId === targetId) updateBanButtonUI(authors[idx]);
+    }
+
+    function updateBanButtonUI(author) {
+      const btn = document.getElementById('banAuthorBtn'), nameEl = document.getElementById('pageProfileName');
+      const crown = isAuthorCreator(author) ? '<span class="owner-tag">👑 Создатель</span>' : '';
+      if (author.banned) { btn.textContent = '✅ Разбанить'; nameEl.innerHTML = esc(author.name) + ' ' + crown + ' <span class="banned-tag">ЗАБАНЕН</span>'; }
+      else { btn.textContent = '🚫 Забанить'; nameEl.innerHTML = esc(author.name) + ' ' + crown; }
+    }
+
+    function deleteAuthorProfile(targetId = selectedAuthorId) {
+      const target = authors.find(a => a.id === targetId);
+      if (!target || !canModerateAuthor(target) || !confirm('Удалить профиль автора и все его карты?')) return;
+      authors = authors.filter(a => a.id !== targetId); cards = cards.filter(c => c.authorId !== targetId);
+      saveData(true); renderAuthorsSidebar(); renderCards(); renderModAuthorsList(); renderModCardsList();
+      if (selectedAuthorId === targetId) closeAuthorProfile();
+    }
+
+    function updateModStats() {
+      const uEl = document.getElementById('modStatUsers');
+      const aEl = document.getElementById('modStatAuthors');
+      const cEl = document.getElementById('modStatCards');
+      const mEl = document.getElementById('modStatMods');
+      if (uEl) uEl.textContent = registeredUsers.length;
+      if (aEl) aEl.textContent = authors.length;
+      if (cEl) cEl.textContent = cards.length;
+      if (mEl) mEl.textContent = moderators.length;
+    }
+
+    function openModWorkspace(tab = 'users') {
+      if (!isRealModerator()) return;
+      document.getElementById('modRoleBadge').textContent = isCreator() ? '👑 Создатель' : '🛡 Модератор';
+      document.getElementById('cfgBrand').value = siteConfig.brand;
+      document.getElementById('cfgHeroTitle').value = siteConfig.heroTitle;
+      document.getElementById('cfgHeroSub').value = siteConfig.heroSub;
+      document.getElementById('cfgGlobalBg').value = siteConfig.globalBg || '';
+      document.getElementById('cfgHeroBg').value = siteConfig.heroBg || '';
+      document.getElementById('cfgCatalogBg').value = siteConfig.catalogBg || '';
+      document.getElementById('cfgTerms').value = siteConfig.terms;
+      updateModStats();
+      renderModUsersList(); renderModsList(); renderModRanksList(); renderModAuthorsList(); renderModCardsList();
+      switchModTab(tab); switchTab('modPage'); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchModTab(tab) {
+      if (tab === 'staff' && !isCreator()) tab = 'users';
+      document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
+      document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
+    }
+    document.getElementById('cfgGlobalBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка общих задних обоев...');
+      try {
+        document.getElementById('cfgGlobalBg').value = await uploadToImageKit(file);
+        showToast('Задние обои загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    document.getElementById('cfgHeroBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка обоев главной...');
+      try {
+        document.getElementById('cfgHeroBg').value = await uploadToImageKit(file);
+        showToast('Обои главной загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    document.getElementById('cfgCatalogBgFile')?.addEventListener('change', async e => {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      showToast('Загрузка обоев каталога...');
+      try {
+        document.getElementById('cfgCatalogBg').value = await uploadToImageKit(file);
+        showToast('Обои каталога загружены — нажмите Сохранить');
+      } catch (err) { showToast('Ошибка: ' + err.message); }
+      e.target.value = '';
+    });
+
+    document.getElementById('siteSettingsForm').addEventListener('submit', e => {
+      e.preventDefault(); if (!isRealModerator()) return;
+      siteConfig.brand = document.getElementById('cfgBrand').value.trim() || 'Custom Cards';
+      siteConfig.heroTitle = document.getElementById('cfgHeroTitle').value.trim();
+      siteConfig.heroSub = document.getElementById('cfgHeroSub').value.trim();
+      siteConfig.globalBg = document.getElementById('cfgGlobalBg').value.trim();
+
+      siteConfig.heroBg = document.getElementById('cfgHeroBg').value.trim();
+      siteConfig.catalogBg = document.getElementById('cfgCatalogBg').value.trim();
+      siteConfig.terms = document.getElementById('cfgTerms').value.trim();
+      saveData(); applySiteConfig(); showToast('Настройки и обои сохранены');
+    });
+    function toggleUserAccountBan(uidOrEmail) {
+      if (!isRealModerator()) return;
+      const idx = registeredUsers.findIndex(u => u.uid === uidOrEmail || u.email === uidOrEmail);
+      if (idx === -1) return;
+      const target = registeredUsers[idx];
+      if ((target.email || '').toLowerCase() === OWNER_EMAIL.toLowerCase()) { showToast('Нельзя заблокировать создателя'); return; }
+      if (!isCreator() && moderators.includes((target.email || '').toLowerCase())) { showToast('Модератор не может банить другого модератора'); return; }
+      registeredUsers[idx].banned = !registeredUsers[idx].banned;
+      saveData();
+      renderModUsersList();
+      showToast(registeredUsers[idx].banned ? 'Аккаунт заблокирован' : 'Аккаунт разблокирован');
+    }
+
+    function renderModUsersList() {
+      const box = document.getElementById('modUsersList'); if (!box) return;
+      const q = (document.getElementById('modUserSearchInput')?.value || '').toLowerCase().trim();
+      const list = registeredUsers.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
+      box.innerHTML = '';
+      if (!list.length) {
+        box.innerHTML = '<div style="color: var(--text-secondary);">Зарегистрированных пользователей пока нет (появятся после входа через Google).</div>';
+        return;
+      }
+      list.forEach(u => {
+        const email = (u.email || '').toLowerCase();
+        const isOwnerUser = email === OWNER_EMAIL.toLowerCase();
+        const isModUser = !isOwnerUser && moderators.includes(email);
+        const linkedAuthor = authors.find(a => (u.uid && a.ownerUid === u.uid) || (email && (a.ownerEmail || '').toLowerCase() === email));
+
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const info = document.createElement('div'); info.className = 'mod-item-info';
+        const img = document.createElement('img'); img.className = 'mod-item-thumb'; img.src = u.avatar || DEFAULT_AVATAR; img.onerror = () => { img.src = DEFAULT_AVATAR; };
+
+        const roleBadge = isOwnerUser ? '👑 Создатель' : (isModUser ? '🛡 Модератор' : (linkedAuthor ? '🎨 Автор: ' + linkedAuthor.name : '👀 Зритель'));
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + esc(u.name || 'Пользователь') + ' • ' + roleBadge + (u.banned ? ' [БАН]' : '') + '</div><div class="mod-item-sub">' + esc(email) + ' • Был(а): ' + esc(u.lastSeen || 'недавно') + '</div>';
+        info.appendChild(img); info.appendChild(meta);
+
+        const acts = document.createElement('div'); acts.className = 'mod-item-actions';
+        if (linkedAuthor) {
+          const profBtn = document.createElement('button'); profBtn.className = 'btn-glass'; profBtn.style.padding = '5px 10px'; profBtn.textContent = 'Профиль';
+          profBtn.onclick = () => openAuthorProfile(linkedAuthor.id);
+          acts.appendChild(profBtn);
+        }
+        if (isCreator() && !isOwnerUser && email) {
+          const modBtn = document.createElement('button'); modBtn.className = 'btn-glass'; modBtn.style.padding = '5px 10px';
+          modBtn.textContent = isModUser ? 'Снять модера' : '🛡 В модераторы';
+          modBtn.onclick = () => { toggleAuthorModerator(email); renderModUsersList(); updateModStats(); };
+          acts.appendChild(modBtn);
+        }
+        if (!isOwnerUser && (isCreator() || !isModUser)) {
+          const banBtn = document.createElement('button'); banBtn.className = 'btn-del-mini';
+          banBtn.textContent = u.banned ? 'Разбанить' : 'Бан';
+          banBtn.onclick = () => toggleUserAccountBan(u.uid || email);
+          acts.appendChild(banBtn);
+        }
+        item.appendChild(info); item.appendChild(acts); box.appendChild(item);
+      });
+    }
+
+    function toggleAuthorModerator(email) {
+      if (!isCreator() || !email) return;
+      const cleanEmail = email.toLowerCase().trim();
+      if (cleanEmail === OWNER_EMAIL.toLowerCase()) return;
+      if (moderators.includes(cleanEmail)) {
+        moderators = moderators.filter(m => m !== cleanEmail);
+        showToast('Права модератора сняты');
+      } else {
+        moderators.push(cleanEmail);
+        showToast('Назначен модератором');
+      }
+      saveData();
+      renderModsList();
+      renderModAuthorsList();
+      renderModUsersList();
+      updateModStats();
+    }
+
+    function renderModsList() {
+      const box = document.getElementById('modsListContainer'); box.innerHTML = '';
+      moderators.forEach(email => {
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const linkedAuthor = authors.find(a => (a.ownerEmail || '').toLowerCase() === email.toLowerCase());
+        const linkedUser = registeredUsers.find(u => (u.email || '').toLowerCase() === email.toLowerCase());
+        const displayName = (linkedAuthor && linkedAuthor.name) || (linkedUser && linkedUser.name) || '';
+        const label = (displayName ? displayName + ' — ' : '') + email + (email === OWNER_EMAIL ? ' (Создатель)' : '');
+        const span = document.createElement('span'); span.textContent = label;
+        item.appendChild(span);
+        if (email !== OWNER_EMAIL && isCreator()) {
+          const btn = document.createElement('button'); btn.className = 'btn-del-mini'; btn.textContent = 'Снять';
+          btn.onclick = () => toggleAuthorModerator(email);
+          item.appendChild(btn);
+        }
+        box.appendChild(item);
+      });
+    }
+
+    function addModerator() {
+      if (!isCreator()) return;
+      const inp = document.getElementById('newModEmailInput'); const email = inp.value.trim().toLowerCase();
+      if (!email || !email.includes('@')) return;
+      if (!moderators.includes(email)) { moderators.push(email); saveData(); renderModsList(); renderModAuthorsList(); renderModUsersList(); updateModStats(); }
+      inp.value = ''; showToast('Модератор назначен');
+    }
+
+    function renderModRanksList() {
+      const box = document.getElementById('ranksEditorList'); box.innerHTML = '';
+      ranks.forEach((r, idx) => {
+        const row = document.createElement('div'); row.className = 'rank-edit-row';
+        const inp = document.createElement('input'); inp.type = 'text'; inp.value = r.name;
+        inp.onchange = e => { if (e.target.value.trim()) { ranks[idx].name = e.target.value.trim(); saveData(); renderCards(); if (selectedAuthorId) renderProfileRanks(); } };
+        row.appendChild(inp);
+        if (ranks.length > 1) {
+          const del = document.createElement('button'); del.type = 'button'; del.className = 'btn-del-mini'; del.textContent = '✕';
+          del.onclick = () => { ranks.splice(idx, 1); saveData(); renderModRanksList(); renderCards(); if (selectedAuthorId) renderProfileRanks(); };
+          row.appendChild(del);
+        }
+        box.appendChild(row);
+      });
+    }
+
+    function addGlobalRank() {
+      if (!isRealModerator()) return;
+      ranks.push({ id: 'r_' + Date.now(), name: 'NEW' }); saveData(); renderModRanksList(); if (selectedAuthorId) renderProfileRanks();
+    }
+    function renderModAuthorsList() {
+      const box = document.getElementById('modAuthorsList'); if (!box) return;
+      const q = (document.getElementById('modAuthorSearchInput')?.value || '').toLowerCase().trim();
+      const list = authors.filter(a => a.name.toLowerCase().includes(q) || (a.ownerEmail || '').toLowerCase().includes(q));
+      box.innerHTML = '';
+      if (!list.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Авторы не найдены</div>'; return; }
+      list.forEach(a => {
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const info = document.createElement('div'); info.className = 'mod-item-info';
+        const img = document.createElement('img'); img.className = 'mod-item-thumb'; img.src = a.avatar || DEFAULT_AVATAR; img.onerror = () => { img.src = DEFAULT_AVATAR; };
+
+        const aEmail = (a.ownerEmail || '').toLowerCase().trim();
+        const isTargetMod = aEmail && moderators.includes(aEmail) && !isAuthorCreator(a);
+        const roleTag = isAuthorCreator(a) ? '👑 ' : (isTargetMod ? '🛡 ' : '');
+
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + roleTag + esc(a.name) + (a.banned ? ' [БАН]' : '') + '</div><div class="mod-item-sub">' + esc(a.ownerEmail || 'Без Email') + ' • Карт: ' + cards.filter(c => c.authorId === a.id).length + '</div>';
+        info.appendChild(img); info.appendChild(meta);
+
+        const acts = document.createElement('div'); acts.className = 'mod-item-actions';
+        const openBtn = document.createElement('button'); openBtn.className = 'btn-glass'; openBtn.style.padding = '5px 10px'; openBtn.textContent = 'Профиль';
+        openBtn.onclick = () => openAuthorProfile(a.id);
+        acts.appendChild(openBtn);
+
+        if (isCreator() && !isAuthorCreator(a) && aEmail) {
+          const modBtn = document.createElement('button');
+          modBtn.className = 'btn-glass';
+          modBtn.style.padding = '5px 10px';
+          modBtn.textContent = isTargetMod ? 'Снять модера' : '🛡 Модер';
+          modBtn.onclick = () => toggleAuthorModerator(aEmail);
+          acts.appendChild(modBtn);
+        }
+
+        if (canEditAuthorProfile(a)) {
+          const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
+          editBtn.onclick = () => openAuthorPage(true, a.id);
+          acts.appendChild(editBtn);
+        }
+        if (canModerateAuthor(a)) {
+          const banBtn = document.createElement('button'); banBtn.className = 'btn-glass'; banBtn.style.padding = '5px 10px'; banBtn.textContent = a.banned ? 'Разбанить' : 'Бан';
+          banBtn.onclick = () => toggleBanAuthor(a.id);
+          const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
+          delBtn.onclick = () => deleteAuthorProfile(a.id);
+          acts.appendChild(banBtn); acts.appendChild(delBtn);
+        }
+        item.appendChild(info); item.appendChild(acts); box.appendChild(item);
+      });
+    }
+
+    function renderModCardsList() {
+      const box = document.getElementById('modCardsList'); if (!box) return;
+      const q = (document.getElementById('modCardSearchInput')?.value || '').toLowerCase().trim();
+      const list = cards.filter(c => {
+        const a = authors.find(x => x.id === c.authorId);
+        return c.title.toLowerCase().includes(q) || (a && a.name.toLowerCase().includes(q));
+      });
+      box.innerHTML = '';
+      if (!list.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Карты не найдены</div>'; return; }
+      list.forEach(c => {
+        const a = authors.find(x => x.id === c.authorId) || { name: 'Автор' };
+        const r = ranks.find(x => x.id === c.rankId) || { name: 'R' };
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const info = document.createElement('div'); info.className = 'mod-item-info';
+        const thumb = document.createElement('img'); thumb.className = 'mod-item-thumb'; thumb.src = c.image;
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + esc(c.title) + ' [' + esc(r.name) + ']</div><div class="mod-item-sub">Автор: ' + esc(a.name) + '</div>';
+        info.appendChild(thumb); info.appendChild(meta);
+
+        const acts = document.createElement('div'); acts.className = 'mod-item-actions';
+        if (canManageCard(c)) {
+          const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
+          editBtn.onclick = () => openEditCardPage(c.id);
+          const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
+          delBtn.onclick = () => deleteCard(c.id);
+          acts.appendChild(editBtn); acts.appendChild(delBtn);
+        } else {
+          const lock = document.createElement('span'); lock.className = 'mod-item-sub'; lock.textContent = '🔒 Каталог создателя';
+          acts.appendChild(lock);
+        }
+        item.appendChild(info); item.appendChild(acts); box.appendChild(item);
+      });
+    }
+
+    async function restoreCardsFromStorage() {
+      if (!isCreator()) return;
+      const btn = document.getElementById('restoreMediaBtn');
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ Сканирование...'; }
+      try {
+        const res = await fetch(SB_URL + '/storage/v1/object/list/media', {
+          method: 'POST',
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prefix: '', limit: 1000, offset: 0, sortBy: { column: 'created_at', order: 'desc' } })
+        });
+        if (!res.ok) throw new Error('Не удалось прочитать папку media (код ' + res.status + ')');
+        const files = await res.json();
+        const mediaFiles = (files || []).filter(f => f && f.name && /\.(png|jpg|jpeg|webp|webm|gif)$/i.test(f.name) && f.name.startsWith('card_'));
+        if (!mediaFiles.length) { showToast('В папке media нет файлов карт'); return; }
+
+        let targetAuthor = authors.find(a => isAuthorCreator(a)) || authors.find(() => true);
+        if (!targetAuthor) {
+          const u = getCurrentUser();
+          targetAuthor = {
+            id: Date.now(), ownerUid: u ? u.uid : '', ownerEmail: OWNER_EMAIL,
+            name: (u && u.displayName) || 'Создатель', avatar: (u && u.photoURL) || DEFAULT_AVATAR,
+            orderStatus: 'open', bio: 'Восстановленный профиль', contact: OWNER_EMAIL, banned: false
+          };
+          authors.push(targetAuthor);
+        }
+
+        const defaultRank = ranks.find(() => true) || { id: 'r1', name: 'S' };
+        const existingUrls = new Set(cards.map(c => c.image));
+        let added = 0;
+
+        mediaFiles.forEach((f, idx) => {
+          const publicUrl = SB_URL + '/storage/v1/object/public/media/' + f.name;
+          if (!existingUrls.has(publicUrl)) {
+            cards.push({ id: Date.now() + idx + 1, authorId: targetAuthor.id, rankId: defaultRank.id, title: 'Карта #' + (cards.length + 1), desc: '', image: publicUrl });
+            added++;
+          }
+        });
+
+        if (added > 0) {
+          await saveData();
+          renderAuthorsSidebar(); renderCards(); renderModCardsList(); updateModStats();
+          showToast('Восстановлено карт: ' + added);
+        } else {
+          showToast('Все файлы из Storage уже есть в каталоге');
+        }
+      } catch (err) {
+        showToast('Ошибка восстановления: ' + err.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '♻ Восстановить из Storage'; }
+      }
+    }
+
+    applySiteConfig(); updateStats(); renderAuthorsSidebar(); renderCards(); handleInitialDeepLink();
+  </script>
+</body>
+</html>
