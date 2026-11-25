@@ -1070,18 +1070,8 @@
       return file;
     }
 
-    async function uploadThumb(file) {
-      if (!file.type.startsWith('image/') || file.type === 'image/gif') return '';
-      const bmp = await createImageBitmap(file);
-      const s = Math.min(1, 480 / Math.max(bmp.width, bmp.height));
-      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
-      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-      const blob = await new Promise(r => c.toBlob(r, 'image/webp', 0.8));
-      if (!blob) return '';
-      const fname = 'thumb_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.webp';
-      const fd = new FormData(); fd.append('', blob, fname);
-      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, { method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true', 'cache-control': 'max-age=31536000' }, body: fd }, 3, 30000);
-      return res.ok ? SB_URL + '/storage/v1/object/public/media/' + fname : '';
+        async function uploadThumb(file) {
+      return await uploadToImageKit(file);
     }
 
         async function uploadToImageKit(file) {
