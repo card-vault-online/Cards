@@ -275,6 +275,14 @@
       .scene-3d { height: 370px; }
       .card-3d-mesh { width: 270px; height: 360px; }
     }
+  .cat-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .cat-toolbar input,.cat-toolbar select{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-primary);border-radius:12px;padding:9px 12px;font-size:.88rem}
+    .cat-toolbar input{flex:1 1 220px}
+    #catFavBtn.on{background:var(--accent);color:var(--accent-text)}
+    .card-stage{position:relative}
+    .fav-btn{position:absolute;top:10px;right:10px;z-index:6;width:32px;height:32px;border-radius:50%;border:1px solid var(--border-glass);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;font-size:.95rem}
+    .fav-btn.on{color:#f43f5e}
+    @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
@@ -346,7 +354,14 @@
               <button class="btn-primary" style="padding: 9px 18px; border-radius: 14px;" onclick="openUploadPage()">+ Загрузить карту</button>
             </div>
           </div>
+          <div class="cat-toolbar">
+            <input type="search" id="catSearch" placeholder="🔍 Поиск по картам, описанию, автору..." aria-label="Поиск по картам" oninput="setCatView('q', this.value)">
+            <select id="catRank" aria-label="Ранг" onchange="setCatView('rank', this.value)"></select>
+            <select id="catSort" aria-label="Сортировка" onchange="setCatView('sort', this.value)"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="title">По названию</option></select>
+            <button type="button" class="btn-glass" id="catFavBtn" onclick="setCatView('fav', !catView.fav)">♥ Избранное</button>
+          </div>
           <div class="cards-grid" id="cardsGrid"></div>
+          <div style="text-align:center;margin-top:18px"><button type="button" class="btn-glass" id="catMore" style="display:none" onclick="catView.limit += 24; renderCards()">Показать ещё</button></div>
         </div>
       </div>
     </section>
@@ -599,6 +614,7 @@
       <div class="viewer-top-bar">
         <div class="drag-hint">👆 Потяните на 360°</div>
         <button type="button" class="holo-toggle-btn active" id="holoToggleBtn" onclick="toggleHoloGlare()">✨ Блик: Вкл</button>
+        <button type="button" class="holo-toggle-btn" id="shareCardBtn" onclick="shareCard()">🔗 Поделиться</button>
       </div>
       <div class="scene-3d holo-on" id="scene3d">
         <div class="card-3d-mesh" id="card3dMesh">
@@ -1053,6 +1069,20 @@
       }
 
       return file;
+    }
+
+    async function uploadThumb(file) {
+      if (!file.type.startsWith('image/') || file.type === 'image/gif') return '';
+      const bmp = await createImageBitmap(file);
+      const s = Math.min(1, 480 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise(r => c.toBlob(r, 'image/webp', 0.8));
+      if (!blob) return '';
+      const fname = 'thumb_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.webp';
+      const fd = new FormData(); fd.append('', blob, fname);
+      const res = await fetchWithRetry(SB_URL + '/storage/v1/object/media/' + fname, { method: 'POST', headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'x-upsert': 'true', 'cache-control': 'max-age=31536000' }, body: fd }, 3, 30000);
+      return res.ok ? SB_URL + '/storage/v1/object/public/media/' + fname : '';
     }
 
     async function uploadToImageKit(file) {
@@ -1652,6 +1682,11 @@
       pillRank.className = 'pill-rank';
       pillRank.textContent = rankObj.name;
       stage.appendChild(pillRank);
+      const favBtn = document.createElement('button');
+      favBtn.type = 'button'; favBtn.className = 'fav-btn' + (getFavs().includes(card.id) ? ' on' : '');
+      favBtn.textContent = '♥'; favBtn.setAttribute('aria-label', 'В избранное');
+      favBtn.onclick = e => { e.stopPropagation(); toggleFav(card.id); };
+      stage.appendChild(favBtn);
 
       if (canManageCard(card)) {
         const modBox = document.createElement('div');
@@ -1700,7 +1735,8 @@
         mediaEl = document.createElement('img');
         mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
         mediaEl.alt = card.title || '';
-        mediaEl.src = card.image;
+        mediaEl.src = card.thumb || card.image;
+        if (card.thumb) mediaEl.onerror = () => { mediaEl.onerror = null; mediaEl.src = card.image; };
         stage.appendChild(mediaEl);
       }
 
@@ -1733,19 +1769,35 @@
       return cell;
     }
 
+    let catView = { q: '', rank: '', sort: 'new', fav: false, limit: 24 };
+    function getFavs() { try { return JSON.parse(localStorage.getItem('cc_favs')) || []; } catch (e) { return []; } }
+    function toggleFav(id) { const f = getFavs(), i = f.indexOf(id); if (i < 0) f.push(id); else f.splice(i, 1); localStorage.setItem('cc_favs', JSON.stringify(f)); renderCards(); }
+    function setCatView(k, v) { catView[k] = v; catView.limit = 24; renderCards(); }
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
       const mod = isRealModerator();
-      const visible = cards.filter(c => {
+      const sel = document.getElementById('catRank');
+      if (sel) { sel.innerHTML = '<option value="">Все ранги</option>' + ranks.map(r => '<option value="' + esc(r.id) + '">' + esc(r.name) + '</option>').join(''); sel.value = catView.rank; }
+      document.getElementById('catFavBtn').classList.toggle('on', catView.fav);
+      const favs = getFavs(), q = catView.q.trim().toLowerCase();
+      let visible = cards.filter(c => {
         const a = authors.find(x => x.id === c.authorId);
-        return !a || !a.banned || mod;
+        if (a && a.banned && !mod) return false;
+        if (catView.rank && String(c.rankId) !== catView.rank) return false;
+        if (catView.fav && !favs.includes(c.id)) return false;
+        if (q && !((c.title || '') + ' ' + (c.desc || '') + ' ' + (a ? a.name : '')).toLowerCase().includes(q)) return false;
+        return true;
       });
+      if (catView.sort === 'old') visible.sort((x, y) => x.id - y.id);
+      else if (catView.sort === 'title') visible.sort((x, y) => (x.title || '').localeCompare(y.title || '', 'ru'));
+      else visible.sort((x, y) => y.id - x.id);
       grid.innerHTML = '';
+      document.getElementById('catMore').style.display = visible.length > catView.limit ? '' : 'none';
       if (!visible.length) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 22px;">В каталоге пока нет карт. Станьте первым автором и загрузите свою работу!</div>';
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 48px 20px; color: var(--text-secondary); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 22px;">Карт не найдено.</div>';
         return;
       }
-      visible.forEach(card => grid.appendChild(buildCardElement(card)));
+      visible.slice(0, catView.limit).forEach(card => grid.appendChild(buildCardElement(card)));
     }
 
     function renderProfileCards() {
@@ -1763,6 +1815,14 @@
     const card3dMesh = document.getElementById('card3dMesh');
     let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false, wasDragged = false;
     let holoEnabled = true;
+
+    function shareCard() {
+      if (!activeViewerCardId) return;
+      const url = SB_URL + '/functions/v1/share?card=' + encodeURIComponent(activeViewerCardId);
+      const done = () => showToast('Ссылка скопирована');
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt('Скопируйте ссылку:', url));
+      else prompt('Скопируйте ссылку:', url);
+    }
 
     function toggleHoloGlare() {
       holoEnabled = !holoEnabled;
@@ -2160,7 +2220,8 @@
           const file = document.getElementById('cardFileInput').files[0];
           if (!file) throw new Error('Выберите файл карты');
           const cloudUrl = await uploadToImageKit(file);
-          cards.unshift({ id: Date.now(), authorId: targetAuthorId, rankId, title, desc, image: cloudUrl });
+          let thumb = ''; try { thumb = await uploadThumb(file); } catch (e) {}
+          cards.unshift({ id: Date.now(), authorId: targetAuthorId, rankId, title, desc, image: cloudUrl, thumb });
           await saveData();
           showToast('Карта загружена');
         }
