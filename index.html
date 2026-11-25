@@ -712,15 +712,19 @@
       if (typeof isRealModerator === 'function' && isRealModerator()) return true;
       const u = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
       if (!u || !u.uid) return false;
-      const myAuthor = typeof authorsData !== 'undefined' ? authorsData.find(a => a.ownerUid === u.uid) : null;
+         const myAuthor = typeof authors !== 'undefined' ? authors.find(a => a.ownerUid === u.uid) : null;
       if (!myAuthor) return false;
       const cardCell = el.closest('.card-cell[data-id]');
       if (cardCell && typeof cardsData !== 'undefined') {
         const card = cardsData.find(c => c.id === cardCell.dataset.id);
         if (card && card.authorId === myAuthor.id) return true;
       }
-      if (el.closest('#cardViewerModal') && typeof currentViewerCardId !== 'undefined' && currentViewerCardId) {
-        const card = cardsData.find(c => c.id === currentViewerCardId);
+            if (cardCell && typeof cards !== 'undefined') {
+        const card = cards.find(c => String(c.id) === String(cardCell.dataset.id));
+        if (card && card.authorId === myAuthor.id) return true;
+      }
+      if (el.closest('#viewerModal') && typeof activeViewerCardId !== 'undefined' && activeViewerCardId) {
+        const card = cards.find(c => String(c.id) === String(activeViewerCardId));
         if (card && card.authorId === myAuthor.id) return true;
       }
       return false;
@@ -1468,7 +1472,7 @@
               'https:\x2f\x2fsroieqeosjjhkvkihubo.supabase.co\x2fstorage\x2fv1\x2fobject\x2fpublic\x2fmedia\x2f',
               'https:\x2f\x2fik.imagekit.io\x2fe879ksw3s\x2f'
             )
-            .replaceAll(/(\.webm)(\?[^"']*)?/gi, '$1?tr=orig-true');
+                     .replaceAll('.webm"', '.webm?tr=orig-true"');
           const d = JSON.parse(rawJson);
           if (d.ranks) ranks = d.ranks;
           if (d.authors) authors = d.authors;
@@ -2222,7 +2226,7 @@
           const file = document.getElementById('cardFileInput').files[0];
           if (!file) throw new Error('Выберите файл карты');
           const cloudUrl = await uploadToImageKit(file);
-          let thumb = ''; try { thumb = await uploadThumb(file); } catch (e) {}
+          const thumb = /\.webm(\?|$)/i.test(cloudUrl) ? '' : (cloudUrl + '?tr=w-480');
           cards.unshift({ id: Date.now(), authorId: targetAuthorId, rankId, title, desc, image: cloudUrl, thumb });
           await saveData();
           showToast('Карта загружена');
