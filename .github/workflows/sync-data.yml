@@ -38,7 +38,7 @@ jobs:
                   return OG_DEFAULT
               base = url.split('?')[0]
               if re.search(r'\.(mp4|webm|mov)$', base, re.I):
-                  return base + '/ik-thumbnail.jpg'
+                  return OG_DEFAULT  # видео: без ik-thumbnail, он тратит VPU
               if 'ik.imagekit.io' in base:
                   return '%s?tr=w-%d,f-jpg' % (base, w)
               return url
