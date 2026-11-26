@@ -1264,7 +1264,7 @@
       "email": "musicrelaxrmi@gmail.com",
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJGC8jZlH7ym_cWdSDoeyt05A8f3H-f3dKOBH7C16nK1io9sOM=s96-c",
       "banned": false,
-      "lastSeen": "24.11.2026, 17:42",
+      "lastSeen": "26.11.2026, 17:46",
       "firstSeen": "24.11.2026, 17:42"
     }
   ],
@@ -1278,6 +1278,13 @@
     "globalBg": "https://ik.imagekit.io/e879ksw3s/card_1795650068929_62828.webp"
   },
   "log": [
+    {
+      "id": "1795704468449_529",
+      "t": 1795704468449,
+      "who": "Li Moon",
+      "action": "Удалил карту",
+      "detail": "ЩШР"
+    },
     {
       "id": "1795703662769_948",
       "t": 1795703662770,
