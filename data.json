@@ -1120,7 +1120,7 @@
       "id": 1795619070886,
       "desc": "",
       "image": "https://ik.imagekit.io/e879ksw3s/card_1795619069634_68951.webp",
-      "title": "Calamitas",
+      "title": "Calamitas.",
       "rankId": "r2",
       "authorId": 1795527217651
     }
@@ -1278,6 +1278,13 @@
     "globalBg": "https://ik.imagekit.io/e879ksw3s/card_1795650068929_62828.webp"
   },
   "log": [
+    {
+      "id": "1795715461711_79",
+      "t": 1795715461711,
+      "who": "Li Moon",
+      "action": "Изменил карту",
+      "detail": "Calamitas → Calamitas."
+    },
     {
       "id": "1795704468449_529",
       "t": 1795704468449,
