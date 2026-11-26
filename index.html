@@ -546,7 +546,6 @@
         <div id="modPanel-cards" class="mod-panel">
           <div class="mod-toolbar">
             <input type="text" class="mod-search-input" id="modCardSearchInput" placeholder="🔍 Поиск карты по названию или автору..." oninput="renderModCardsList()">
-            <button type="button" class="btn-glass owner-only" id="restoreMediaBtn" onclick="restoreCardsFromStorage()">♻ Восстановить из Storage</button>
           </div>
           <div id="modCardsList"></div>
         </div>
@@ -1088,7 +1087,9 @@
       const ext = (readyFile.name.split('.').pop() || 'webp').toLowerCase();
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
-         const signRes = await fetch('https:\x2f\x2fcards-api-1bl.pages.dev\x2fsign');
+         let signRes;
+         try { signRes = await fetch(SB_URL + '/sign'); }
+         catch (e) { throw new Error("Сервер загрузки недоступен (возможно, блокировка у провайдера). Включите VPN и повторите."); }
       if (!signRes.ok) throw new Error("Не удалось получить подпись загрузки");
       const { token, expire, signature } = await signRes.json();
 
@@ -1458,14 +1459,37 @@
       }
     }
 
+    async function loadCloudRows() {
+      // 1) основной API (с коротким таймаутом, чтобы без доступа не ждать долго)
+      const apiDownUntil = Number(sessionStorage.getItem('cc_api_down') || 0);
+      if (Date.now() > apiDownUntil) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 5000);
+        try {
+          const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+            signal: ctrl.signal
+          });
+          clearTimeout(timer);
+          if (res.ok) { sessionStorage.removeItem('cc_api_down'); return await res.json(); }
+        } catch (e) { clearTimeout(timer); }
+        sessionStorage.setItem('cc_api_down', String(Date.now() + 10 * 60 * 1000));
+      }
+      // 2) запасной вариант: data.json рядом с сайтом (на том же домене GitHub Pages)
+      const r2 = await fetch('data.json?v=' + Date.now(), { cache: 'no-store' });
+      if (!r2.ok) throw new Error('data.json HTTP ' + r2.status);
+      const d = await r2.json();
+      if (!sessionStorage.getItem('cc_fallback_toast')) {
+        sessionStorage.setItem('cc_fallback_toast', '1');
+        showToast('Сервер данных недоступен, показана резервная копия (обновляется раз в 15 минут)');
+      }
+      return [{ data: d }];
+    }
+
     async function syncFromCloud() {
       if (sbSaving || (Date.now() - sbLastSaveTime < 6000)) return;
       try {
-        const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
-          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-        });
-             if (!res.ok) throw new Error('HTTP ' + res.status);
-        const rows = await res.json();
+        const rows = await loadCloudRows();
                         if (rows && rows.length && rows.at(0).data) {
           const rawJson = JSON.stringify(rows.at(0).data)
             .replaceAll(
@@ -2550,58 +2574,6 @@
         }
         item.appendChild(info); item.appendChild(acts); box.appendChild(item);
       });
-    }
-
-    async function restoreCardsFromStorage() {
-      if (!isCreator()) return;
-      const btn = document.getElementById('restoreMediaBtn');
-      if (btn) { btn.disabled = true; btn.textContent = '⏳ Сканирование...'; }
-      try {
-        const res = await fetch(SB_URL + '/storage/v1/object/list/media', {
-          method: 'POST',
-          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prefix: '', limit: 1000, offset: 0, sortBy: { column: 'created_at', order: 'desc' } })
-        });
-        if (!res.ok) throw new Error('Не удалось прочитать папку media (код ' + res.status + ')');
-        const files = await res.json();
-        const mediaFiles = (files || []).filter(f => f && f.name && /\.(png|jpg|jpeg|webp|webm|gif)$/i.test(f.name) && f.name.startsWith('card_'));
-        if (!mediaFiles.length) { showToast('В папке media нет файлов карт'); return; }
-
-        let targetAuthor = authors.find(a => isAuthorCreator(a)) || authors.find(() => true);
-        if (!targetAuthor) {
-          const u = getCurrentUser();
-          targetAuthor = {
-            id: Date.now(), ownerUid: u ? u.uid : '', ownerEmail: OWNER_EMAIL,
-            name: (u && u.displayName) || 'Создатель', avatar: (u && u.photoURL) || DEFAULT_AVATAR,
-            orderStatus: 'open', bio: 'Восстановленный профиль', contact: OWNER_EMAIL, banned: false
-          };
-          authors.push(targetAuthor);
-        }
-
-        const defaultRank = ranks.find(() => true) || { id: 'r1', name: 'S' };
-        const existingUrls = new Set(cards.map(c => c.image));
-        let added = 0;
-
-        mediaFiles.forEach((f, idx) => {
-          const publicUrl = SB_URL + '/storage/v1/object/public/media/' + f.name;
-          if (!existingUrls.has(publicUrl)) {
-            cards.push({ id: Date.now() + idx + 1, authorId: targetAuthor.id, rankId: defaultRank.id, title: 'Карта #' + (cards.length + 1), desc: '', image: publicUrl });
-            added++;
-          }
-        });
-
-        if (added > 0) {
-          await saveData();
-          renderAuthorsSidebar(); renderCards(); renderModCardsList(); updateModStats();
-          showToast('Восстановлено карт: ' + added);
-        } else {
-          showToast('Все файлы из Storage уже есть в каталоге');
-        }
-      } catch (err) {
-        showToast('Ошибка восстановления: ' + err.message);
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = '♻ Восстановить из Storage'; }
-      }
     }
 
     applySiteConfig(); updateStats(); renderAuthorsSidebar(); renderCards(); handleInitialDeepLink();
