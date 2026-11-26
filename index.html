@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Custom Cards — Галерея кастомных карт</title>
+  <meta name="description" content="Галерея кастомных карт: смотри работы авторов, находи исполнителей и заказывай свою карту.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Custom Cards">
+  <meta property="og:title" content="Custom Cards — Галерея кастомных карт">
+  <meta property="og:description" content="Смотри работы авторов, находи исполнителей и заказывай свою карту.">
+  <meta property="og:image" content="https://card-vault-online.github.io/Cards/og-image.png">
+  <meta property="og:url" content="https://card-vault-online.github.io/Cards/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://card-vault-online.github.io/Cards/og-image.png">
   <link rel="icon" id="siteFavicon" type="image/png" href="">
   <script>
     (function() {
@@ -1467,16 +1476,12 @@
 
     function copyAuthorShareLink() {
       if (!selectedAuthorId) return;
-      const url = new URL(window.location.href);
-      url.search = '?author=' + selectedAuthorId;
-      copyTextToClipboard(url.toString(), 'Ссылка на профиль скопирована!');
+      copyTextToClipboard(SHARE_BASE + 'a/' + encodeURIComponent(selectedAuthorId) + '/', 'Ссылка на профиль скопирована!');
     }
 
     function copyCardShareLink() {
       if (!activeViewerCardId) return;
-      let link;
-      if (SHARE_BASE) link = SHARE_BASE + '?card=' + encodeURIComponent(activeViewerCardId);
-      else { const url = new URL(window.location.href); url.search = '?card=' + activeViewerCardId; link = url.toString(); }
+      const link = SHARE_BASE + 'c/' + encodeURIComponent(activeViewerCardId) + '/';
       copyTextToClipboard(link, 'Персональная ссылка на карту скопирована!');
     }
 
@@ -1916,7 +1921,7 @@
     let isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0, rafPending = false, wasDragged = false;
     let holoEnabled = true;
 
-   const SHARE_BASE = 'https:\x2f\x2fcards-share.musicrelaxrmi.workers.dev\x2f';
+   const SHARE_BASE = 'https://card-vault-online.github.io/Cards/';
     function toggleHoloGlare() {
       holoEnabled = !holoEnabled;
       scene3d.classList.toggle('holo-on', holoEnabled);
