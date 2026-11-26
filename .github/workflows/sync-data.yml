@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: sync-data
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -43,7 +47,7 @@ jobs:
           def video_preview(url):
               """Первый кадр видео -> p/<hash>.jpg (кэшируется, ImageKit VPU не тратит)."""
               base = url.split('?')[0]
-              key = hashlib.md5((base + '|sq640').encode()).hexdigest()[:16]
+              key = hashlib.md5((base + '|sq640b').encode()).hexdigest()[:16]
               out = 'p/%s.jpg' % key
               if os.path.exists(out):
                   return BASE + out
@@ -52,9 +56,9 @@ jobs:
                   req = urllib.request.Request(base, headers={'User-Agent': 'Mozilla/5.0'})
                   with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f:
                       shutil.copyfileobj(r, f)
-                  flt = ('color=c=0x0d0d11:s=640x640[bg];'
-                         '[0:v]scale=640:640:force_original_aspect_ratio=decrease[fg];'
-                         '[bg][fg]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p')
+                  flt = ('[0:v]scale=640:640:force_original_aspect_ratio=decrease,split[a][b];'
+                         '[a]drawbox=c=0x0d0d11:t=fill[bg];[bg][b]overlay=format=auto,'
+                         'pad=640:640:(ow-iw)/2:(oh-ih)/2:color=0x0d0d11,format=yuv420p')
                   subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', '0.3', '-i', tmp,
                                   '-filter_complex', flt, '-frames:v', '1', '-q:v', '6', out],
                                  check=True, timeout=120)
@@ -153,4 +157,11 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || (git commit -m "Update data and share pages" && git push)
+          if ! git diff --cached --quiet; then
+            git commit -m "Update data and share pages"
+            for i in 1 2 3 4; do
+              git push && exit 0
+              git pull --rebase -X theirs origin main
+            done
+            exit 1
+          fi
