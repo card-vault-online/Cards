@@ -1464,7 +1464,7 @@
         const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
           headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
         });
-        if (!res.ok) return;
+             if (!res.ok) throw new Error('HTTP ' + res.status);
         const rows = await res.json();
                         if (rows && rows.length && rows.at(0).data) {
           const rawJson = JSON.stringify(rows.at(0).data)
@@ -1500,7 +1500,11 @@
           if (selectedAuthorId) renderProfileCards();
           handleInitialDeepLink();
         }
-      } catch (e) {}
+         } catch (e) {
+     if (!authors.length && !cards.length) {
+       setTimeout(syncFromCloud, 2500);
+     }
+   }
     }
 
     syncFromCloud();
