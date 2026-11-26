@@ -764,6 +764,16 @@
       clearTimeout(window._toastTimer);
       window._toastTimer = setTimeout(() => box.classList.remove('show'), 3600);
     }
+    // Защита карт от скачивания: true = запрещены правый клик, перетаскивание, Ctrl+S (для чужих карт). false = выключена.
+    const PROTECT_MEDIA = false;
+    // Уменьшенная копия для сетки/списков (ImageKit, только картинки): экономит трафик
+    function gridThumb(card) {
+      if (!card) return '';
+      if (card.thumb) return card.thumb;
+      const u = card.image || '';
+      if (/ik\.imagekit\.io/.test(u) && !/\.(webm|mp4|mov)(\?|$)/i.test(u) && !u.includes('?')) return u + '?tr=w-480';
+      return u;
+    }
     // Защита карт от скачивания чужими пользователями (сам автор и модераторы могут скачивать свои работы)
     function canDownloadTargetCard(el) {
       if (typeof isRealModerator === 'function' && isRealModerator()) return true;
@@ -788,6 +798,7 @@
     }
 
     document.addEventListener('contextmenu', e => {
+      if (!PROTECT_MEDIA) return;
       if (canDownloadTargetCard(e.target)) return;
       if (e.target.closest('.card-cell, .card-stage, .viewer-card, .viewer-backdrop, .avatar-box, img, video')) {
         e.preventDefault();
@@ -796,6 +807,7 @@
     });
 
     document.addEventListener('dragstart', e => {
+      if (!PROTECT_MEDIA) return;
       if (canDownloadTargetCard(e.target)) return;
       if (e.target.closest('.card-cell, .card-stage, .viewer-card, img, video')) {
         e.preventDefault();
@@ -803,6 +815,7 @@
     });
 
     document.addEventListener('keydown', e => {
+      if (!PROTECT_MEDIA) return;
       if (typeof isRealModerator === 'function' && isRealModerator()) return;
       if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'ы', 'г'].includes(e.key.toLowerCase())) {
         e.preventDefault();
@@ -811,6 +824,7 @@
     });
 
     new MutationObserver(() => {
+      if (!PROTECT_MEDIA) return;
       document.querySelectorAll('video').forEach(v => {
         v.setAttribute('controlsList', 'nodownload noplaybackrate');
         v.setAttribute('disablePictureInPicture', '');
@@ -1146,8 +1160,10 @@
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
          let signRes;
-         try { signRes = await fetch(SB_URL + '/sign'); }
+         try { signRes = await fetch(SB_URL + '/sign', { headers: await authHeader() }); }
          catch (e) { throw new Error("Сервер загрузки недоступен (возможно, блокировка у провайдера). Включите VPN и повторите."); }
+      if (signRes.status === 401) throw new Error("Для загрузки нужно войти через Google");
+      if (signRes.status === 403) throw new Error("Аккаунт заблокирован, загрузка недоступна");
       if (!signRes.ok) throw new Error("Не удалось получить подпись загрузки");
       const { token, expire, signature } = await signRes.json();
 
@@ -1344,6 +1360,8 @@
     if (window.firebase) {
       firebase.auth().onAuthStateChanged(user => {
         if (user) trackLoggedInUser(user);
+        // после входа/выхода подтягиваем данные заново: модераторам нужна полная версия, остальным урезанная
+        setTimeout(syncFromCloud, 400); setTimeout(syncFromCloud, 7000);
         updateAuthUI();
         renderAuthorsSidebar();
         renderCards();
@@ -1384,6 +1402,15 @@
     let modLog = JSON.parse(localStorage.getItem('cc_log') || '[]');
     let modSel = new Set();
 
+    // Токен входа через Google: сервер по нему проверяет, кто сохраняет данные и что ему разрешено
+    async function authHeader() {
+      try {
+        const u = getCurrentUser();
+        if (u && u.getIdToken) return { 'X-Auth-Token': await u.getIdToken() };
+      } catch (e) {}
+      return {};
+    }
+
     function sbHeaders() {
       return {
         'apikey': SB_KEY,
@@ -1403,7 +1430,7 @@
       sbLastSaveTime = Date.now();
       try {
         const getRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
-          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, ...(await authHeader()) },
           cache: 'no-store'
         });
         if (!getRes.ok) throw new Error('не удалось получить данные с сервера (' + getRes.status + ')');
@@ -1441,12 +1468,18 @@
         const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig, log: modLog };
         const postRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
           method: 'POST',
-          headers: sbHeaders(),
+          headers: { ...sbHeaders(), ...(await authHeader()), 'X-View': window.cloudViewFull ? 'full' : 'public' },
           body: JSON.stringify([{ id: 'main', data: payload }])
         });
         if (!postRes.ok) {
           const errData = await postRes.json().catch(() => ({}));
-          throw new Error(errData.message || ('Ошибка базы: ' + postRes.status));
+          if (postRes.status === 401) throw new Error('Нужен вход через Google. Войдите в аккаунт и повторите.');
+          throw new Error(errData.error || errData.message || ('Ошибка базы: ' + postRes.status));
+        }
+        const out = await postRes.json().catch(() => null);
+        if (out && out[0] && out[0].rejected > 0) {
+          showToast('Часть изменений не принята сервером (нет прав или данные уже изменились).');
+          setTimeout(syncFromCloud, 6500);
         }
       } catch (e) {
         showToast('Ошибка сохранения: ' + e.message);
@@ -1532,7 +1565,7 @@
         const timer = setTimeout(() => ctrl.abort(), 9000);
         try {
           const res = await fetch(SB_URL + '/rest/v1/vault_state?id=eq.main&select=data', {
-            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY },
+            headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, ...(await authHeader()) },
             cache: 'no-store',
             signal: ctrl.signal
           });
@@ -1577,6 +1610,7 @@
             )
             .replaceAll('.webm"', '.webm?tr=orig-true"');
           const d = JSON.parse(rawJson);
+          window.cloudViewFull = (d._view === 'full'); // полные данные (с почтами) получают только модераторы и создатель
           if (d.ranks) ranks = d.ranks;
           if (d.authors) authors = d.authors;
           if (d.cards) cards = d.cards;
@@ -1861,8 +1895,8 @@
         mediaEl = document.createElement('img');
         mediaEl.loading = 'lazy'; mediaEl.decoding = 'async';
         mediaEl.alt = card.title || '';
-        mediaEl.src = card.thumb || card.image;
-        if (card.thumb) mediaEl.onerror = () => { mediaEl.onerror = null; mediaEl.src = card.image; };
+        mediaEl.src = gridThumb(card);
+        if (gridThumb(card) !== card.image) mediaEl.onerror = () => { mediaEl.onerror = null; mediaEl.src = card.image; };
         stage.appendChild(mediaEl);
       }
 
@@ -2755,7 +2789,7 @@
           cb.onchange = () => { modToggleSel(c.id, cb.checked); };
           info.appendChild(cb);
         }
-        const thumb = document.createElement('img'); thumb.className = 'mod-item-thumb'; thumb.src = c.thumb || c.image;
+        const thumb = document.createElement('img'); thumb.className = 'mod-item-thumb'; thumb.src = gridThumb(c);
         const meta = document.createElement('div'); meta.className = 'mod-item-meta';
         meta.innerHTML = '<div class="mod-item-title">' + esc(c.title) + ' [' + esc(r.name) + ']' + (c.hidden ? ' 🙈' : '') + '</div><div class="mod-item-sub">Автор: ' + esc(a.name) + (c.hidden ? ' • скрыта' : '') + '</div>';
         info.appendChild(thumb); info.appendChild(meta);
