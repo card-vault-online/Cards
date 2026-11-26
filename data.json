@@ -1,0 +1,1264 @@
+{
+  "ranks": [
+    {
+      "id": "r1",
+      "name": "S"
+    },
+    {
+      "id": "r2",
+      "name": "A"
+    },
+    {
+      "id": "r3",
+      "name": "RE"
+    },
+    {
+      "id": "r4",
+      "name": "R"
+    }
+  ],
+  "authors": [
+    {
+      "id": 1795520954612,
+      "bio": "Стараюсь делать все качественно и быстро",
+      "name": "DedWeil",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795520951995_41482.png",
+      "banned": false,
+      "banner": "",
+      "contact": "@Dedweil",
+      "ownerUid": "wsQ75WXOr2SOWZwIVh4BJiqi1DW2",
+      "ownerEmail": "barknight312@gmail.com",
+      "orderStatus": "queue"
+    },
+    {
+      "id": 1795527217651,
+      "bio": "REMANGA SENKURO",
+      "name": "MAJOR",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795647276567_29286.webp",
+      "banned": false,
+      "banner": "",
+      "contact": "@maj054r",
+      "ownerUid": "8XfJXVNZE8YwyA0R8p1L4YtFigx1",
+      "ownerEmail": "shix3rota@gmail.com",
+      "orderStatus": "queue"
+    },
+    {
+      "id": 1795532920036,
+      "bio": "Хвастаюсь своими творениями",
+      "name": "vladimir060607",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795532918807_43009.jpg",
+      "banned": false,
+      "banner": "",
+      "contact": "t.me/vladimir060607",
+      "ownerUid": "gibiqCPRvWcUATVNgHzJ43c9NXG3",
+      "ownerEmail": "vladimirvladmir6@gmail.com",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795534685620,
+      "bio": "TEsT",
+      "name": "Test",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795534684076_71804.gif",
+      "banned": false,
+      "banner": "",
+      "contact": "@maj05r",
+      "ownerUid": "umCf4xTssXQF79rmCox72SDIyA13",
+      "ownerEmail": "musicrelaxrmi@gmail.com",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795540932430,
+      "bio": "Просто негодяй",
+      "name": "01bag",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795540930671_56626.jpg",
+      "banned": false,
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795540931602_47108.jpg",
+      "contact": "@disirion @iekue",
+      "ownerUid": "MY7m6go9HaaIj672HG9zQn25lwP2",
+      "ownerEmail": "gleb163hh@gmail.com",
+      "orderStatus": "open"
+    },
+    {
+      "id": 1795541059456,
+      "bio": "Делаю статичные карты",
+      "name": "Фэшн_будда",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795541048107_65957.jpeg",
+      "banned": false,
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795541050959_50161.webp",
+      "contact": "@Tut_menya_net",
+      "ownerUid": "4pqQiQm9QHQuLApoHPgsPoG02D72",
+      "ownerEmail": "koloshichm@gmail.com",
+      "orderStatus": "open"
+    },
+    {
+      "id": 1795541372696,
+      "bio": "Карты пока делаю только на сенкуро. Стоимость кастомной карты 4000 рублей. За собой оставляю право размещать сделанную карту в портфолио",
+      "name": "Эльф",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795541371761_46860.jpg",
+      "banned": false,
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795541372387_30319.jpg",
+      "contact": "Тг: @Alinas555",
+      "ownerUid": "IYHP5nOsNpeSkASc5JKTFLJliUQ2",
+      "ownerEmail": "alina14451.sh55555@gmail.com",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795545260715,
+      "bio": "",
+      "name": "Mix рисовый шарик",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795545322617_26508.jpg",
+      "banned": false,
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795545258817_86884.jpg",
+      "contact": "@MIX_necard",
+      "ownerUid": "VzhD2GoACEQPabhnLMX4uCBZPqw1",
+      "ownerEmail": "smnvabdullo@gmail.com",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795546252012,
+      "bio": "стилизация + анимация",
+      "name": "Lme",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795546245174_32630.gif",
+      "banned": false,
+      "banner": "",
+      "contact": "tg: @Lme_card",
+      "ownerUid": "gkgWiDWkPdWGDIRXK48U6GjASEo1",
+      "ownerEmail": "lmeakkount@gmail.com",
+      "orderStatus": "open"
+    },
+    {
+      "id": 1795547054344,
+      "bio": "",
+      "name": "b4ljke",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLHq1Rawcm9SajnNMdcQT6LIA36NezB62HMfvlJ8siuQcOccA=s96-c",
+      "banned": false,
+      "banner": "",
+      "contact": "@b4ljke",
+      "ownerUid": "zo9Bq4JoZbStzIZ5L1NoHu3lLtr2",
+      "ownerEmail": "thebalmiha42@gmail.com",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795547397221,
+      "bio": "я пидорас",
+      "name": "gay-nes",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795547396881_86261.webp",
+      "banned": false,
+      "banner": "",
+      "contact": "@Gaynese",
+      "ownerUid": "NcOAtHO2wsMwrOBRGwvlHZrYaY73",
+      "ownerEmail": "matvey.moeev.2002@mail.ru",
+      "orderStatus": "closed"
+    },
+    {
+      "id": 1795547810939,
+      "bio": "",
+      "name": "Key DinSudzhi",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795548130788_43530.jpg",
+      "banned": false,
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795547809211_9738.png",
+      "contact": "@Abyssal_Black_Flame_Dragon",
+      "ownerUid": "PNnShBB6Yaf15usT1SlDNzyWDl83",
+      "ownerEmail": "keydidzhi@gmail.com",
+      "orderStatus": "open"
+    },
+    {
+      "id": 1795547922994,
+      "bio": "",
+      "name": "Panacea",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLoDNTqP91PBCPoA_iH5HbJrnAhR9UP7PfD4HhRXpgYsrZhH8La=s96-c",
+      "banned": false,
+      "banner": "",
+      "contact": "@No_serenityy",
+      "ownerUid": "Y9KT9UBHvgNZTkInMJtmHz6Dvnn1",
+      "ownerEmail": "beatriche.gil@gmail.com",
+      "orderStatus": "queue"
+    },
+    {
+      "id": 1795550959551,
+      "bio": "Гад",
+      "name": "DEAD927",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795550958969_37545.png",
+      "banned": false,
+      "banner": "",
+      "contact": "@ne_tut_ya",
+      "ownerUid": "UlGcMjAEAiYhUgST2wMiZAmElT72",
+      "ownerEmail": "dead23457@gmail.com",
+      "orderStatus": "closed"
+    }
+  ],
+  "cards": [
+    {
+      "id": 1795520988019,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795520985675_71019.png",
+      "title": "Мангалиб",
+      "rankId": "r_1795521015598",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521017878,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521015635_32763.png",
+      "title": "Мангалиб",
+      "rankId": "r_1795521015598",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521044164,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521040217_79959.png",
+      "title": "Реманга",
+      "rankId": "r3",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521075487,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521071506_97318.png",
+      "title": "Мангалиб",
+      "rankId": "r3",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521116213,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521110139_9805.png",
+      "title": "Сенкуро Кифри",
+      "rankId": "r4",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521394754,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521393757_80546.jpg",
+      "title": "Реманга Мичи мочиви",
+      "rankId": "r2",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521432719,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521427754_27972.webp",
+      "title": "Реманга Йоичи Нагумо",
+      "rankId": "r2",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795521462624,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795521458406_26815.webp",
+      "title": "Реманга Эбико Амаи",
+      "rankId": "r2",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795522142991,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795522141869_28528.jpg",
+      "title": "Реманг Хан Ислант",
+      "rankId": "r2",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795522167432,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795522166302_13031.jpg",
+      "title": "Реманга Беннингтон",
+      "rankId": "r2",
+      "authorId": 1795520954612
+    },
+    {
+      "id": 1795528350867,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528350501_53087.webp",
+      "title": "Сок Ген Вон",
+      "rankId": "r2",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528538698,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528535836_20201.webm?tr=orig-true",
+      "title": "Klein Moretti",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528563995,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528561656_21142.webm?tr=orig-true",
+      "title": "Эолиан",
+      "rankId": "r1",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528604318,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528603220_44596.png",
+      "title": "Хэллоуин",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528660925,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528660643_81349.webp",
+      "title": "Море Лесов",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528712067,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528711781_37175.webp",
+      "title": "Гармония в спешке",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528751389,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528749948_83709.webm?tr=orig-true",
+      "title": "Чхон Мен",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528787683,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528785604_51137.webm?tr=orig-true",
+      "title": "Чже Хван",
+      "rankId": "r3",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795528879268,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795528878983_14446.webp",
+      "title": "Фапута",
+      "rankId": "r2",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795529045988,
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795529044698_23636.png",
+      "title": "Чхон Мен",
+      "rankId": "r4",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795533136847,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795533115658_72623.png",
+      "title": "Гислен Бердиум",
+      "rankId": "r4",
+      "authorId": 1795532920036
+    },
+    {
+      "id": 1795533304571,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795533295153_78535.png",
+      "title": "Шигэо Кагэяма",
+      "rankId": "r4",
+      "authorId": 1795532920036
+    },
+    {
+      "id": 1795533540447,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795533393426_98938.png",
+      "title": "Хатаке Какаши",
+      "rankId": "r4",
+      "authorId": 1795532920036
+    },
+    {
+      "id": 1795541627403,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795541619095_5443.png",
+      "title": "Осенний вайб",
+      "rankId": "r3",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795541659311,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795541650492_69712.png",
+      "title": "Соблазн",
+      "rankId": "r3",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795541808585,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795541797603_1805.webp",
+      "title": "Лесная сказка",
+      "rankId": "r3",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795541862444,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795541836889_5833.png",
+      "title": "Последняя встреча",
+      "rankId": "r3",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795542365173,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795542355684_14141.webp",
+      "title": "Гу Чанге",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795542589856,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795542565024_64437.png",
+      "title": "Герой Х",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795542618268,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795542608171_15578.png",
+      "title": "Клейн Моретти",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795545449993,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795545436138_50182.png",
+      "title": "Амон",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795546021508,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795545999847_52251.png",
+      "title": "Тони Старк",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795546085938,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546079654_89331.png",
+      "title": "О Кан У",
+      "rankId": "r4",
+      "authorId": 1795545260715
+    },
+    {
+      "id": 1795546138263,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546132944_86772.png",
+      "title": "Монки Д Луффи",
+      "rankId": "r4",
+      "authorId": 1795545260715
+    },
+    {
+      "id": 1795546234130,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546224125_28982.png",
+      "title": "Бию",
+      "rankId": "r4",
+      "authorId": 1795545260715
+    },
+    {
+      "id": 1795546319788,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546318623_76150.png",
+      "title": "makima",
+      "rankId": "r4",
+      "authorId": 1795546252012
+    },
+    {
+      "id": 1795546537241,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546522134_62465.png",
+      "title": "Чхон Мен",
+      "rankId": "r4",
+      "authorId": 1795545260715
+    },
+    {
+      "id": 1795546634330,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546631415_938.webp",
+      "title": "Аластор",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795546719641,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546717554_25818.webp",
+      "title": "Кофуку",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795546774914,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546772665_73525.webp",
+      "title": "Томое",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795546795384,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546785915_65540.png",
+      "title": "Хан Су Ен",
+      "rankId": "r4",
+      "authorId": 1795545260715
+    },
+    {
+      "id": 1795546874796,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546872721_11046.webp",
+      "title": "Фрирен",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795546939595,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795546937690_73416.webp",
+      "title": "Хаян",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547037127,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547031577_54531.png",
+      "title": "Юдзи",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547087907,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547085112_35943.webp",
+      "title": "Ято",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547193750,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547180845_30321.png",
+      "title": "Страшно красиво",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547238259,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547230766_70684.png",
+      "title": "Моей кровавой леди",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547301834,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547298279_45118.png",
+      "title": "Йо-хо-хо",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547470202,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547459601_84134.webp",
+      "title": "Кинич",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547476027,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547475462_58898.webp",
+      "title": "Глеб на отдыхе",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795547473308,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547471190_97609.webp",
+      "title": "Хвичи Хо Ён",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547494468,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547494002_17181.webp",
+      "title": "Мавуика",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547509699,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547509300_84635.webp",
+      "title": "Ситлали",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547513645,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547513252_49565.webp",
+      "title": "Хаха-кто куда а я на батуты",
+      "rankId": "r4",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795547527043,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547526638_16240.webp",
+      "title": "Герман Спэрроу",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547540808,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547540416_41006.webp",
+      "title": "Осараги",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547548849,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547548341_26138.webp",
+      "title": "67 сикс севен",
+      "rankId": "r4",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795547562891,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547562531_99229.webp",
+      "title": "Леонард",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547576881,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547576564_42739.webp",
+      "title": "сосальных дел мастерица",
+      "rankId": "r4",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795547581698,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547581354_37535.webp",
+      "title": "Айронмаус",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547657935,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547657561_22204.webp",
+      "title": "Рио Цукацуки",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547671300,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547670886_64052.webp",
+      "title": "лимонные девочки",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795547666393,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547665952_15771.webp",
+      "title": "Возьми мою руку",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547679868,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547679447_25403.webp",
+      "title": "Рио Цукацуки",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547697238,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547696825_5829.webp",
+      "title": "Мерлин Гермес",
+      "rankId": "r2",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795547727590,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547727150_4099.webp",
+      "title": "Пушистое наваждение",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547779486,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547778790_55248.webp",
+      "title": "Медуза",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547802292,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547801777_8837.webp",
+      "title": "Коломбина",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795547904659,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795547904016_67578.webp",
+      "title": "Капитано",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795548058338,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548057696_910.webp",
+      "title": "Эллис фон Атараксия",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548057863,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548057385_38767.webp",
+      "title": "сасондронне",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548067491,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548067008_83745.webp",
+      "title": "Сердце пустыни",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795548080503,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548079999_52335.webp",
+      "title": "какой то гей",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548090900,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548090184_4833.webp",
+      "title": "Нана",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548113446,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548113066_61652.webp",
+      "title": "хуйня коня",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548130940,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548130286_33718.webp",
+      "title": "Ророноа Зоро",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548138429,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548137392_10909.webp",
+      "title": "И каждое лето я буду здесь... для тебя",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795548158339,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548157839_10579.webp",
+      "title": "Час расплаты",
+      "rankId": "r3",
+      "authorId": 1795547054344
+    },
+    {
+      "id": 1795548151427,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548151029_82871.webp",
+      "title": "рио сукадесу",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548174389,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548173969_99059.webp",
+      "title": "лесбиянки",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548213504,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548213025_4850.webp",
+      "title": "коколомбна",
+      "rankId": "r2",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548296490,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548296023_56334.webp",
+      "title": "Гуд морнинг Вьетнам",
+      "rankId": "r3",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548340681,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548339973_52192.webp",
+      "title": "все. я сгорел.",
+      "rankId": "r3",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548339433,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548338998_84355.webp",
+      "title": "Ая Сямэймару",
+      "rankId": "r_1795548335136",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548367997,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548365185_64568.webp",
+      "title": "ИИСлоп",
+      "rankId": "r3",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548369643,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548369034_43904.webp",
+      "title": "Хисока Мороу",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548401898,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548401421_62639.webp",
+      "title": "Амане Миса",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548416472,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548416031_18349.webp",
+      "title": "ну эт хуйня",
+      "rankId": "r3",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548437431,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548436827_43242.webp",
+      "title": "Каори Миядзоно",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548446469,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548446049_84569.webp",
+      "title": "просто попа",
+      "rankId": "r3",
+      "authorId": 1795547397221
+    },
+    {
+      "id": 1795548481102,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548480782_20824.webp",
+      "title": "Ким Сольым",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548630049,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548629595_28310.webp",
+      "title": "Мицури Канроджи",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548655258,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548651065_44395.webp",
+      "title": "Альбедо",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548686086,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548685373_90457.webp",
+      "title": "Музыка без границ",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795548693740,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548693069_3698.webp",
+      "title": "Нуар Джабелла",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548732759,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548732291_88234.webp",
+      "title": "Люсина Кунасинада",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548828486,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548828078_86852.webp",
+      "title": "Кальцифер",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795548827696,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548827261_69445.webp",
+      "title": "Исаги",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795548853836,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795548853491_82831.webp",
+      "title": "Амане Миса",
+      "rankId": "r4",
+      "authorId": 1795547922994
+    },
+    {
+      "id": 1795549042745,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795549042289_86968.webp",
+      "title": "Ято",
+      "rankId": "r2",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795549633971,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795549630925_82489.webm?tr=orig-true",
+      "title": "Безмятежность в отражении",
+      "rankId": "r3",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795549699730,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795549696672_80058.webm?tr=orig-true",
+      "title": "Моракс",
+      "rankId": "r1",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550189863,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550189362_91347.webp",
+      "title": "Атанасия",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550220838,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550220385_61648.webp",
+      "title": "Дэку",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550239790,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550239161_77278.webp",
+      "title": "Томиока",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550263853,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550263300_88390.webp",
+      "title": "Сейлор мун",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550283352,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550282732_51313.webp",
+      "title": "Люсина",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550322479,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550322014_96524.webp",
+      "title": "Эрза",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550338036,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550337458_27731.webp",
+      "title": "Шинобу",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550353523,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550353223_5898.webp",
+      "title": "Тэль",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550385467,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550385031_48409.webp",
+      "title": "Тодороки",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550399283,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550398194_57124.webp",
+      "title": "Тога",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550422536,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550421810_65542.webp",
+      "title": "Йор",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550475517,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550474981_35911.webp",
+      "title": "Алан Уолкер",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550503622,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550503178_64459.webp",
+      "title": "Фрирен под луной",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795550520542,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795550519841_58966.webp",
+      "title": "Гимель под луной",
+      "rankId": "r4",
+      "authorId": 1795541372696
+    },
+    {
+      "id": 1795606483562,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795606476677_26825.png",
+      "title": "Клейн Моретти",
+      "rankId": "r2",
+      "authorId": 1795541059456
+    },
+    {
+      "id": 1795614645618,
+      "desc": "REMANGA",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795614639795_73512.webm?tr=orig-true",
+      "title": "Ellen Joe",
+      "rankId": "r_1795546812730",
+      "authorId": 1795527217651
+    },
+    {
+      "id": 1795619070886,
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795619069634_68951.webp",
+      "title": "Calamitas",
+      "rankId": "r2",
+      "authorId": 1795527217651
+    }
+  ],
+  "mods": [
+    "shix3rota@gmail.com"
+  ],
+  "users": [
+    {
+      "uid": "8XfJXVNZE8YwyA0R8p1L4YtFigx1",
+      "name": "Li Moon",
+      "email": "shix3rota@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIftWoAxeI5jHrhve-F4yfYP9USpmUqQGjXaPemrVIqU89RANZXlA=s96-c",
+      "banned": false,
+      "lastSeen": "26.11.2026, 03:40",
+      "firstSeen": "26.11.2026, 02:13"
+    },
+    {
+      "uid": "UlGcMjAEAiYhUgST2wMiZAmElT72",
+      "name": "DEAD 927",
+      "email": "dead23457@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJCFO3OelknfXVaVQ-uZZoLz0xIzgoTeDplScWw3blKtnHb_KFz=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 23:08",
+      "firstSeen": "24.11.2026, 23:08"
+    },
+    {
+      "uid": "Y9KT9UBHvgNZTkInMJtmHz6Dvnn1",
+      "name": "Panacea",
+      "email": "beatriche.gil@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLoDNTqP91PBCPoA_iH5HbJrnAhR9UP7PfD4HhRXpgYsrZhH8La=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 21:17",
+      "firstSeen": "24.11.2026, 21:17"
+    },
+    {
+      "uid": "NcOAtHO2wsMwrOBRGwvlHZrYaY73",
+      "name": "Gaynese",
+      "email": "matvey.moeev.2002@mail.ru",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIScDsZS54SUWAgOGErW6mnU9hsUJfQyOKeGhLgZPgKTAbR4xLh=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 22:03",
+      "firstSeen": "24.11.2026, 22:03"
+    },
+    {
+      "uid": "zo9Bq4JoZbStzIZ5L1NoHu3lLtr2",
+      "name": "b4ljke",
+      "email": "thebalmiha42@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLHq1Rawcm9SajnNMdcQT6LIA36NezB62HMfvlJ8siuQcOccA=s96-c",
+      "banned": false,
+      "lastSeen": "25.11.2026, 02:03",
+      "firstSeen": "25.11.2026, 02:03"
+    },
+    {
+      "uid": "gkgWiDWkPdWGDIRXK48U6GjASEo1",
+      "name": "Lme",
+      "email": "lmeakkount@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKzE5Q2nmOrQFAUMRxYxwOOYGA5m-p3VMsM8xdqdIaxTY959g=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 20:46",
+      "firstSeen": "24.11.2026, 20:46"
+    },
+    {
+      "uid": "VzhD2GoACEQPabhnLMX4uCBZPqw1",
+      "name": "USMONOV Abdullo",
+      "email": "smnvabdullo@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKIBjd8_k5RHNX8sYf7HQV5CVy8Vdk7l9aJ0pu-r89kYcTc-rA=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 21:11",
+      "firstSeen": "24.11.2026, 21:11"
+    },
+    {
+      "uid": "PNnShBB6Yaf15usT1SlDNzyWDl83",
+      "name": "Key DinSudzhi",
+      "email": "keydidzhi@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocKwkgC9vOB_CQDabGp6nUhiefopuXIKL85QF9ghVM3U_UP8Z62D=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 21:53",
+      "firstSeen": "24.11.2026, 21:53"
+    },
+    {
+      "uid": "4pqQiQm9QHQuLApoHPgsPoG02D72",
+      "name": "Maksim Koloshich",
+      "email": "koloshichm@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLP6pIpCKPUelsi1q0WLHtgoSTyhj8ChDMLvcbvIMhI6Sz_47g=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 20:17",
+      "firstSeen": "24.11.2026, 20:17"
+    },
+    {
+      "uid": "MY7m6go9HaaIj672HG9zQn25lwP2",
+      "name": "Ррп Ррр",
+      "email": "gleb163hh@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJ0MR5k29HLFLl9cCxz1uJugjQj08PFv1fsf2kjN_LHVBO7Uw=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 21:15",
+      "firstSeen": "24.11.2026, 21:15"
+    },
+    {
+      "uid": "gibiqCPRvWcUATVNgHzJ43c9NXG3",
+      "name": "Владимир Владимирович",
+      "email": "vladimirvladmir6@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIWfvo8EDCZAG5e_MREafyGp9YpvYv1ZJTVE8YIlPEdoFrx4g=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 20:06",
+      "firstSeen": "24.11.2026, 20:06"
+    },
+    {
+      "uid": "IYHP5nOsNpeSkASc5JKTFLJliUQ2",
+      "name": "Alina",
+      "email": "alina14451.sh55555@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIfC9LSZnPONtVI2WleWwi5xfDqZvXs_xKEwOX2vGpJz7f6YQ=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 17:54",
+      "firstSeen": "24.11.2026, 17:54"
+    },
+    {
+      "uid": "wsQ75WXOr2SOWZwIVh4BJiqi1DW2",
+      "name": "Темный Рыцарь",
+      "email": "barknight312@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLxG9Xx3CDiqSFVPALqoOTwdUXxui26i6FGeiSJhTfBCtCX7g0=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 17:43",
+      "firstSeen": "24.11.2026, 17:43"
+    },
+    {
+      "uid": "umCf4xTssXQF79rmCox72SDIyA13",
+      "name": "Relaxation Music",
+      "email": "musicrelaxrmi@gmail.com",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJGC8jZlH7ym_cWdSDoeyt05A8f3H-f3dKOBH7C16nK1io9sOM=s96-c",
+      "banned": false,
+      "lastSeen": "24.11.2026, 17:42",
+      "firstSeen": "24.11.2026, 17:42"
+    }
+  ],
+  "siteConfig": {
+    "brand": "Custom Cards",
+    "heroTitle": "Кастомные карты расскажут об авторах лучше слов",
+    "heroSub": "Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.",
+    "heroBg": "",
+    "catalogBg": "",
+    "terms": "1. Администрация и создатель платформы не несут ответственности за достоверность данных, авторские права и содержимое загружаемых материалов.\n\n2. Всю ответственность за размещаемые карты, изображения и контактную информацию несёт исключительно пользователь, загрузивший контент.\n\n3. Запрещено размещать материалы, нарушающие законодательство или права третьих лиц.",
+    "globalBg": "https://ik.imagekit.io/e879ksw3s/card_1795650068929_62828.webp"
+  }
+}
