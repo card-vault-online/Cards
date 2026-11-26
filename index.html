@@ -679,7 +679,7 @@
       appId: "1:576413137502:web:bf8246e8fe306aff0d92cf"
     };
 
-    const SB_URL = 'https:\x2f\x2fcards-share.musicrelaxrmi.workers.dev';
+    const SB_URL = 'https:\x2f\x2fcards-api-1bl.pages.dev';
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyb2llcWVvc2pqaGt2a2lodWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDQ4MDUsImV4cCI6MjExMDkyMDgwNX0.lIxOieRFjGaJU5TvMMNqcz45HUoJ7NewkOsJXKHYlQI";
 
     const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1e1e24"/><circle cx="50" cy="38" r="18" fill="#71717a"/><path d="M20 88c0-18 14-28 30-28s30 10 30 28" fill="#71717a"/></svg>');
@@ -1088,7 +1088,7 @@
       const ext = (readyFile.name.split('.').pop() || 'webp').toLowerCase();
       const fname = 'card_' + Date.now() + '_' + Math.floor(Math.random() * 99999) + '.' + ext;
 
-      const signRes = await fetch('https:\x2f\x2fcards-share.musicrelaxrmi.workers.dev\x2fsign');
+         const signRes = await fetch('https:\x2f\x2fcards-api-1bl.pages.dev\x2fsign');
       if (!signRes.ok) throw new Error("Не удалось получить подпись загрузки");
       const { token, expire, signature } = await signRes.json();
 
