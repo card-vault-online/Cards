@@ -1,0 +1,118 @@
+name: Sync data and share pages
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download data from API
+        run: |
+          curl -sf --max-time 30 "https://cards-api-an1o.netlify.app/rest/v1/vault_state?id=eq.main&select=data" -o rows.json
+          jq -e '.[0].data | (.cards | type == "array") and (.authors | type == "array")' rows.json
+          jq '.[0].data' rows.json > data.json
+          rm rows.json
+      - name: Generate Telegram preview pages
+        run: |
+          python3 - <<'PYGEN'
+          import json, os, re, shutil
+          from html import escape
+
+          BASE = 'https://card-vault-online.github.io/Cards/'
+          OG_DEFAULT = BASE + 'og-image.png'
+
+          data = json.load(open('data.json', encoding='utf-8'))
+          ranks = {str(r.get('id')): r.get('name', '') for r in data.get('ranks', [])}
+          authors = {str(a.get('id')): a for a in data.get('authors', [])}
+
+
+          def img(url, w=1000):
+              if not url:
+                  return OG_DEFAULT
+              base = url.split('?')[0]
+              if re.search(r'\.(mp4|webm|mov)$', base, re.I):
+                  return base + '/ik-thumbnail.jpg'
+              if 'ik.imagekit.io' in base:
+                  return '%s?tr=w-%d,f-jpg' % (base, w)
+              return url
+
+
+          def short(t, n=200):
+              t = re.sub(r'\s+', ' ', str(t or '')).strip()
+              return t if len(t) <= n else t[:n - 1].rstrip() + '…'
+
+
+          def page(title, desc, image, page_url, target):
+              t, d, i, u = (escape(x, quote=True) for x in (title, desc, image, page_url))
+              return f'''<!DOCTYPE html>
+          <html lang="ru"><head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>{t}</title>
+          <meta name="description" content="{d}">
+          <link rel="canonical" href="{u}">
+          <meta property="og:type" content="website">
+          <meta property="og:site_name" content="Custom Cards">
+          <meta property="og:title" content="{t}">
+          <meta property="og:description" content="{d}">
+          <meta property="og:image" content="{i}">
+          <meta property="og:url" content="{u}">
+          <meta name="twitter:card" content="summary_large_image">
+          <meta name="twitter:title" content="{t}">
+          <meta name="twitter:description" content="{d}">
+          <meta name="twitter:image" content="{i}">
+          <script>location.replace({json.dumps(target)});</script>
+          </head><body style="background:#0d0d11;color:#fff;font-family:sans-serif;text-align:center;padding:40px">
+          <p><a style="color:#a5b4fc" href="{escape(target, quote=True)}">Открыть на сайте</a></p>
+          </body></html>
+          '''
+
+
+          for d in ('c', 'a'):
+              shutil.rmtree(d, ignore_errors=True)
+              os.makedirs(d)
+
+
+          def write(folder, key, html):
+              path = os.path.join(folder, str(key))
+              os.makedirs(path, exist_ok=True)
+              with open(os.path.join(path, 'index.html'), 'w', encoding='utf-8') as f:
+                  f.write(html)
+
+
+          n_cards = n_auth = 0
+          for c in data.get('cards', []):
+              a = authors.get(str(c.get('authorId')), {})
+              if c.get('hidden') or a.get('banned'):
+                  continue
+              name = a.get('name', 'Автор')
+              rank = ranks.get(str(c.get('rankId')), '')
+              title = '%s — %s' % (c.get('title') or 'Карта', name)
+              desc = short(c.get('desc')) or ('Кастомная карта от %s%s' % (name, ' • ранг ' + rank if rank else ''))
+              cid = c.get('id')
+              write('c', cid, page(title, desc, img(c.get('thumb') or c.get('image')), '%sc/%s/' % (BASE, cid), '%s?card=%s' % (BASE, cid)))
+              n_cards += 1
+
+          for aid, a in authors.items():
+              if a.get('banned'):
+                  continue
+              title = '%s — автор на Custom Cards' % a.get('name', 'Автор')
+              desc = short(a.get('bio')) or 'Профиль автора кастомных карт'
+              write('a', aid, page(title, desc, img(a.get('avatar') or a.get('banner')), '%sa/%s/' % (BASE, aid), '%s?author=%s' % (BASE, aid)))
+              n_auth += 1
+
+          print('pages: cards=%d authors=%d' % (n_cards, n_auth))
+          PYGEN
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || (git commit -m "Update data and share pages" && git push)
