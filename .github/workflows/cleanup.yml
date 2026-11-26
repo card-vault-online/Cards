@@ -21,3 +21,10 @@ jobs:
           cat out.json
           echo
           test "$code" = "200"
+      - name: Show access audit
+        env:
+          CLEANUP_KEY: ${{ secrets.CLEANUP_KEY }}
+        run: |
+          curl -sS --max-time 60 -H "x-cleanup-key: $CLEANUP_KEY" \
+            "https://cards-api-an1o.netlify.app/.netlify/functions/audit"
+          echo
