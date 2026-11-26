@@ -43,7 +43,7 @@ jobs:
           def video_preview(url):
               """Первый кадр видео -> p/<hash>.jpg (кэшируется, ImageKit VPU не тратит)."""
               base = url.split('?')[0]
-              key = hashlib.md5(base.encode()).hexdigest()[:16]
+              key = hashlib.md5((base + '|sq640').encode()).hexdigest()[:16]
               out = 'p/%s.jpg' % key
               if os.path.exists(out):
                   return BASE + out
@@ -52,14 +52,15 @@ jobs:
                   req = urllib.request.Request(base, headers={'User-Agent': 'Mozilla/5.0'})
                   with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f:
                       shutil.copyfileobj(r, f)
-                  flt = ('[0:v]scale=1000:-2,split[a][b];[a]drawbox=c=0x0d0d11:t=fill[bg];'
-                         '[bg][b]overlay=format=auto,format=yuv420p')
+                  flt = ('color=c=0x0d0d11:s=640x640[bg];'
+                         '[0:v]scale=640:640:force_original_aspect_ratio=decrease[fg];'
+                         '[bg][fg]overlay=(W-w)/2:(H-h)/2:format=auto,format=yuv420p')
                   subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', '0.3', '-i', tmp,
-                                  '-filter_complex', flt, '-frames:v', '1', '-q:v', '3', out],
+                                  '-filter_complex', flt, '-frames:v', '1', '-q:v', '6', out],
                                  check=True, timeout=120)
                   if not os.path.exists(out):
                       subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp,
-                                      '-filter_complex', flt, '-frames:v', '1', '-q:v', '3', out],
+                                      '-filter_complex', flt, '-frames:v', '1', '-q:v', '6', out],
                                      check=True, timeout=120)
                   return BASE + out
               except Exception as e:
@@ -70,14 +71,14 @@ jobs:
                       os.remove(tmp)
 
 
-          def img(url, w=1000):
+          def img(url, w=640):
               if not url:
                   return OG_DEFAULT
               base = url.split('?')[0]
               if re.search(r'\.(mp4|webm|mov)$', base, re.I):
                   return video_preview(base)
               if 'ik.imagekit.io' in base:
-                  return '%s?tr=w-%d,f-jpg' % (base, w)
+                  return '%s?tr=w-%d,h-%d,cm-pad_resize,bg-0D0D11,q-70,f-jpg' % (base, w, w)
               return url
 
 
