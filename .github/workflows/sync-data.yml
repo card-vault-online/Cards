@@ -1,0 +1,31 @@
+name: Sync data.json
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download data from API
+        run: |
+          curl -sf --max-time 30 \
+            "https://cards-api-1bl.pages.dev/rest/v1/vault_state?id=eq.main&select=data" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyb2llcWVvc2pqaGt2a2lodWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDQ4MDUsImV4cCI6MjExMDkyMDgwNX0.lIxOieRFjGaJU5TvMMNqcz45HUoJ7NewkOsJXKHYlQI" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyb2llcWVvc2pqaGt2a2lodWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzNDQ4MDUsImV4cCI6MjExMDkyMDgwNX0.lIxOieRFjGaJU5TvMMNqcz45HUoJ7NewkOsJXKHYlQI" \
+            -o rows.json
+          jq -e '.[0].data | (.cards | type == "array") and (.authors | type == "array")' rows.json
+          jq '.[0].data' rows.json > data.json
+          rm rows.json
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add data.json
+          git diff --cached --quiet || (git commit -m "Update data.json" && git push)
