@@ -19,6 +19,8 @@ jobs:
           jq -e '.[0].data | (.cards | type == "array") and (.authors | type == "array")' rows.json
           jq '.[0].data' rows.json > data.json
           rm rows.json
+      - name: Install ffmpeg
+        run: command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
       - name: Generate Telegram preview pages
         run: |
           python3 - <<'PYGEN'
