@@ -1147,7 +1147,7 @@
       "email": "shix3rota@gmail.com",
       "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIftWoAxeI5jHrhve-F4yfYP9USpmUqQGjXaPemrVIqU89RANZXlA=s96-c",
       "banned": false,
-      "lastSeen": "26.11.2026, 13:30",
+      "lastSeen": "26.11.2026, 17:34",
       "firstSeen": "26.11.2026, 02:13"
     },
     {
@@ -1278,6 +1278,34 @@
     "globalBg": "https://ik.imagekit.io/e879ksw3s/card_1795650068929_62828.webp"
   },
   "log": [
+    {
+      "id": "1795703662769_948",
+      "t": 1795703662770,
+      "who": "Li Moon",
+      "action": "Удалил карту",
+      "detail": "lkj"
+    },
+    {
+      "id": "1795703659499_706",
+      "t": 1795703659499,
+      "who": "Li Moon",
+      "action": "Удалил карту",
+      "detail": "ТЕСТ777"
+    },
+    {
+      "id": "1795702805601_816",
+      "t": 1795702805601,
+      "who": "Li Moon",
+      "action": "Удалил карту",
+      "detail": ";lm"
+    },
+    {
+      "id": "1795702624472_672",
+      "t": 1795702624472,
+      "who": "Li Moon",
+      "action": "Удалил карту",
+      "detail": "Hh"
+    },
     {
       "id": "1795689011000_805",
       "t": 1795689011000,
