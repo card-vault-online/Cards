@@ -279,6 +279,35 @@
     .cat-toolbar input,.cat-toolbar select{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-primary);border-radius:12px;padding:9px 12px;font-size:.88rem}
     .cat-toolbar input{flex:1 1 220px}
     #catFavBtn.on{background:var(--accent);color:var(--accent-text)}
+    /* Единый стиль выпадающих списков под тему сайта */
+    :root[data-theme="dark"] select { color-scheme: dark; }
+    :root[data-theme="light"] select { color-scheme: light; }
+    select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 34px !important;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat; background-position: right 12px center; transition: border-color .2s, background-color .2s; }
+    select:hover { border-color: var(--border-hover); background-color: var(--bg-glass-hover); }
+    select:focus { outline: none; border-color: var(--border-hover); }
+    select option, select optgroup { background: var(--bg-solid); color: var(--text-primary); padding: 8px 12px; }
+    select option:checked, select option:hover { background: var(--accent) linear-gradient(0deg, var(--accent), var(--accent)); color: var(--accent-text); }
+    select option:disabled { color: var(--text-secondary); }
+    /* Кастомные выпадающие списки (единый вид на всех устройствах) */
+    .cs { position: relative; display: inline-block; min-width: 0; }
+    .field .cs { display: block; width: 100%; }
+    .cs-native { position: absolute !important; left: 0; bottom: 0; width: 1px !important; height: 1px !important; padding: 0 !important; border: 0 !important; opacity: 0; pointer-events: none; }
+    .cs-btn { width: 100%; display: flex; align-items: center; text-align: left; cursor: pointer; font-family: inherit; color: var(--text-primary);
+      background-color: var(--bg-glass); border: 1px solid var(--border-glass);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat; background-position: right 12px center; transition: border-color .2s, background-color .2s; }
+    .cs-btn:hover, .cs-btn:focus-visible, .cs-btn[aria-expanded="true"] { border-color: var(--border-hover); background-color: var(--bg-glass-hover); outline: none; }
+    .cs-btn:disabled { opacity: .55; cursor: not-allowed; }
+    .cs-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cs-pop { position: fixed; z-index: 9999; overflow-y: auto; background: var(--bg-solid); border: 1px solid var(--border-hover); border-radius: 14px; padding: 6px; box-shadow: 0 18px 50px rgba(0,0,0,.45); animation: csIn .12s ease-out; }
+    .cs-opt { padding: 9px 12px; border-radius: 9px; font-size: .9rem; cursor: pointer; color: var(--text-primary); white-space: nowrap; transition: background .12s; }
+    :root[data-theme="dark"] .cs-opt:hover, :root[data-theme="dark"] .cs-opt.act { background: rgba(255,255,255,.09); }
+    :root[data-theme="light"] .cs-opt:hover, :root[data-theme="light"] .cs-opt.act { background: rgba(0,0,0,.06); }
+    .cs-opt.sel { background: var(--accent) !important; color: var(--accent-text); font-weight: 600; }
+    .cs-opt.dis { opacity: .45; cursor: not-allowed; }
+    @keyframes csIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
     .card-stage{position:relative}
     .fav-btn{position:absolute;top:10px;right:10px;z-index:6;width:32px;height:32px;border-radius:50%;border:1px solid var(--border-glass);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;font-size:.95rem}
     .fav-btn.on{color:#f43f5e}
@@ -495,6 +524,13 @@
               <span id="fileStatusText">Нажмите, чтобы выбрать файл карты</span>
               <input type="file" id="cardFileInput" accept=".png,.webp,.webm,.gif,.jpg,.jpeg" style="display: none;">
             </div>
+            <div id="cardPreviewBox" style="display:none; margin-top:14px; text-align:center;">
+              <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:6px;">Предпросмотр перед добавлением</div>
+              <div style="max-width:260px; margin:0 auto; border:1px solid var(--border-glass); border-radius:16px; padding:8px; background:var(--bg-glass);">
+                <div id="cardPreviewMedia" style="height:300px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:10px;"></div>
+                <div id="cardPreviewTitle" style="font-weight:600; margin-top:8px; word-break:break-word;"></div>
+              </div>
+            </div>
           </div>
           <div class="dialog-footer">
             <button type="button" class="btn-glass" onclick="cancelFormPage()">Отмена</button>
@@ -524,6 +560,7 @@
           <button type="button" class="mod-tab-btn active" data-modtab="users" onclick="switchModTab('users')">👤 Пользователи</button>
           <button type="button" class="mod-tab-btn" data-modtab="authors" onclick="switchModTab('authors')">👥 Авторы</button>
           <button type="button" class="mod-tab-btn" data-modtab="cards" onclick="switchModTab('cards')">🃏 Карты</button>
+        <button type="button" class="mod-tab-btn" data-modtab="log" onclick="switchModTab('log')">📜 Журнал</button>
           <button type="button" class="mod-tab-btn" data-modtab="ranks" onclick="switchModTab('ranks')">⚙ Ранги</button>
           <button type="button" class="mod-tab-btn" data-modtab="settings" onclick="switchModTab('settings')">📝 Тексты и обои</button>
           <button type="button" class="mod-tab-btn owner-only" data-modtab="staff" onclick="switchModTab('staff')">👑 Модераторы</button>
@@ -547,10 +584,22 @@
           <div class="mod-toolbar">
             <input type="text" class="mod-search-input" id="modCardSearchInput" placeholder="🔍 Поиск карты по названию или автору..." oninput="renderModCardsList()">
           </div>
-          <div id="modCardsList"></div>
+          <div class="mod-toolbar" style="gap:8px; flex-wrap:wrap; align-items:center;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" id="modSelAll" onchange="modSelectAll(this.checked)"> Выбрать все</label>
+          <span class="mod-item-sub">Выбрано: <strong id="modSelCount">0</strong></span>
+          <button type="button" class="btn-glass" style="padding:5px 10px;" onclick="bulkCards('hide')">🙈 Скрыть</button>
+          <button type="button" class="btn-glass" style="padding:5px 10px;" onclick="bulkCards('show')">👁 Показать</button>
+          <select id="modBulkRank" class="mod-search-input" style="max-width:160px;" onchange="bulkCards('rank')"></select>
+          <button type="button" class="btn-del-mini" onclick="bulkCards('delete')">Удалить</button>
+        </div>
+        <div id="modCardsList"></div>
         </div>
 
-        <div id="modPanel-ranks" class="mod-panel">
+        <div id="modPanel-log" class="mod-panel">
+        <div id="modLogList"></div>
+      </div>
+
+      <div id="modPanel-ranks" class="mod-panel">
           <div id="ranksEditorList"></div>
           <button type="button" class="btn-glass" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="addGlobalRank()">+ Добавить ранг</button>
         </div>
@@ -1322,6 +1371,8 @@
 
     let sbSaving = false;
     let sbLastSaveTime = 0;
+    let modLog = JSON.parse(localStorage.getItem('cc_log') || '[]');
+    let modSel = new Set();
 
     function sbHeaders() {
       return {
@@ -1344,6 +1395,7 @@
           const rows = await getRes.json();
           if (rows && rows.length && rows[0].data) {
             const cloud = rows[0].data;
+            if (Array.isArray(cloud.log)) modLog = mergeLogs(modLog, cloud.log);
             if (!forceDelete) {
               if (Array.isArray(cloud.authors)) {
                 const localIds = new Set(authors.map(a => a.id));
@@ -1366,11 +1418,11 @@
         localStorage.setItem('cc_cards', JSON.stringify(cards));
         localStorage.setItem('cc_mods', JSON.stringify(moderators));
         localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
-        localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
+        localStorage.setItem('cc_cfg', JSON.stringify(siteConfig)); localStorage.setItem('cc_log', JSON.stringify(modLog));
         updateStats();
         updateAuthUI();
 
-        const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig };
+        const payload = { ranks, authors, cards, mods: moderators, users: registeredUsers, siteConfig, log: modLog };
         const postRes = await fetchWithRetry(SB_URL + '/rest/v1/vault_state?on_conflict=id', {
           method: 'POST',
           headers: sbHeaders(),
@@ -1442,7 +1494,7 @@
       const cardParam = params.get('card');
 
       if (cardParam) {
-        const c = cards.find(x => String(x.id) === String(cardParam));
+        const c = cards.find(x => String(x.id) === String(cardParam) && (!x.hidden || isRealModerator()));
         if (c) {
           initialRouteHandled = true;
           switchTab('catalog', false);
@@ -1506,6 +1558,7 @@
             if (!moderators.includes(OWNER_EMAIL)) moderators.unshift(OWNER_EMAIL);
           }
           if (Array.isArray(d.users)) registeredUsers = d.users;
+          if (Array.isArray(d.log)) modLog = mergeLogs(modLog, d.log);
           if (d.siteConfig) {
             siteConfig = { ...siteConfig, ...d.siteConfig };
             applySiteConfig();
@@ -1516,7 +1569,7 @@
           localStorage.setItem('cc_cards', JSON.stringify(cards));
           localStorage.setItem('cc_mods', JSON.stringify(moderators));
           localStorage.setItem('cc_users', JSON.stringify(registeredUsers));
-          localStorage.setItem('cc_cfg', JSON.stringify(siteConfig));
+          localStorage.setItem('cc_cfg', JSON.stringify(siteConfig)); localStorage.setItem('cc_log', JSON.stringify(modLog));
           updateStats();
           updateAuthUI();
           renderAuthorsSidebar(document.getElementById('authorSearchInput').value);
@@ -1539,7 +1592,7 @@
       const aEl = document.getElementById('statAuthors');
       const cEl = document.getElementById('statCards');
       if (aEl) aEl.textContent = authors.filter(a => !a.banned).length;
-      if (cEl) cEl.textContent = cards.length;
+      if (cEl) cEl.textContent = cards.filter(c => !c.hidden).length;
     }
 
     function switchTab(tabId, resetUrl = true) {
@@ -1723,6 +1776,11 @@
       pillRank.className = 'pill-rank';
       pillRank.textContent = rankObj.name;
       stage.appendChild(pillRank);
+      if (card.hidden) {
+        cell.style.opacity = '0.6';
+        const hb = document.createElement('span'); hb.className = 'pill-rank'; hb.style.cssText = 'left:auto; right:10px;'; hb.textContent = '🙈 Скрыта';
+        stage.appendChild(hb);
+      }
       const favBtn = document.createElement('button');
       favBtn.type = 'button'; favBtn.className = 'fav-btn' + (getFavs().includes(card.id) ? ' on' : '');
       favBtn.textContent = '♥'; favBtn.setAttribute('aria-label', 'В избранное');
@@ -1824,6 +1882,7 @@
       let visible = cards.filter(c => {
         const a = authors.find(x => x.id === c.authorId);
         if (a && a.banned && !mod) return false;
+        if (c.hidden && !mod) return false;
         if (catView.rank && String(c.rankId) !== catView.rank) return false;
         if (catView.fav && !favs.includes(c.id)) return false;
         if (q && !((c.title || '') + ' ' + (c.desc || '') + ' ' + (a ? a.name : '')).toLowerCase().includes(q)) return false;
@@ -1843,7 +1902,7 @@
 
     function renderProfileCards() {
       const grid = document.getElementById('profileCardsGrid');
-      let list = cards.filter(c => c.authorId === selectedAuthorId);
+      let list = cards.filter(c => c.authorId === selectedAuthorId && (!c.hidden || canManageCard(c)));
       if (selectedRankFilter !== 'ALL') list = list.filter(c => c.rankId === selectedRankFilter);
       grid.innerHTML = '';
       if (!list.length) {
@@ -2176,6 +2235,7 @@
       document.getElementById('cardFileField').style.display = 'block';
       document.getElementById('cardFileInput').required = true;
       document.getElementById('fileStatusText').textContent = 'Нажмите, чтобы выбрать файл карты';
+      clearCardPreview();
 
       const aSel = document.getElementById('cardAuthorSelect'); aSel.innerHTML = '';
       allowedAuthors.forEach(a => { const opt = document.createElement('option'); opt.value = a.id; opt.textContent = a.name; aSel.appendChild(opt); });
@@ -2206,6 +2266,7 @@
       document.getElementById('cardDescInput').value = card.desc || '';
       document.getElementById('cardFileField').style.display = 'none';
       document.getElementById('cardFileInput').required = false;
+      clearCardPreview();
 
       const allowedAuthors = authors.filter(a => canEditAuthorProfile(a) || a.id === card.authorId);
       const aSel = document.getElementById('cardAuthorSelect'); aSel.innerHTML = '';
@@ -2220,8 +2281,31 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    let cardPreviewUrl = null;
+    function clearCardPreview() {
+      if (cardPreviewUrl) { URL.revokeObjectURL(cardPreviewUrl); cardPreviewUrl = null; }
+      const box = document.getElementById('cardPreviewBox'); if (box) box.style.display = 'none';
+      const m = document.getElementById('cardPreviewMedia'); if (m) m.innerHTML = '';
+    }
+    function updateCardPreviewTitle() {
+      const t = document.getElementById('cardPreviewTitle');
+      if (t) t.textContent = document.getElementById('cardTitleInput').value.trim();
+    }
+    document.getElementById('cardTitleInput').addEventListener('input', updateCardPreviewTitle);
     document.getElementById('cardFileInput').addEventListener('change', e => {
-      if (e.target.files[0]) document.getElementById('fileStatusText').textContent = 'Файл: ' + e.target.files[0].name;
+      const f = e.target.files[0];
+      if (!f) { clearCardPreview(); return; }
+      document.getElementById('fileStatusText').textContent = 'Файл: ' + f.name;
+      clearCardPreview();
+      cardPreviewUrl = URL.createObjectURL(f);
+      const isVid = (f.type || '').startsWith('video/') || /\.(webm|mp4)$/i.test(f.name);
+      const el = document.createElement(isVid ? 'video' : 'img');
+      el.src = cardPreviewUrl;
+      el.style.cssText = 'max-width:100%; max-height:100%; object-fit:contain;';
+      if (isVid) { el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; }
+      document.getElementById('cardPreviewMedia').appendChild(el);
+      document.getElementById('cardPreviewBox').style.display = 'block';
+      updateCardPreviewTitle();
     });
 
     document.getElementById('cardForm').addEventListener('submit', async e => {
@@ -2246,6 +2330,8 @@
         if (editCardId) {
           const idx = cards.findIndex(c => c.id === Number(editCardId));
           if (idx === -1 || !canManageCard(cards[idx])) throw new Error('Нет прав на изменение этой карты');
+          const before = cards[idx];
+          logAction('Изменил карту', before.title + (before.title !== title ? ' → ' + title : '') + (before.rankId !== rankId ? ' (ранг изменён)' : '') + (before.authorId !== targetAuthorId ? ' (автор изменён)' : ''));
           cards[idx] = { ...cards[idx], authorId: targetAuthorId, rankId, title, desc };
           await saveData();
           showToast('Карта обновлена');
@@ -2267,6 +2353,7 @@
         function deleteCard(cardId) {
       const card = cards.find(c => c.id === cardId);
       if (!card || !canManageCard(card) || !confirm('Удалить эту карту?')) return;
+      logAction('Удалил карту', card.title);
       cards = cards.filter(c => c.id !== cardId); saveData(true); renderCards(); renderAuthorsSidebar(); renderModCardsList();
       if (selectedAuthorId) renderProfileCards();
     }
@@ -2274,7 +2361,7 @@
     function toggleBanAuthor(targetId = selectedAuthorId) {
       const idx = authors.findIndex(a => a.id === targetId);
       if (idx === -1 || !canModerateAuthor(authors[idx])) { showToast('Нельзя применить санкции к этому профилю'); return; }
-      authors[idx].banned = !authors[idx].banned; saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
+      authors[idx].banned = !authors[idx].banned; logAction(authors[idx].banned ? 'Забанил автора' : 'Разбанил автора', authors[idx].name); saveData(); renderAuthorsSidebar(); renderCards(); renderModAuthorsList();
       if (selectedAuthorId === targetId) updateBanButtonUI(authors[idx]);
     }
 
@@ -2288,6 +2375,7 @@
     function deleteAuthorProfile(targetId = selectedAuthorId) {
       const target = authors.find(a => a.id === targetId);
       if (!target || !canModerateAuthor(target) || !confirm('Удалить профиль автора и все его карты?')) return;
+      logAction('Удалил профиль автора и его карты', target.name);
       authors = authors.filter(a => a.id !== targetId); cards = cards.filter(c => c.authorId !== targetId);
       saveData(true); renderAuthorsSidebar(); renderCards(); renderModAuthorsList(); renderModCardsList();
       if (selectedAuthorId === targetId) closeAuthorProfile();
@@ -2323,6 +2411,7 @@
       if (tab === 'staff' && !isCreator()) tab = 'users';
       document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.modtab === tab));
       document.querySelectorAll('.mod-panel').forEach(p => p.classList.toggle('active', p.id === 'modPanel-' + tab));
+      if (tab === 'log') renderModLogList();
     }
     document.getElementById('cfgGlobalBgFile')?.addEventListener('change', async e => {
       const file = e.target.files.item(0);
@@ -2377,6 +2466,7 @@
       if ((target.email || '').toLowerCase() === OWNER_EMAIL.toLowerCase()) { showToast('Нельзя заблокировать создателя'); return; }
       if (!isCreator() && moderators.includes((target.email || '').toLowerCase())) { showToast('Модератор не может банить другого модератора'); return; }
       registeredUsers[idx].banned = !registeredUsers[idx].banned;
+      logAction(registeredUsers[idx].banned ? 'Заблокировал аккаунт' : 'Разблокировал аккаунт', registeredUsers[idx].name || maskEmail(target.email));
       saveData();
       renderModUsersList();
       showToast(registeredUsers[idx].banned ? 'Аккаунт заблокирован' : 'Аккаунт разблокирован');
@@ -2434,10 +2524,10 @@
       if (cleanEmail === OWNER_EMAIL.toLowerCase()) return;
       if (moderators.includes(cleanEmail)) {
         moderators = moderators.filter(m => m !== cleanEmail);
-        showToast('Права модератора сняты');
+        logAction('Снял права модератора', maskEmail(cleanEmail)); showToast('Права модератора сняты');
       } else {
         moderators.push(cleanEmail);
-        showToast('Назначен модератором');
+        logAction('Назначил модератора', maskEmail(cleanEmail)); showToast('Назначен модератором');
       }
       saveData();
       renderModsList();
@@ -2469,7 +2559,7 @@
       if (!isCreator()) return;
       const inp = document.getElementById('newModEmailInput'); const email = inp.value.trim().toLowerCase();
       if (!email || !email.includes('@')) return;
-      if (!moderators.includes(email)) { moderators.push(email); saveData(); renderModsList(); renderModAuthorsList(); renderModUsersList(); updateModStats(); }
+      if (!moderators.includes(email)) { moderators.push(email); logAction('Назначил модератора', maskEmail(email)); saveData(); renderModsList(); renderModAuthorsList(); renderModUsersList(); updateModStats(); }
       inp.value = ''; showToast('Модератор назначен');
     }
 
@@ -2542,32 +2632,117 @@
       });
     }
 
+    function maskEmail(e) { e = String(e || ''); return e.replace(/^(.{2}).*(@.*)$/, '$1***$2'); }
+    function mergeLogs(a, b) {
+      const m = new Map(); [...(a || []), ...(b || [])].forEach(e => { if (e && e.id) m.set(e.id, e); });
+      return [...m.values()].sort((x, y) => y.t - x.t).slice(0, 300);
+    }
+    function logAction(action, detail) {
+      if (!isRealModerator()) return;
+      const u = getCurrentUser();
+      modLog.unshift({ id: Date.now() + '_' + Math.floor(Math.random() * 1000), t: Date.now(), who: (u && u.displayName) || 'Модератор', action, detail: String(detail || '').slice(0, 200) });
+      modLog = modLog.slice(0, 300);
+    }
+    function renderModLogList() {
+      const box = document.getElementById('modLogList'); if (!box) return;
+      box.innerHTML = '';
+      if (!modLog.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Действий пока нет</div>'; return; }
+      modLog.forEach(e => {
+        const item = document.createElement('div'); item.className = 'mod-list-item';
+        const meta = document.createElement('div'); meta.className = 'mod-item-meta';
+        meta.innerHTML = '<div class="mod-item-title">' + esc(e.action) + (e.detail ? ': ' + esc(e.detail) : '') + '</div><div class="mod-item-sub">' + esc(e.who) + ' • ' + esc(new Date(e.t).toLocaleString('ru-RU')) + '</div>';
+        item.appendChild(meta); box.appendChild(item);
+      });
+    }
+
+    function modFilteredCards() {
+      const q = (document.getElementById('modCardSearchInput')?.value || '').toLowerCase().trim();
+      return cards.filter(c => {
+        const a = authors.find(x => x.id === c.authorId);
+        return (c.title || '').toLowerCase().includes(q) || (a && a.name.toLowerCase().includes(q));
+      });
+    }
+    function updateModSelCount() {
+      const n = modSel.size, el = document.getElementById('modSelCount'); if (el) el.textContent = n;
+    }
+    function modToggleSel(id, on) { if (on) modSel.add(id); else modSel.delete(id); updateModSelCount(); }
+    function modSelectAll(on) {
+      modFilteredCards().forEach(c => { if (canManageCard(c)) { if (on) modSel.add(c.id); else modSel.delete(c.id); } });
+      renderModCardsList();
+    }
+    function refreshCardViews() {
+      renderCards(); renderAuthorsSidebar(); renderModCardsList(); updateModStats(); updateStats();
+      if (selectedAuthorId) renderProfileCards();
+    }
+    function toggleCardHidden(id) {
+      const c = cards.find(x => x.id === id);
+      if (!c || !isRealModerator() || !canManageCard(c)) return;
+      c.hidden = !c.hidden;
+      logAction(c.hidden ? 'Скрыл карту' : 'Показал карту', c.title);
+      saveData(); refreshCardViews();
+    }
+    function bulkCards(action) {
+      const rankSel = document.getElementById('modBulkRank');
+      if (!isRealModerator()) return;
+      const targets = cards.filter(c => modSel.has(c.id) && canManageCard(c));
+      if (!targets.length) { showToast('Сначала отметьте карты'); if (rankSel) rankSel.value = ''; return; }
+      let rankId = null;
+      if (action === 'rank') { rankId = rankSel.value; if (!rankId) return; }
+      if (action === 'delete' && !confirm('Удалить выбранные карты (' + targets.length + ')?')) return;
+      const ids = new Set(targets.map(c => c.id));
+      let label;
+      if (action === 'delete') { cards = cards.filter(c => !ids.has(c.id)); label = 'удалил'; }
+      else {
+        cards.forEach(c => {
+          if (!ids.has(c.id)) return;
+          if (action === 'hide') c.hidden = true; else if (action === 'show') c.hidden = false; else c.rankId = rankId;
+        });
+        label = action === 'hide' ? 'скрыл' : action === 'show' ? 'показал' : 'сменил ранг на ' + ((ranks.find(r => r.id === rankId) || {}).name || '?') + ' у';
+      }
+      logAction('Массово ' + label, targets.length + ' карт');
+      modSel.clear();
+      saveData(action === 'delete'); refreshCardViews();
+      showToast('Готово: ' + targets.length + ' карт');
+    }
+
     function renderModCardsList() {
       const box = document.getElementById('modCardsList'); if (!box) return;
-      const q = (document.getElementById('modCardSearchInput')?.value || '').toLowerCase().trim();
-      const list = cards.filter(c => {
-        const a = authors.find(x => x.id === c.authorId);
-        return c.title.toLowerCase().includes(q) || (a && a.name.toLowerCase().includes(q));
-      });
+      const rs = document.getElementById('modBulkRank');
+      if (rs) rs.innerHTML = '<option value="">Сменить ранг…</option>' + ranks.map(r => '<option value="' + esc(r.id) + '">' + esc(r.name) + '</option>').join('');
+      const list = modFilteredCards();
       box.innerHTML = '';
+      updateModSelCount();
+      const all = document.getElementById('modSelAll');
+      if (all) all.checked = list.length > 0 && list.filter(c => canManageCard(c)).every(c => modSel.has(c.id));
       if (!list.length) { box.innerHTML = '<div style="color: var(--text-secondary);">Карты не найдены</div>'; return; }
       list.forEach(c => {
         const a = authors.find(x => x.id === c.authorId) || { name: 'Автор' };
         const r = ranks.find(x => x.id === c.rankId) || { name: 'R' };
         const item = document.createElement('div'); item.className = 'mod-list-item';
+        if (c.hidden) item.style.opacity = '0.65';
         const info = document.createElement('div'); info.className = 'mod-item-info';
-        const thumb = document.createElement('img'); thumb.className = 'mod-item-thumb'; thumb.src = c.image;
+        const manage = canManageCard(c);
+        if (manage) {
+          const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = modSel.has(c.id);
+          cb.style.cssText = 'flex-shrink:0; width:18px; height:18px; cursor:pointer;';
+          cb.onchange = () => { modToggleSel(c.id, cb.checked); };
+          info.appendChild(cb);
+        }
+        const thumb = document.createElement('img'); thumb.className = 'mod-item-thumb'; thumb.src = c.thumb || c.image;
         const meta = document.createElement('div'); meta.className = 'mod-item-meta';
-        meta.innerHTML = '<div class="mod-item-title">' + esc(c.title) + ' [' + esc(r.name) + ']</div><div class="mod-item-sub">Автор: ' + esc(a.name) + '</div>';
+        meta.innerHTML = '<div class="mod-item-title">' + esc(c.title) + ' [' + esc(r.name) + ']' + (c.hidden ? ' 🙈' : '') + '</div><div class="mod-item-sub">Автор: ' + esc(a.name) + (c.hidden ? ' • скрыта' : '') + '</div>';
         info.appendChild(thumb); info.appendChild(meta);
 
         const acts = document.createElement('div'); acts.className = 'mod-item-actions';
-        if (canManageCard(c)) {
+        if (manage) {
+          const hideBtn = document.createElement('button'); hideBtn.className = 'btn-glass'; hideBtn.style.padding = '5px 10px';
+          hideBtn.textContent = c.hidden ? '👁' : '🙈'; hideBtn.title = c.hidden ? 'Показать в каталоге' : 'Скрыть из каталога';
+          hideBtn.onclick = () => toggleCardHidden(c.id);
           const editBtn = document.createElement('button'); editBtn.className = 'btn-glass'; editBtn.style.padding = '5px 10px'; editBtn.textContent = '✎';
           editBtn.onclick = () => openEditCardPage(c.id);
           const delBtn = document.createElement('button'); delBtn.className = 'btn-del-mini'; delBtn.textContent = 'Удалить';
           delBtn.onclick = () => deleteCard(c.id);
-          acts.appendChild(editBtn); acts.appendChild(delBtn);
+          acts.appendChild(hideBtn); acts.appendChild(editBtn); acts.appendChild(delBtn);
         } else {
           const lock = document.createElement('span'); lock.className = 'mod-item-sub'; lock.textContent = '🔒 Каталог создателя';
           acts.appendChild(lock);
@@ -2575,6 +2750,99 @@
         item.appendChild(info); item.appendChild(acts); box.appendChild(item);
       });
     }
+
+    // ===== Кастомные выпадающие списки: заменяют системные <select> по всему сайту =====
+    (function () {
+      const protoValue = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+      let openState = null;
+      function closeSel() {
+        if (!openState) return;
+        openState.pop.remove(); openState.btn.setAttribute('aria-expanded', 'false'); openState = null;
+      }
+      document.addEventListener('mousedown', e => {
+        if (openState && !openState.pop.contains(e.target) && !openState.btn.contains(e.target)) closeSel();
+      }, true);
+      window.addEventListener('resize', closeSel);
+      window.addEventListener('scroll', e => { if (openState && !openState.pop.contains(e.target)) closeSel(); }, true);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSel(); });
+
+      function enhance(sel) {
+        if (sel.dataset.cs || sel.multiple) return;
+        sel.dataset.cs = '1';
+        const cs = getComputedStyle(sel);
+        const wrap = document.createElement('div'); wrap.className = 'cs';
+        if (sel.style.maxWidth) wrap.style.maxWidth = sel.style.maxWidth;
+        const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'cs-btn';
+        btn.style.padding = cs.paddingTop + ' 34px ' + cs.paddingBottom + ' ' + cs.paddingLeft;
+        btn.style.borderRadius = cs.borderRadius; btn.style.fontSize = cs.fontSize;
+        btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
+        if (sel.getAttribute('aria-label')) btn.setAttribute('aria-label', sel.getAttribute('aria-label'));
+        const label = document.createElement('span'); label.className = 'cs-label'; btn.appendChild(label);
+        sel.parentNode.insertBefore(wrap, sel); wrap.appendChild(sel); wrap.appendChild(btn);
+        sel.classList.add('cs-native'); sel.tabIndex = -1;
+
+        function refresh() {
+          const o = sel.options[sel.selectedIndex];
+          label.textContent = o ? o.textContent : '';
+          btn.disabled = sel.disabled;
+        }
+        Object.defineProperty(sel, 'value', {
+          get() { return protoValue.get.call(this); },
+          set(v) { protoValue.set.call(this, v); refresh(); },
+          configurable: true
+        });
+        new MutationObserver(refresh).observe(sel, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled'] });
+
+        function pick(i) {
+          sel.selectedIndex = i; refresh(); closeSel();
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          btn.focus();
+        }
+        function open() {
+          if (sel.disabled) return;
+          closeSel();
+          const pop = document.createElement('div'); pop.className = 'cs-pop'; pop.setAttribute('role', 'listbox');
+          [...sel.options].forEach((o, i) => {
+            const it = document.createElement('div');
+            it.className = 'cs-opt' + (i === sel.selectedIndex ? ' sel' : '') + (o.disabled ? ' dis' : '');
+            it.setAttribute('role', 'option'); it.textContent = o.textContent;
+            it.addEventListener('mousedown', ev => ev.preventDefault());
+            it.addEventListener('click', () => { if (!o.disabled) pick(i); });
+            pop.appendChild(it);
+          });
+          document.body.appendChild(pop);
+          const r = btn.getBoundingClientRect();
+          const below = window.innerHeight - r.bottom, above = r.top;
+          const up = below < 200 && above > below;
+          pop.style.minWidth = r.width + 'px';
+          pop.style.maxHeight = Math.max(120, Math.min(280, (up ? above : below) - 16)) + 'px';
+          pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - pop.offsetWidth - 8)) + 'px';
+          pop.style.top = up ? Math.max(8, r.top - pop.offsetHeight - 6) + 'px' : (r.bottom + 6) + 'px';
+          btn.setAttribute('aria-expanded', 'true');
+          openState = { pop, btn };
+          const cur = pop.querySelector('.sel'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+        }
+        btn.addEventListener('click', () => { if (openState && openState.btn === btn) closeSel(); else open(); });
+        btn.addEventListener('keyup', e => { if (e.key === ' ') e.preventDefault(); });
+        btn.addEventListener('keydown', e => {
+          if (!['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) return;
+          e.preventDefault();
+          if (!openState || openState.btn !== btn) { open(); return; }
+          const items = [...openState.pop.children];
+          let a = items.findIndex(x => x.classList.contains('act'));
+          if (a < 0) a = sel.selectedIndex;
+          if (e.key === 'Enter' || e.key === ' ') { if (!sel.options[a].disabled) pick(a); return; }
+          const dir = e.key === 'ArrowDown' ? 1 : -1;
+          let n = a + dir;
+          while (items[n] && items[n].classList.contains('dis')) n += dir;
+          if (!items[n]) return;
+          items.forEach(x => x.classList.remove('act')); items[n].classList.add('act');
+          items[n].scrollIntoView({ block: 'nearest' });
+        });
+        refresh();
+      }
+      document.querySelectorAll('select').forEach(enhance);
+    })();
 
     applySiteConfig(); updateStats(); renderAuthorsSidebar(); renderCards(); handleInitialDeepLink();
   </script>
