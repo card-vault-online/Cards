@@ -33,12 +33,47 @@ jobs:
           authors = {str(a.get('id')): a for a in data.get('authors', [])}
 
 
+          import hashlib, subprocess, urllib.request
+
+          os.makedirs('p', exist_ok=True)
+
+
+          def video_preview(url):
+              """Первый кадр видео -> p/<hash>.jpg (кэшируется, ImageKit VPU не тратит)."""
+              base = url.split('?')[0]
+              key = hashlib.md5(base.encode()).hexdigest()[:16]
+              out = 'p/%s.jpg' % key
+              if os.path.exists(out):
+                  return BASE + out
+              tmp = 'p/%s.src' % key
+              try:
+                  req = urllib.request.Request(base, headers={'User-Agent': 'Mozilla/5.0'})
+                  with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f:
+                      shutil.copyfileobj(r, f)
+                  flt = ('[0:v]scale=1000:-2,split[a][b];[a]drawbox=c=0x0d0d11:t=fill[bg];'
+                         '[bg][b]overlay=format=auto,format=yuv420p')
+                  subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', '0.3', '-i', tmp,
+                                  '-filter_complex', flt, '-frames:v', '1', '-q:v', '3', out],
+                                 check=True, timeout=120)
+                  if not os.path.exists(out):
+                      subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', tmp,
+                                      '-filter_complex', flt, '-frames:v', '1', '-q:v', '3', out],
+                                     check=True, timeout=120)
+                  return BASE + out
+              except Exception as e:
+                  print('preview failed', base, e)
+                  return OG_DEFAULT
+              finally:
+                  if os.path.exists(tmp):
+                      os.remove(tmp)
+
+
           def img(url, w=1000):
               if not url:
                   return OG_DEFAULT
               base = url.split('?')[0]
               if re.search(r'\.(mp4|webm|mov)$', base, re.I):
-                  return OG_DEFAULT  # видео: без ik-thumbnail, он тратит VPU
+                  return video_preview(base)
               if 'ik.imagekit.io' in base:
                   return '%s?tr=w-%d,f-jpg' % (base, w)
               return url
