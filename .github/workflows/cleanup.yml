@@ -1,0 +1,23 @@
+name: Cleanup unused media
+
+on:
+  schedule:
+    - cron: '23 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cleanup
+        env:
+          CLEANUP_KEY: ${{ secrets.CLEANUP_KEY }}
+          # 0 = только показать, что удалила бы; 1 = реально удалять
+          APPLY: '0'
+        run: |
+          code=$(curl -sS -o out.json -w '%{http_code}' --max-time 60 \
+            -H "x-cleanup-key: $CLEANUP_KEY" \
+            "https://cards-api-an1o.netlify.app/cleanup?apply=$APPLY")
+          cat out.json
+          echo
+          test "$code" = "200"
