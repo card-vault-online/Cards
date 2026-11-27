@@ -189,9 +189,93 @@
       "ownerUid": "UlGcMjAEAiYhUgST2wMiZAmElT72",
       "ownerEmail": "dead23457@gmail.com",
       "orderStatus": "closed"
+    },
+    {
+      "id": 1795800655342,
+      "ownerUid": "190Fs7AT47PssMHkhWUYuZzgr8F3",
+      "ownerEmail": "aliciadelepetsir@gmail.com",
+      "name": "Yutia Bludia",
+      "orderStatus": "closed",
+      "avatar": "https://ik.imagekit.io/e879ksw3s/card_1795802226859_52635.webp",
+      "banner": "https://ik.imagekit.io/e879ksw3s/card_1795802309345_9544.webp",
+      "bio": "Не умею делать карты.",
+      "contact": "@YutiaBludia",
+      "banned": false
     }
   ],
   "cards": [
+    {
+      "id": 1795801256588,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Аянами Рей",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801250483_55907.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801250483_55907.webp?tr=w-480"
+    },
+    {
+      "id": 1795801207094,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Zero Two",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801203821_18125.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801203821_18125.webp?tr=w-480"
+    },
+    {
+      "id": 1795801133037,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Руби Хошино",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801131765_18841.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801131765_18841.webp?tr=w-480"
+    },
+    {
+      "id": 1795801104536,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Ошино Оги",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801103437_47601.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801103437_47601.webp?tr=w-480"
+    },
+    {
+      "id": 1795801081850,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Юмэко Джиабами",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801080627_5619.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801080627_5619.webp?tr=w-480"
+    },
+    {
+      "id": 1795801010965,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Маганэ Чикуджоин",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795801009813_54910.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795801009813_54910.webp?tr=w-480"
+    },
+    {
+      "id": 1795800906947,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Сваллоу",
+      "desc": "Мой первый позор",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795800905207_92216.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795800905207_92216.webp?tr=w-480"
+    },
+    {
+      "id": 1795800985950,
+      "authorId": 1795800655342,
+      "rankId": "r4",
+      "title": "Аквамарин Хошино",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795800984817_83513.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795800984817_83513.webp?tr=w-480"
+    },
     {
       "id": 1795520988019,
       "image": "https://ik.imagekit.io/e879ksw3s/card_1795520985675_71019.png",
@@ -1266,15 +1350,24 @@
       "banned": false,
       "lastSeen": "26.11.2026, 17:46",
       "firstSeen": "24.11.2026, 17:42"
+    },
+    {
+      "uid": "190Fs7AT47PssMHkhWUYuZzgr8F3",
+      "email": "aliciadelepetsir@gmail.com",
+      "name": "Alicia de Lepetsir",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIbGdZiP6o0to88FGucvpKTDTiCcJLE6oCykyeR1H5N3Ibt54E=s96-c",
+      "firstSeen": "27.11.2026, 19:29",
+      "lastSeen": "27.11.2026, 19:29",
+      "banned": false
     }
   ],
   "siteConfig": {
     "brand": "Custom Cards",
     "heroTitle": "Кастомные карты расскажут об авторах лучше слов",
     "heroSub": "Открытая галерея карт от разных создателей — для прямого заказа у автора или просто для эстетичного любования.",
+    "terms": "1. Администрация и создатель платформы не несут ответственности за достоверность данных, авторские права и содержимое загружаемых материалов.\n\n2. Всю ответственность за размещаемые карты, изображения и контактную информацию несёт исключительно пользователь, загрузивший контент.\n\n3. Запрещено размещать материалы, нарушающие законодательство или права третьих лиц.",
     "heroBg": "",
     "catalogBg": "",
-    "terms": "1. Администрация и создатель платформы не несут ответственности за достоверность данных, авторские права и содержимое загружаемых материалов.\n\n2. Всю ответственность за размещаемые карты, изображения и контактную информацию несёт исключительно пользователь, загрузивший контент.\n\n3. Запрещено размещать материалы, нарушающие законодательство или права третьих лиц.",
     "globalBg": "https://ik.imagekit.io/e879ksw3s/card_1795650068929_62828.webp"
   },
   "log": [
