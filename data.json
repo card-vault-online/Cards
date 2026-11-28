@@ -205,9 +205,39 @@
       "bio": "Не умею делать карты.",
       "contact": "@YutiaBludia",
       "banned": false
+    },
+    {
+      "id": 1795871403420,
+      "ownerUid": "oQlTfP0N87UbHzr92F0W7Jk4Ewy2",
+      "ownerEmail": "yooshkaa@gmail.com",
+      "name": "Йошка",
+      "orderStatus": "closed",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLNPjvnXGyHOPAqycvHD8YxZ_SyKk8KDabMjUOkm3SYG0ADv86l=s96-c",
+      "banner": "",
+      "bio": "",
+      "contact": ".",
+      "banned": false
     }
   ],
   "cards": [
+    {
+      "id": 1795871460117,
+      "authorId": 1795871403420,
+      "rankId": "r4",
+      "title": "Гатс",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795871459205_2143.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795871459205_2143.webp?tr=w-480"
+    },
+    {
+      "id": 1795871437995,
+      "authorId": 1795871403420,
+      "rankId": "r4",
+      "title": "Тан Бо",
+      "desc": "",
+      "image": "https://ik.imagekit.io/e879ksw3s/card_1795871436567_72464.webp",
+      "thumb": "https://ik.imagekit.io/e879ksw3s/card_1795871436567_72464.webp?tr=w-480"
+    },
     {
       "id": 1795861007894,
       "authorId": 1795547922994,
@@ -1221,6 +1251,24 @@
     "lmeakkount@gmail.com"
   ],
   "users": [
+    {
+      "uid": "oQlTfP0N87UbHzr92F0W7Jk4Ewy2",
+      "email": "yooshkaa@gmail.com",
+      "name": "Ihor Mizun",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLNPjvnXGyHOPAqycvHD8YxZ_SyKk8KDabMjUOkm3SYG0ADv86l=s96-c",
+      "firstSeen": "28.11.2026, 15:07",
+      "lastSeen": "28.11.2026, 15:07",
+      "banned": false
+    },
+    {
+      "uid": "S9pYCOAocfhYmuYFgJGeS7sTvf33",
+      "email": "m040320090@gmail.com",
+      "name": "Maria",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLUYJYIsMedHgNLfaEvPkwM9SksA8vp_np_CkYl6JBMd5HrHvMB=s96-c",
+      "firstSeen": "28.11.2026, 16:05",
+      "lastSeen": "28.11.2026, 16:05",
+      "banned": false
+    },
     {
       "uid": "qalEfqKWvdZ2XVVr5IdwykDSgs23",
       "email": "08b2007d01@gmail.com",
