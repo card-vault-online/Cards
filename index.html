@@ -365,6 +365,8 @@
           <div class="hero-btns">
             <button class="btn-primary" onclick="switchTab('catalog')">Смотреть каталог карт</button>
             <button class="btn-glass" onclick="openUploadPage()">+ Добавить свою карту</button>
+                        <a id="downloadApkBtn" href="https://github.com" download class="btn glass" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;">📱 Скачать приложение (Android)</a>
+            <script>if (window.matchMedia('(display-mode: standalone)').matches || document.referrer.startsWith('android-app://')) { const b = document.getElementById('downloadApkBtn'); if (b) b.style.display = 'none'; }</script>
           </div>
         </div>
         <div class="hero-right">
