@@ -71,12 +71,15 @@ jobs:
                       os.remove(tmp)
 
           def img(url):
-              if not url:
+              if not url or not isinstance(url, str):
+                  return OG_DEFAULT
+              url = url.strip()
+              if not url or url.startswith('data:'):
                   return OG_DEFAULT
               base = url.split('?')[0]
               is_vid = bool(re.search(r'\.(mp4|webm|mov)$', base, re.I))
-              if 'ik.imagekit.io' in base or is_vid:
-                  return make_preview(base, is_video=is_vid)
+              if 'ik.imagekit.io' in base or 'googleusercontent.com' in base or is_vid:
+                  return make_preview(url if 'googleusercontent.com' in base else base, is_video=is_vid)
               return url
 
           def short(t, n=200):
