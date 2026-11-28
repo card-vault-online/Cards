@@ -2,7 +2,7 @@ name: Sync data and share pages
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -48,7 +48,8 @@ jobs:
                   return BASE + out
               tmp = 'p/%s.src' % key
               try:
-                  req = urllib.request.Request(base, headers={'User-Agent': 'Mozilla/5.0'})
+                  target_url = url if 'googleusercontent.com' in base else base
+                  req = urllib.request.Request(target_url, headers={'User-Agent': 'Mozilla/5.0'})
                   with urllib.request.urlopen(req, timeout=60) as r, open(tmp, 'wb') as f:
                       shutil.copyfileobj(r, f)
                   flt = ('[0:v]scale=640:640:force_original_aspect_ratio=decrease,split[a][b];'
@@ -79,7 +80,7 @@ jobs:
               base = url.split('?')[0]
               is_vid = bool(re.search(r'\.(mp4|webm|mov)$', base, re.I))
               if 'ik.imagekit.io' in base or 'googleusercontent.com' in base or is_vid:
-                  return make_preview(url if 'googleusercontent.com' in base else base, is_video=is_vid)
+                  return make_preview(url, is_video=is_vid)
               return url
 
           def short(t, n=200):
@@ -100,12 +101,16 @@ jobs:
           <meta property="og:title" content="{t}">
           <meta property="og:description" content="{d}">
           <meta property="og:image" content="{i}">
+          <meta property="og:image:secure_url" content="{i}">
+          <meta property="og:image:type" content="image/jpeg">
+          <meta property="og:image:width" content="640">
+          <meta property="og:image:height" content="640">
           <meta property="og:url" content="{u}">
           <meta name="twitter:card" content="summary_large_image">
           <meta name="twitter:title" content="{t}">
           <meta name="twitter:description" content="{d}">
           <meta name="twitter:image" content="{i}">
-          <script>location.replace({json.dumps(target)});</script>
+          <script>if(!/bot|crawl|spider|telegram|discord|vkshare|whatsapp/i.test(navigator.userAgent)){{setTimeout(function(){{location.replace({json.dumps(target)});}},120);}}</script>
           </head><body style="background:#0d0d11;color:#fff;font-family:sans-serif;text-align:center;padding:40px">
           <p><a style="color:#a5b4fc" href="{escape(target, quote=True)}">Открыть на сайте</a></p>
           </body></html>
