@@ -14,6 +14,14 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://card-vault-online.github.io/Cards/og-image.png">
   <link rel="icon" id="siteFavicon" type="image/png" href="">
+  <!-- Установка как приложение (PWA) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#09090b">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Custom Cards">
+  <script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
   <script>
     (function() {
       const c = document.createElement('canvas');
